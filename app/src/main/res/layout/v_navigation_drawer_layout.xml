@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/half_transparent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:layout_above="@+id/current_commands"
+                android:layout_alignParentTop="true">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/commands_list"
+                    android:layout_width="@dimen/navigation_drawer_width"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical" />
+
+                <FrameLayout
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/material_blue_grey_800"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/function_commands_container"
+                    android:layout_width="@dimen/navigation_drawer_width"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/material_blue_grey_800"
+                android:id="@+id/bottom_divider"
+                android:layout_above="@+id/current_commands" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/current_commands"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/abc_action_bar_default_height_material"
+                android:scrollbars="horizontal"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+</FrameLayout>

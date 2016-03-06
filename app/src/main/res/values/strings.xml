@@ -1,0 +1,79 @@
+<resources>
+    <string name="app_name">AlgoStudying</string>
+
+    <string name="login">логин</string>
+    <string name="password">пароль</string>
+    <string name="enter">войти</string>
+    <string name="entering">входим</string>
+    <string name="welcome">Добро пожаловать!</string>
+
+    <string name="move_command">Двигаться</string>
+    <string name="move_command_desc">Двигает робота вперед</string>
+    <string name="turn_left_command">Повернуть налево</string>
+    <string name="turn_left_command_desc">Поворачивает робота налево</string>
+    <string name="turn_right_command">Повернуть направо</string>
+    <string name="turn_right_command_desc">Поворачивает робота направо</string>
+    <string name="cycle_command">Брок команд</string>
+    <string name="cycle_command_desc">Представляет собой блок команд</string>
+
+    <string name="drawer_open">OPEN</string>
+    <string name="drawer_close">CLOSE</string>
+
+    <string name="home_tab_task">Задания</string>
+    <string name="home_tab_profile">Профиль</string>
+    <string name="home_tab_about">Справка</string>
+    <string name="home_tab_settings">Настройки</string>
+    <string name="home_tab_users">Пользователи</string>
+    <string name="home_tab_logout">Выход</string>
+    <string name="create_task_tab_title">Создание уровня</string>
+
+    <string name="menu_item_title_remove">Отменить</string>
+
+    <!-- ERRORRS -->
+    <string name="error_unknown">Неизвесная ошибка</string>
+    <string name="error_no_user">Нет такого пользователя</string>
+    <string name="error_wrong_pass">Неверный пароль</string>
+    <string name="error_user_exists">Такой пользователь уже существует</string>
+    <string name="error_failed_to_connect">Не удалось подключится к серверу</string>
+    <string name="error_empty_not_allowed">Поле должно быть заполнено</string>
+    <string name="error_password_not_confirmed">Пароли не совпадают</string>
+    <string name="error_world_name_empty">Введите название мира</string>
+    <string name="error_world_group_empty">Выберите группу</string>
+    <string name="error_placeholder_retry">Нажмите, чтобы перезагрузить</string>
+    <string name="error_failed_to_load_world">Не удалось загрузить мир</string>
+
+    <!-- PROFILE TAB -->
+    <string name="tab_title_stats">Статистика</string>
+    <string name="message_details_updated">Данные успешно обновлены</string>
+
+    <string name="message_user_registered">Пользователь успешно зарегестрирован</string>
+
+    <string name="title_register">Регистрация нового пользователя</string>
+    <string name="text_admin">Учитель</string>
+    <string name="text_student">Студент</string>
+
+    <string name="hint_login">Логин</string>
+    <string name="hint_name">Имя</string>
+    <string name="hint_pass">Пароль</string>
+    <string name="hint_confirm_pass">Повторите пароль</string>
+
+    <string name="world_setup_height_title">Длина:</string>
+    <string name="world_setup_width_title">Ширина:</string>
+    <string name="world_setup_title_hint">Название задания</string>
+    <string name="world_setup_desc_hint">Описание задания</string>
+    <string name="world_setup_create_group">Создать группу</string>
+    <string name="world_setup_group_press">Нажмите, чтобы задать группу</string>
+    <string name="world_setup_group_title">Группа: %s</string>
+    <string name="world_setup_group_hint">Введите название группы</string>
+    <string name="menu_item_create_title">Создать мир</string>
+    <string name="menu_item_edit_group">Редактировать группу</string>
+    <string name="menu_item_remove_group">Удалить группу</string>
+    <string name="menu_item_create_group">Создать группу</string>
+
+    <string name="title_user_view">Пользователь</string>
+    <string name="message_world_created">Мир успешно создан</string>
+    <string name="message_world_not_created">При создании мира произошла ошибка</string>
+
+    <string name="header_students">Ученики</string>
+    <string name="header_teachers">Учителя</string>
+</resources>

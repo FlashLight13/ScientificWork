@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_micro">12sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+
+    <dimen name="navigation_drawer_width">240dp</dimen>
+    <dimen name="navigation_drawer_bottom_height">64dp</dimen>
+    <dimen name="navigation_drawer_indicator_width">10dp</dimen>
+
+    <dimen name="bottom_fab_footer">72dp</dimen>
+
+    <dimen name="radius">3dp</dimen>
+    <dimen name="stroke_width">2dp</dimen>
+
+    <dimen name="content_margins">16dp</dimen>
+    <dimen name="content_divider_margins">8dp</dimen>
+
+    <dimen name="about_group_view_image_size_small">48dp</dimen>
+    <dimen name="about_group_view_image_size_big">288dp</dimen>
+    <dimen name="about_group_view_image_margin">20dp</dimen>
+    <dimen name="about_group_view_padding">16dp</dimen>
+    <dimen name="about_group_view_description_padding">24dp</dimen>
+
+    <dimen name="basic_list_item_height">56dp</dimen>
+    <dimen name="basic_list_item_sides_margin">16dp</dimen>
+    <dimen name="basic_list_header_margin">16dp</dimen>
+
+    <dimen name="img_list_item_img_size">36dp</dimen>
+    <dimen name="img_list_item_text_margin">72dp</dimen>
+    <dimen name="img_list_item_sides_margin">16dp</dimen>
+
+    <dimen name="game_field_control_button_size">48dp</dimen>
+
+    <dimen name="single_line_list_item_height">48dp</dimen>
+    <dimen name="list_item_action_margins">16dp</dimen>
+    <dimen name="list_item_sides_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="error_placeholder_retry_size">96dp</dimen>
+    <dimen name="error_placeholder_retry_margins">12dp</dimen>
+
+    <dimen name="edit_text_height">72dp</dimen>
+    <dimen name="edit_text_margings">@dimen/basic_list_item_sides_margin</dimen>
+
+    <dimen name="world_setup_text_margin_top">12dp</dimen>
+    <dimen name="world_setup_text_margin_bottom">4dp</dimen>
+
+    <dimen name="task_list_item_img_size">72dp</dimen>
+    <dimen name="task_list_item_title_margin">8dp</dimen>
+</resources>
