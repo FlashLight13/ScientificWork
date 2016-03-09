@@ -18,6 +18,13 @@ public class CycleCommandBlock extends CommandBlock {
         this.count = count;
     }
 
+    public CycleCommandBlock(Command command) {
+        super(command);
+        if (command instanceof CycleCommandBlock) {
+            this.count = ((CycleCommandBlock) command).count;
+        }
+    }
+
     public void setCount(int count) {
         this.count = count;
     }
@@ -31,5 +38,10 @@ public class CycleCommandBlock extends CommandBlock {
         for (int i = 0; i < count; i++) {
             super.perform(gameWorld, player);
         }
+    }
+
+    @Override
+    public Command cloneCommand() {
+        return new CycleCommandBlock(this);
     }
 }

@@ -8,10 +8,8 @@
         android:id="@+id/list"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
-        android:listSelector="@color/smoky_blue"
         android:choiceMode="singleChoice"
-        android:dividerHeight="1dp"
-        android:divider="@color/light_grey"/>
+        android:divider="@null"/>
 
     <FrameLayout
         android:layout_width="1dp"

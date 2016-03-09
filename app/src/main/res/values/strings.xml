@@ -50,7 +50,7 @@
 
     <string name="title_register">Регистрация нового пользователя</string>
     <string name="text_admin">Учитель</string>
-    <string name="text_student">Студент</string>
+    <string name="text_student">Ученик</string>
 
     <string name="hint_login">Логин</string>
     <string name="hint_name">Имя</string>

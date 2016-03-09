@@ -15,8 +15,17 @@ public class TurnRightCommand extends Command {
                 R.string.turn_right_command_desc);
     }
 
+    public TurnRightCommand(Command command) {
+        super(command);
+    }
+
     @Override
     public void perform(GameWorld gameWorld, Player player) {
         player.turnToTheRight();
+    }
+
+    @Override
+    public Command cloneCommand() {
+        return new TurnRightCommand(this);
     }
 }

@@ -22,13 +22,12 @@
 
         <ListView
             android:id="@+id/left_drawer"
-            android:layout_width="240dp"
+            android:layout_width="@dimen/navigation_drawer_width"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/white"
             android:choiceMode="singleChoice"
-            android:divider="@color/light_grey"
-            android:dividerHeight="1dp" />
+            android:divider="@null" />
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>
 

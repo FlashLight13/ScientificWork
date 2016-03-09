@@ -160,7 +160,7 @@ public class EditUserTasksActivity extends BaseActivity {
                 view = new CheckBox(context);
                 ViewGroup.MarginLayoutParams layoutParams = new ViewGroup.MarginLayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
-                        context.getResources().getDimensionPixelSize(R.dimen.basic_list_item_height));
+                        context.getResources().getDimensionPixelSize(R.dimen.list_item_height_medium));
                 int margin = context.getResources().getDimensionPixelSize(R.dimen.basic_list_item_sides_margin);
                 layoutParams.setMargins(margin, 0, margin, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -169,7 +169,7 @@ public class EditUserTasksActivity extends BaseActivity {
                 }
                 view.setLayoutParams(layoutParams);
                 view.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
-                view.setPadding(context.getResources().getDimensionPixelSize(R.dimen.basic_list_item_height), 0, 0, 0);
+                view.setPadding(context.getResources().getDimensionPixelSize(R.dimen.list_item_height_medium), 0, 0, 0);
             }
 
             UserData userData = getItem(position);

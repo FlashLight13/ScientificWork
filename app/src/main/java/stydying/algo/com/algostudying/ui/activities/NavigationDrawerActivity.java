@@ -3,12 +3,15 @@ package stydying.algo.com.algostudying.ui.activities;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +21,7 @@ import android.widget.ListView;
 
 import butterknife.Bind;
 import stydying.algo.com.algostudying.R;
-import stydying.algo.com.algostudying.ui.views.NavigationDrawerItemView;
+import stydying.algo.com.algostudying.ui.views.NavigationItemView;
 
 /**
  * Created by Anton on 18.07.2015.
@@ -107,7 +110,11 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
         @Nullable
         Fragment getFragmentInstance();
 
+        @StringRes
         int getTitleRes();
+
+        @DrawableRes
+        int getIcon();
 
         boolean isMain();
 
@@ -117,6 +124,11 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
 
     public interface NavigationTask {
         void execute(BaseActivity context);
+    }
+
+    public void showTab(int pos) {
+        drawerList.setItemChecked(pos, true);
+        showTab(getTabs()[pos]);
     }
 
     public void showTab(NavigationTab tab) {
@@ -159,11 +171,16 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            NavigationDrawerItemView view = (NavigationDrawerItemView) convertView;
-            if (view == null) {
-                view = new NavigationDrawerItemView(context);
+            final NavigationTab tab = getItem(position);
+            NavigationItemView view = (NavigationItemView) convertView;
+            if (view == null || view.isMain() != tab.isMain()) {
+                view = new NavigationItemView(new ContextThemeWrapper(context, tab.isMain()
+                        ? R.style.NavigationBarItemPrimary
+                        : R.style.NavigationBarItemSecondary));
             }
-            view.setNavigationTab(getItem(position));
+            view.setTitle(tab.getTitleRes());
+            view.setIcon(tab.getIcon());
+            view.setMain(tab.isMain());
             return view;
         }
     }
@@ -171,7 +188,7 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            showTab((NavigationTab) (parent.getAdapter()).getItem(position));
+            showTab(position);
         }
     }
 }

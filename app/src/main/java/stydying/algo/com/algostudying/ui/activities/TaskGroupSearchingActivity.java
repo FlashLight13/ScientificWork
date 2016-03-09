@@ -152,7 +152,7 @@ public class TaskGroupSearchingActivity extends BaseActivity {
             TextView textView = new TextView(context, null, R.style.ListItemStyle);
             textView.setLayoutParams(new AbsListView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    context.getResources().getDimensionPixelSize(R.dimen.basic_list_item_height)));
+                    context.getResources().getDimensionPixelSize(R.dimen.list_item_height_medium)));
             textView.setGravity(Gravity.CENTER_VERTICAL);
             int padding = context.getResources().getDimensionPixelSize(R.dimen.basic_list_item_sides_margin);
             textView.setPadding(padding, 0, padding, 0);

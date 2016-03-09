@@ -18,6 +18,13 @@ public class CommandBlock extends Command {
         super(R.string.cycle_command, R.drawable.ic_repeat_black_24dp, R.string.cycle_command_desc);
     }
 
+    public CommandBlock(Command command) {
+        super(command);
+        if (command instanceof CommandBlock) {
+            this.commands = new ArrayList<>(((CommandBlock) command).commands);
+        }
+    }
+
     public void perform(GameWorld gameWorld, Player player) {
         for (Command currentCommand : commands) {
             currentCommand.perform(gameWorld, player);
@@ -38,5 +45,10 @@ public class CommandBlock extends Command {
 
     public List<Command> getCommands() {
         return this.commands;
+    }
+
+    @Override
+    public Command cloneCommand() {
+        return new CommandBlock(this);
     }
 }

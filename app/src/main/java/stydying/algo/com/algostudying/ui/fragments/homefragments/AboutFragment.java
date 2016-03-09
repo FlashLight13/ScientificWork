@@ -21,7 +21,7 @@ import stydying.algo.com.algostudying.game.commands.MoveCommand;
 import stydying.algo.com.algostudying.game.commands.TurnLeftCommand;
 import stydying.algo.com.algostudying.game.commands.TurnRightCommand;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
-import stydying.algo.com.algostudying.ui.views.ImageTextView;
+import stydying.algo.com.algostudying.ui.views.IndicatedListItemView;
 
 /**
  * Created by Anton on 18.07.2015.
@@ -31,6 +31,8 @@ public class AboutFragment extends BaseFragment {
     protected ListView commandsListView;
     @Bind(R.id.description_view)
     protected TextView descriptionView;
+
+    private Adapter adapter;
 
     @Nullable
     @Override
@@ -46,18 +48,20 @@ public class AboutFragment extends BaseFragment {
         commands.add(new TurnLeftCommand());
         commands.add(new TurnRightCommand());
         commands.add(new CommandBlock());
-        Adapter adapter = new Adapter(getActivity(), commands);
+        adapter = new Adapter(getActivity(), commands);
         commandsListView.setAdapter(adapter);
         commandsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onCommandSelected(((Command) commandsListView.getAdapter().getItem(position)));
+                onCommandSelected(position);
             }
         });
+        onCommandSelected(0);
     }
 
-    private void onCommandSelected(Command command) {
-        descriptionView.setText(command.getDescriptionId());
+    private void onCommandSelected(int position) {
+        commandsListView.setItemChecked(position, true);
+        descriptionView.setText((adapter.getItem(position)).getDescriptionId());
     }
 
     public class Adapter extends BaseAdapter {
@@ -77,11 +81,13 @@ public class AboutFragment extends BaseFragment {
         @Override
         public View getView(int groupPosition, View convertView,
                             ViewGroup parent) {
-            ImageTextView view = (ImageTextView) convertView;
+            IndicatedListItemView view = (IndicatedListItemView) convertView;
             if (view == null) {
-                view = new ImageTextView(context);
+                view = new IndicatedListItemView(context);
             }
-            view.setCommand(getItem(groupPosition));
+            final Command command = getItem(groupPosition);
+            view.setTitle(command.getTitleId());
+            view.setIcon(command.getIconId());
             return view;
         }
 

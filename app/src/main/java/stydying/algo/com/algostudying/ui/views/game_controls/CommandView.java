@@ -3,14 +3,11 @@ package stydying.algo.com.algostudying.ui.views.game_controls;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,6 +31,7 @@ public class CommandView extends RelativeLayout {
     @Bind(R.id.arrow)
     View arrow;
 
+    private State state;
     private Command command;
 
     public CommandView(Context context) {
@@ -63,6 +61,7 @@ public class CommandView extends RelativeLayout {
     }
 
     public void moveToState(State state) {
+        this.state = state;
         switch (state) {
             case FULL:
                 this.icon.setVisibility(View.VISIBLE);
@@ -79,18 +78,14 @@ public class CommandView extends RelativeLayout {
         this.command = command;
         this.icon.setImageResource(command.getIconId());
         this.titleView.setText(command.getTitleId());
-        if (command instanceof CommandBlock) {
+        if (command instanceof CommandBlock && state == State.FULL) {
             arrow.setVisibility(View.VISIBLE);
         } else {
             arrow.setVisibility(View.GONE);
         }
     }
 
-    @Nullable
-    public List<Command> getCommandsCommands() {
-        if (command instanceof CommandBlock) {
-            return ((CommandBlock) command).getCommands();
-        }
-        return null;
+    public Command getCommand() {
+        return command;
     }
 }

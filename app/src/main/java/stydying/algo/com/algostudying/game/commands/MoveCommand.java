@@ -14,6 +14,10 @@ public class MoveCommand extends Command {
         super(R.string.move_command, R.drawable.ic_arrow_upward_black_24dp, R.string.move_command_desc);
     }
 
+    public MoveCommand(Command command) {
+        super(command);
+    }
+
     @Override
     public void perform(GameWorld gameWorld, Player player) {
         Vector3i coordinates = player.getCoordinates();
@@ -35,6 +39,10 @@ public class MoveCommand extends Command {
             default:
                 throw new IllegalStateException();
         }
+    }
 
+    @Override
+    public Command cloneCommand() {
+        return new MoveCommand(this);
     }
 }

@@ -2,8 +2,16 @@
 <resources>
 
     <style name="AlgoStudyingBaseActivity" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:editTextStyle">@style/TextInputLayout</item>
+        <item name="android:radioButtonStyle">@style/RadioButton</item>
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
     <style name="AlgoStudyingGameFieldActivity" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:editTextStyle">@style/TextInputLayout</item>
+        <item name="android:radioButtonStyle">@style/RadioButton</item>
+        <item name="colorControlActivated">@color/yellow</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 </resources>

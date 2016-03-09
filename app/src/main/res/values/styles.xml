@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:app="http://schemas.android.com/tools">
 
     <style name="AlgoActionBarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="android:background">@color/deep_blue</item>
@@ -11,9 +11,15 @@
     </style>
 
     <style name="ListItemStyle">
-        <item name="android:minHeight">@dimen/basic_list_item_height</item>
+        <item name="android:minHeight">@dimen/list_item_height_medium</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="IndicatedListItem">
+        <item name="android:maxHeight">@dimen/list_item_height_medium</item>
+        <item name="android:minHeight">@dimen/list_item_height_medium</item>
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -25,9 +31,25 @@
 
     <style name="TabsStyle" parent="@style/Widget.Design.TabLayout">
         <item name="android:background">@color/deep_blue</item>
-        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <item name="tabIndicatorColor">@color/yellow</item>
         <item name="tabBackground">?attr/selectableItemBackground</item>
         <item name="tabTextColor">@color/lightest_grey</item>
         <item name="tabSelectedTextColor">@color/white</item>
+    </style>
+
+    <style name="FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/yellow</item>
+        <item name="android:layout_marginBottom">@dimen/fab_margin</item>
+        <item name="android:layout_marginEnd" app:targetApi="19">@dimen/fab_margin</item>
+        <item name="android:layout_marginRight">@dimen/fab_margin</item>
+    </style>
+
+    <style name="TextInputLayout" parent="Widget.Design.TextInputLayout">
+        <item name="android:textColorHint">@color/lightest_grey</item>
+        <item name="android:textColor">@color/yellow</item>
+    </style>
+
+    <style name="RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/yellow</item>
     </style>
 </resources>

@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/IndicatedListItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <FrameLayout
+        android:id="@+id/indicator"
         android:layout_width="@dimen/navigation_drawer_indicator_width"
         android:layout_height="match_parent"
-        android:id="@+id/indicator"
-        android:background="@drawable/navigation_drawer_indicator"/>
+        android:background="@drawable/navigation_drawer_indicator"
+        android:duplicateParentState="true" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/icon_size_small"
+        android:layout_height="@dimen/icon_size_small"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/app_name" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="15dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 </LinearLayout>

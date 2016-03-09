@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="NavigationBarItemPrimary" parent="@style/IndicatedListItem">
+        <item name="android:textViewStyle">@style/TextPrimary</item>
+    </style>
+
+    <style name="NavigationBarItemSecondary">
+        <item name="android:maxHeight">@dimen/list_item_height_small</item>
+        <item name="android:minHeight">@dimen/list_item_height_small</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textViewStyle">@style/TextSecondary</item>
+    </style>
+
+    <style name="TextPrimary">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+
+    <style name="TextSecondary">
+        <item name="android:textColor">@color/light_grey</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+    </style>
+</resources>

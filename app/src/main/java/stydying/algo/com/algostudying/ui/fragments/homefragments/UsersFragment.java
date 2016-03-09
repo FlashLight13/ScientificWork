@@ -173,11 +173,13 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         private void remove(String login) {
             Iterator iterator = data.iterator();
             while (iterator.hasNext()) {
-                User current = (User) iterator.next();
-                if (current.getLogin().equals(login)) {
-                    iterator.remove();
-                    notifyDataSetChanged();
-                    return;
+                ListItem current = (ListItem) iterator.next();
+                if (current.type == ListItem.ITEM) {
+                    if (((User) current.data).getLogin().equals(login)){
+                        iterator.remove();
+                        notifyDataSetChanged();
+                        return;
+                    }
                 }
             }
         }
@@ -236,7 +238,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
                     } else {
                         header = convertView;
                     }
-                    ((TextView)header.findViewById(R.id.text)).setText((Integer) getItem(position).data);
+                    ((TextView) header.findViewById(R.id.text)).setText((Integer) getItem(position).data);
                     return header;
                 case ListItem.ITEM:
                     UsersListItemView view;

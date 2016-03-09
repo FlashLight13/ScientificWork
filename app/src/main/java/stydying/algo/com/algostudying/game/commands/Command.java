@@ -6,7 +6,7 @@ import stydying.algo.com.algostudying.game.objects.Player;
 /**
  * Created by anton on 27.06.15.
  */
-public abstract class Command {
+public abstract class Command implements Cloneable {
 
     private int titleId;
     private int iconId;
@@ -16,6 +16,12 @@ public abstract class Command {
         this.titleId = titleId;
         this.iconId = iconId;
         this.descriptionId = descriptionId;
+    }
+
+    public Command(Command command) {
+        this.titleId = command.titleId;
+        this.iconId = command.iconId;
+        this.descriptionId = command.descriptionId;
     }
 
     public abstract void perform(GameWorld gameWorld, Player player);
@@ -31,4 +37,6 @@ public abstract class Command {
     public int getDescriptionId() {
         return descriptionId;
     }
+
+    public abstract Command cloneCommand();
 }

@@ -21,8 +21,9 @@
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_title"
+                style="@style/TextInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/basic_list_item_height">
+                android:layout_height="@dimen/list_item_height_medium">
 
                 <EditText
                     style="@style/ListItemStyle"
@@ -36,7 +37,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/basic_list_item_height">
+                android:layout_height="@dimen/list_item_height_medium">
 
                 <TextView
                     style="@style/ListItemStyle"
@@ -61,7 +62,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/basic_list_item_height">
+                android:layout_height="@dimen/list_item_height_medium">
 
                 <TextView
                     style="@style/ListItemStyle"
@@ -88,13 +89,14 @@
                 android:id="@+id/input_group"
                 style="@style/ListItemStyle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/basic_list_item_height"
+                android:layout_height="@dimen/list_item_height_medium"
                 android:hint="@string/world_setup_group_title" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_description"
+                style="@style/TextInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/basic_list_item_height">
+                android:layout_height="@dimen/list_item_height_medium">
 
                 <EditText
                     android:layout_width="match_parent"
@@ -112,14 +114,12 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/btn_create"
+        style="@style/FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end|bottom"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_24dp" />
 </RelativeLayout>

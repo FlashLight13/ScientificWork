@@ -32,7 +32,7 @@ public class HomeActivity extends NavigationDrawerActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        showTab(getTabs()[0]);
+        showTab(0);
     }
 
     @Override
@@ -56,10 +56,10 @@ public class HomeActivity extends NavigationDrawerActivity {
     private static final class AdminTabsProvider {
 
         private enum HomeTab implements NavigationTab {
-            TASKS(TasksFragment.class, null, R.string.home_tab_task, true),
-            STATS(ProfileFragment.class, null, R.string.home_tab_profile, true),
-            ABOUT(AboutFragment.class, null, R.string.home_tab_about, true),
-            USERS(UsersFragment.class, null, R.string.home_tab_users, true),
+            TASKS(TasksFragment.class, null, R.string.home_tab_task, R.drawable.ic_content_paste_black_24dp, true),
+            STATS(ProfileFragment.class, null, R.string.home_tab_profile, R.drawable.ic_person_outline_black_24dp, true),
+            ABOUT(AboutFragment.class, null, R.string.home_tab_about, R.drawable.ic_help_outline_black_24dp, true),
+            USERS(UsersFragment.class, null, R.string.home_tab_users, R.drawable.ic_people_outline_black_24dp, true),
             SETTINGS(SettingsFragment.class, null, R.string.home_tab_settings, false),
             LOGOUT(null, LOGOUT_TASK, R.string.home_tab_logout, false);
 
@@ -67,6 +67,15 @@ public class HomeActivity extends NavigationDrawerActivity {
             private int titleRes;
             private boolean isMain;
             private NavigationTask task;
+            private int icon = -1;
+
+            HomeTab(Class fragmentClass, NavigationTask task, int titleRes, int icon, boolean isMain) {
+                this.fragmentClass = fragmentClass;
+                this.titleRes = titleRes;
+                this.isMain = isMain;
+                this.task = task;
+                this.icon = icon;
+            }
 
             HomeTab(Class fragmentClass, NavigationTask task, int titleRes, boolean isMain) {
                 this.fragmentClass = fragmentClass;
@@ -90,6 +99,11 @@ public class HomeActivity extends NavigationDrawerActivity {
             }
 
             @Override
+            public int getIcon() {
+                return icon;
+            }
+
+            @Override
             public boolean isMain() {
                 return isMain;
             }
@@ -99,6 +113,8 @@ public class HomeActivity extends NavigationDrawerActivity {
             public NavigationTask getTask() {
                 return task;
             }
+
+
         }
 
         public NavigationTab[] getTabs() {
@@ -109,9 +125,9 @@ public class HomeActivity extends NavigationDrawerActivity {
     private static final class PlayerTabsProvider {
 
         private enum HomeTab implements NavigationTab {
-            TASKS(TasksFragment.class, null, R.string.home_tab_task, true),
-            STATS(ProfileFragment.class, null, R.string.home_tab_profile, true),
-            ABOUT(AboutFragment.class, null, R.string.home_tab_about, true),
+            TASKS(TasksFragment.class, null, R.string.home_tab_task, R.drawable.ic_content_paste_black_24dp, true),
+            STATS(ProfileFragment.class, null, R.string.home_tab_profile, R.drawable.ic_people_outline_black_24dp, true),
+            ABOUT(AboutFragment.class, null, R.string.home_tab_about, R.drawable.ic_help_outline_black_24dp, true),
             SETTINGS(SettingsFragment.class, null, R.string.home_tab_settings, false),
             LOGOUT(null, LOGOUT_TASK, R.string.home_tab_logout, false);
 
@@ -119,6 +135,15 @@ public class HomeActivity extends NavigationDrawerActivity {
             private int titleRes;
             private boolean isMain;
             private NavigationTask task;
+            private int icon;
+
+            HomeTab(Class fragmentClass, NavigationTask task, int titleRes, int icon, boolean isMain) {
+                this.fragmentClass = fragmentClass;
+                this.titleRes = titleRes;
+                this.isMain = isMain;
+                this.task = task;
+                this.icon = icon;
+            }
 
             HomeTab(Class fragmentClass, NavigationTask task, int titleRes, boolean isMain) {
                 this.fragmentClass = fragmentClass;
@@ -142,6 +167,11 @@ public class HomeActivity extends NavigationDrawerActivity {
             }
 
             @Override
+            public int getIcon() {
+                return icon;
+            }
+
+            @Override
             public boolean isMain() {
                 return isMain;
             }
@@ -151,6 +181,8 @@ public class HomeActivity extends NavigationDrawerActivity {
             public NavigationTask getTask() {
                 return task;
             }
+
+
         }
 
         public NavigationTab[] getTabs() {
