@@ -57,6 +57,11 @@ public abstract class GameObject {
         return new Vector3f(x / GameWorld.GAME_CELL_MULTIPLIER, y / GameWorld.GAME_CELL_MULTIPLIER, z / GameWorld.GAME_CELL_MULTIPLIER);
     }
 
+    public void setWorldCoordinates(int x, int y) {
+        this.x = x * GameWorld.GAME_CELL_MULTIPLIER;
+        this.y = y * GameWorld.GAME_CELL_MULTIPLIER;
+    }
+
     public GameObject setCoordinates(int x, int y, int z) {
         this.x = x;
         this.y = y;

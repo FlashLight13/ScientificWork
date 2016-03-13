@@ -20,27 +20,27 @@ import stydying.algo.com.algostudying.ui.interfaces.GameObjectSelectListener;
 /**
  * Created by Anton on 09.02.2016.
  */
-public class GameObjectsList extends ListView {
+public class GameObjectsListView extends ListView {
 
     private GameObjectSelectListener listener;
 
-    public GameObjectsList(Context context) {
+    public GameObjectsListView(Context context) {
         super(context);
         init(context);
     }
 
-    public GameObjectsList(Context context, AttributeSet attrs) {
+    public GameObjectsListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public GameObjectsList(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GameObjectsListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public GameObjectsList(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public GameObjectsListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
@@ -75,7 +75,7 @@ public class GameObjectsList extends ListView {
         ((ObjectsAdapter) getAdapter()).setGameObjects(gameObjectsClasses);
     }
 
-    public GameObjectsList setControlListener(GameObjectSelectListener listener) {
+    public GameObjectsListView setControlListener(GameObjectSelectListener listener) {
         this.listener = listener;
         return this;
     }

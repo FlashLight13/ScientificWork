@@ -21,8 +21,8 @@ public class MoveCommand extends Command {
     @Override
     public void perform(GameWorld gameWorld, Player player) {
         Vector3i coordinates = player.getCoordinates();
-        float newX = coordinates.x;
-        float newY = coordinates.y;
+        int newX = coordinates.x;
+        int newY = coordinates.y;
         switch (player.getSightDirection()) {
             case BACK:
                 newY = newY - 1;
@@ -39,6 +39,7 @@ public class MoveCommand extends Command {
             default:
                 throw new IllegalStateException();
         }
+        player.setWorldCoordinates(newX, newY);
     }
 
     @Override

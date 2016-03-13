@@ -52,8 +52,14 @@ public class GameWorld {
                             .setCoordinates((x - worldX / 2) * GAME_CELL_MULTIPLIER,
                                     (y - worldY / 2) * GAME_CELL_MULTIPLIER,
                                     z * GAME_CELL_MULTIPLIER);
+                    if (map[x][y][z] instanceof Player) {
+                        player = (Player) map[x][y][z];
+                    }
                 }
             }
+        }
+        if (player == null) {
+            throw new IllegalStateException("No player");
         }
         this.task = task;
 

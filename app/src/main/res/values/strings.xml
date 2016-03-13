@@ -76,4 +76,6 @@
 
     <string name="header_students">Ученики</string>
     <string name="header_teachers">Учителя</string>
+
+    <string name="menu_item_execute">Выполнить</string>
 </resources>

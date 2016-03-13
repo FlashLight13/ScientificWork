@@ -42,7 +42,7 @@ import stydying.algo.com.algostudying.ui.graphics.GameView;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldCellsHeightControl;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldSelectControl;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
-import stydying.algo.com.algostudying.ui.views.game_controls.GameObjectsList;
+import stydying.algo.com.algostudying.ui.views.game_controls.GameObjectsListView;
 import stydying.algo.com.algostudying.utils.loaders.BaseAsyncLoader;
 
 /**
@@ -57,13 +57,13 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         public View getNavigationView(Context context, @Nullable GameWorld gameWorld) {
             switch (this) {
                 case EDIT:
-                    GameObjectsList gameObjectsList = new GameObjectsList(context);
-                    gameObjectsList.setControlListener(gameWorld == null
+                    GameObjectsListView gameObjectsListView = new GameObjectsListView(context);
+                    gameObjectsListView.setControlListener(gameWorld == null
                             ? null
                             : gameWorld.getGameWorldEditor());
-                    gameObjectsList.setPossibleObjects(new Class[]{CubeBlock.class, Player.class});
-                    gameObjectsList.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START));
-                    return gameObjectsList;
+                    gameObjectsListView.setPossibleObjects(new Class[]{CubeBlock.class, Player.class});
+                    gameObjectsListView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START));
+                    return gameObjectsListView;
                 case PLAY:
                     return GameNavigationDrawerView.getInstance(context);
                 default:
@@ -72,8 +72,15 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         }
 
         private void createOptionsMenu(BaseActivity baseActivity, Menu menu) {
-            if (this == EDIT) {
-                baseActivity.getMenuInflater().inflate(R.menu.menu_create_world, menu);
+            switch (this) {
+                case EDIT:
+                    baseActivity.getMenuInflater().inflate(R.menu.menu_create_world, menu);
+                    return;
+                case PLAY:
+                    baseActivity.getMenuInflater().inflate(R.menu.menu_execute_operations, menu);
+                    return;
+                default:
+                    throw new IllegalArgumentException("Unknown mode");
             }
         }
     }
@@ -117,21 +124,25 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void initGameFieldNavigationControl(@NonNull FrameLayout rootView) {
-        this.gameFieldSelectControl = new GameFieldSelectControl(this);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.BOTTOM | Gravity.END);
-        rootView.addView(gameFieldSelectControl, layoutParams);
+        if (mode == Mode.EDIT) {
+            this.gameFieldSelectControl = new GameFieldSelectControl(this);
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.BOTTOM | Gravity.END);
+            rootView.addView(gameFieldSelectControl, layoutParams);
+        }
     }
 
     private void initGameFieldCellsHeightControl(@NonNull FrameLayout rootView) {
-        this.gameFieldCellsHeightControl = new GameFieldCellsHeightControl(this);
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                Gravity.TOP | Gravity.END);
-        rootView.addView(gameFieldCellsHeightControl, layoutParams);
+        if (mode == Mode.EDIT) {
+            this.gameFieldCellsHeightControl = new GameFieldCellsHeightControl(this);
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    Gravity.TOP | Gravity.END);
+            rootView.addView(gameFieldCellsHeightControl, layoutParams);
+        }
     }
 
     private void initDrawer() {
@@ -185,6 +196,12 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     private void create() {
         OperationProcessor.executeOperation(this,
                 new CreateUpdateTaskOperation(gameWorld.createTask()));
+    }
+
+    private void execute() {
+        if (gameWorld != null) {
+            gameWorld.executeCommands();
+        }
     }
 
     protected void onDrawerClosed() {
@@ -287,6 +304,9 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         switch (item.getItemId()) {
             case R.id.menu_item_create:
                 create();
+                return true;
+            case R.id.menu_item_execute:
+                execute();
                 return true;
         }
         return super.onOptionsItemSelected(item);
