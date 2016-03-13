@@ -53,8 +53,10 @@ public abstract class GameObject {
     public void move() {
     }
 
-    public Vector3f getWorldCoordinates() {
-        return new Vector3f(x / GameWorld.GAME_CELL_MULTIPLIER, y / GameWorld.GAME_CELL_MULTIPLIER, z / GameWorld.GAME_CELL_MULTIPLIER);
+    public Vector3i getWorldCoordinates() {
+        return new Vector3i(x / GameWorld.GAME_CELL_MULTIPLIER,
+                y / GameWorld.GAME_CELL_MULTIPLIER,
+                z / GameWorld.GAME_CELL_MULTIPLIER);
     }
 
     public void setWorldCoordinates(int x, int y) {

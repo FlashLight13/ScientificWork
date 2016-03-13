@@ -20,7 +20,7 @@ public class MoveCommand extends Command {
 
     @Override
     public void perform(GameWorld gameWorld, Player player) {
-        Vector3i coordinates = player.getCoordinates();
+        Vector3i coordinates = player.getWorldCoordinates();
         int newX = coordinates.x;
         int newY = coordinates.y;
         switch (player.getSightDirection()) {

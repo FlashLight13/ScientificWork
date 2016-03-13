@@ -33,7 +33,6 @@ public class GameWorld {
     private int worldZ;
 
     private transient Player player;
-    private transient List<Command> commands;
     private transient GameObject[][][] map;
 
     private transient GameWorldEditor gameWorldEditor;
@@ -66,7 +65,7 @@ public class GameWorld {
         gameWorldEditor = new GameWorldEditor(map, worldX, worldY, worldZ);
     }
 
-    public void executeCommands() {
+    public void executeCommands(List<Command> commands) {
         for (Command command : commands) {
             command.perform(this, player);
         }

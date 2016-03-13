@@ -98,6 +98,7 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
 
     private GameFieldSelectControl gameFieldSelectControl;
     private GameFieldCellsHeightControl gameFieldCellsHeightControl;
+    private View navigationView;
 
     private Task task;
     private Mode mode;
@@ -199,8 +200,8 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     private void execute() {
-        if (gameWorld != null) {
-            gameWorld.executeCommands();
+        if (gameWorld != null && navigationView != null) {
+            gameWorld.executeCommands(((GameNavigationDrawerView) navigationView).getCommands());
         }
     }
 
@@ -230,12 +231,15 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader loader, GameWorld data) {
-        drawerLayout.addView(mode.getNavigationView(this, data));
+        navigationView = mode.getNavigationView(this, data);
+        drawerLayout.addView(navigationView);
         if (data != null) {
             gameWorld = data;
             mGLView.init(data);
-            gameFieldSelectControl.setControlListener(data.getGameWorldEditor());
-            gameFieldCellsHeightControl.setControlListener(data.getGameWorldEditor());
+            if (mode == Mode.EDIT) {
+                gameFieldSelectControl.setControlListener(data.getGameWorldEditor());
+                gameFieldCellsHeightControl.setControlListener(data.getGameWorldEditor());
+            }
         }
     }
 
