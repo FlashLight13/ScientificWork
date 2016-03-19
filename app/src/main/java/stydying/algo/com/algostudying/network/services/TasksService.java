@@ -1,17 +1,12 @@
 package stydying.algo.com.algostudying.network.services;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.errors.NetworkException;
-import stydying.algo.com.algostudying.network.NetworkProvider;
-import stydying.algo.com.algostudying.network.parsers.EntityParser;
+import stydying.algo.com.algostudying.network.CallsProcessor;
+import stydying.algo.com.algostudying.network.interfaces.TaskInterface;
 import stydying.algo.com.algostudying.utils.BaseJsonEntityBuilder;
 
 /**
@@ -19,58 +14,39 @@ import stydying.algo.com.algostudying.utils.BaseJsonEntityBuilder;
  */
 public class TasksService {
 
-    public static WorldData createUpdateTask(WorldData worldData) throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/createOrUpdateWorld"),
-                RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(worldData)),
-                null,
-                new EntityParser<>(WorldData.class));
+    private static TaskInterface api;
+
+    public static TaskInterface.WorldData createUpdateTask(TaskInterface.WorldData worldData) throws NetworkException {
+        return new CallsProcessor<TaskInterface.WorldData>().executeCall(api().createUpdateTask(worldData));
     }
 
     public static List<TaskGroup> getTaskGroupsNames() throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/getTaskGroupsNames"),
-                RequestBody.create(null, ""),
-                null,
-                new EntityParser<>(new TypeToken<List<TaskGroup>>() {
-                }));
+        return new CallsProcessor<List<TaskGroup>>().executeCall(api().getTaskGroupsNames());
     }
 
     public static void removeTaskGroup(Long id) throws NetworkException {
-        String jsonRequest = new BaseJsonEntityBuilder().add("id", id).build();
-        NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/removeTaskGroup"),
-                RequestBody.create(MediaType.parse("application/json"), jsonRequest),
-                null);
+        new CallsProcessor<>().executeCall(api().removeTaskGroup(new BaseJsonEntityBuilder().add("id", id).build()));
     }
 
-    public static TaskGroup updateTaskGroup(TaskGroup taskGroup) throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/createOrUpdateWorld"),
-                RequestBody.create(MediaType.parse("application/json"), new Gson().toJson(taskGroup)),
-                null,
-                new EntityParser<>(TaskGroup.class));
+    public static TaskGroup updateTaskGroup(String title, Long id, List<String> userIds) throws NetworkException {
+        return new CallsProcessor<TaskGroup>().executeCall(api().updateTaskGroup(
+                new TaskInterface.UpdateTaskGroupData(title, id, userIds)));
+    }
+
+    public static Task updateTask(Task updatedTask, long taskGroupId, List<String> usersIds) throws NetworkException {
+        return new CallsProcessor<Task>().executeCall(api().updateTask(
+                new TaskInterface.UpdateTaskData(updatedTask, taskGroupId, usersIds)));
     }
 
     public static Task getTask(Long taskId) throws NetworkException {
-        String jsonRequest = new BaseJsonEntityBuilder().add("id", taskId).build();
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/task"),
-                RequestBody.create(MediaType.parse("application/json"), jsonRequest),
-                null,
-                new EntityParser<>(Task.class));
+        return new CallsProcessor<Task>().executeCall(api().getTask(
+                new BaseJsonEntityBuilder().add("id", taskId).build()));
     }
 
-    public static final class WorldData {
-        public TaskGroup taskGroup;
-        public Task task;
-
-        public WorldData() {
+    private static TaskInterface api() {
+        if (api == null) {
+            api = CallsProcessor.retrofit().create(TaskInterface.class);
         }
-
-        public WorldData(TaskGroup taskGroup, Task task) {
-            this.taskGroup = taskGroup;
-            this.task = task;
-        }
+        return api;
     }
 }

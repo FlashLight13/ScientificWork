@@ -27,8 +27,6 @@
     <string name="home_tab_logout">Выход</string>
     <string name="create_task_tab_title">Создание уровня</string>
 
-    <string name="menu_item_title_remove">Отменить</string>
-
     <!-- ERRORRS -->
     <string name="error_unknown">Неизвесная ошибка</string>
     <string name="error_no_user">Нет такого пользователя</string>
@@ -44,9 +42,6 @@
 
     <!-- PROFILE TAB -->
     <string name="tab_title_stats">Статистика</string>
-    <string name="message_details_updated">Данные успешно обновлены</string>
-
-    <string name="message_user_registered">Пользователь успешно зарегестрирован</string>
 
     <string name="title_register">Регистрация нового пользователя</string>
     <string name="text_admin">Учитель</string>
@@ -56,6 +51,7 @@
     <string name="hint_name">Имя</string>
     <string name="hint_pass">Пароль</string>
     <string name="hint_confirm_pass">Повторите пароль</string>
+    <string name="hint_group_title">Название группы</string>
 
     <string name="world_setup_height_title">Длина:</string>
     <string name="world_setup_width_title">Ширина:</string>
@@ -65,17 +61,24 @@
     <string name="world_setup_group_press">Нажмите, чтобы задать группу</string>
     <string name="world_setup_group_title">Группа: %s</string>
     <string name="world_setup_group_hint">Введите название группы</string>
+
+    <string name="menu_item_title_remove">Отменить</string>
     <string name="menu_item_create_title">Создать мир</string>
     <string name="menu_item_edit_group">Редактировать группу</string>
     <string name="menu_item_remove_group">Удалить группу</string>
     <string name="menu_item_create_group">Создать группу</string>
+    <string name="menu_item_edit_done">Готово</string>
+    <string name="menu_item_execute">Выполнить</string>
 
     <string name="title_user_view">Пользователь</string>
+
+    <string name="message_details_updated">Данные успешно обновлены</string>
+    <string name="message_user_registered">Пользователь успешно зарегестрирован</string>
     <string name="message_world_created">Мир успешно создан</string>
     <string name="message_world_not_created">При создании мира произошла ошибка</string>
+    <string name="message_edit_done">Редактирование успешно выполнено</string>
 
     <string name="header_students">Ученики</string>
     <string name="header_teachers">Учителя</string>
 
-    <string name="menu_item_execute">Выполнить</string>
 </resources>

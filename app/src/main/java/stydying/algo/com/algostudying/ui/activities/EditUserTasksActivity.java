@@ -6,7 +6,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -29,6 +33,7 @@ import stydying.algo.com.algostudying.operations.OperationProcessor;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
 import stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments.EditTaskFragment;
 import stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments.EditTaskGroupFragment;
+import stydying.algo.com.algostudying.utils.BundleBuilder;
 
 /**
  * Created by Anton on 29.02.2016.
@@ -40,7 +45,7 @@ public class EditUserTasksActivity extends BaseActivity {
 
     private static final String MODE_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity.MODE_EXTRA";
-    private static final String ID_EXTRA
+    public static final String ID_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity.ID_EXTRA";
 
     public enum Mode {
@@ -52,9 +57,11 @@ public class EditUserTasksActivity extends BaseActivity {
             this.fragmentClass = fragmentClass;
         }
 
-        BaseFragment fragment() {
+        BaseFragment fragment(long id) {
             try {
-                return fragmentClass.newInstance();
+                BaseFragment baseFragment = fragmentClass.newInstance();
+                baseFragment.setArguments(new BundleBuilder().putLong(ID_EXTRA, id).build());
+                return baseFragment;
             } catch (Exception e) {
                 return null;
             }
@@ -62,32 +69,47 @@ public class EditUserTasksActivity extends BaseActivity {
     }
 
     private Mode mode;
-    private long id;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_edit_user_tasks);
         this.mode = Mode.valueOf(getIntent().getStringExtra(MODE_EXTRA));
-        this.id = getIntent().getLongExtra(ID_EXTRA, -1);
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, mode.fragment(), null).commit();
+        getSupportFragmentManager().beginTransaction().replace(
+                R.id.content, mode.fragment(getIntent().getLongExtra(ID_EXTRA, -1)), null).commit();
         OperationProcessor.executeOperation(this, new LoadUsersOperation());
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Subscribe
     public void onSuccess(OperationSuccessEvent event) {
-        List<User> users = event.data();
-        List<UserData> userDatas = new ArrayList<>(users.size());
-        for (User user : users) {
-            userDatas.add(new UserData(user, false));
+        if (event.isOperation(LoadUsersOperation.class)) {
+            List<User> users = event.data();
+            List<UserData> userDatas = new ArrayList<>(users.size());
+            for (User user : users) {
+                userDatas.add(new UserData(user, false));
+            }
+            listView.setAdapter(new UsersAdapter(this, userDatas));
         }
-        listView.setAdapter(new UsersAdapter(this, userDatas));
+    }
+
+    public List<User> getSelectedUsers() {
+        List<User> result = new ArrayList<>();
+        for (UserData userData : ((UsersAdapter) listView.getAdapter()).getUsers()) {
+            if (userData.isSelected) {
+                result.add(userData.user);
+            }
+        }
+        return result;
     }
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-
+        if (event.isOperation(LoadUsersOperation.class)) {
+        }
     }
 
     @Override
@@ -100,6 +122,12 @@ public class EditUserTasksActivity extends BaseActivity {
     protected void onPause() {
         BusProvider.bus().unregister(this);
         super.onPause();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_edit_done, menu);
+        return true;
     }
 
     public static void startMe(@NonNull Context context, @NonNull Mode mode, long id) {
@@ -177,6 +205,10 @@ public class EditUserTasksActivity extends BaseActivity {
             view.setText(userData.user.getName());
 
             return view;
+        }
+
+        public List<UserData> getUsers() {
+            return users;
         }
     }
 }

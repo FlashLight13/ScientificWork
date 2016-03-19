@@ -64,13 +64,15 @@ public class TaskListItemView extends LinearLayout {
         textTitle.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                final int rightDrawableRight = textTitle.getWidth();
-                final int rightDrawableLeft = rightDrawableRight - drawable.getIntrinsicWidth();
-                if (event.getX() > rightDrawableLeft && event.getX() < rightDrawableRight) {
-                    if (onEditTaskListenerListener != null) {
-                        onEditTaskListenerListener.onEditTaskClicked((int) getTag());
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    final int rightDrawableRight = textTitle.getWidth();
+                    final int rightDrawableLeft = rightDrawableRight - drawable.getIntrinsicWidth();
+                    if (event.getX() > rightDrawableLeft && event.getX() < rightDrawableRight) {
+                        if (onEditTaskListenerListener != null) {
+                            onEditTaskListenerListener.onEditTaskClicked((int) getTag());
+                        }
+                        return true;
                     }
-                    return true;
                 }
                 return false;
             }

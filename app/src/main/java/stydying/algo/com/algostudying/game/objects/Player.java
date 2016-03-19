@@ -44,7 +44,7 @@ public class Player extends GameObject {
 
     @Override
     protected String getModelName() {
-        //return ModelNames.PLAYER;
-        return null;
+        return ModelNames.PLAYER;
+        //return null;
     }
 }

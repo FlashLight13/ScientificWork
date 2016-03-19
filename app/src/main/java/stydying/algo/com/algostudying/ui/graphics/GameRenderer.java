@@ -135,9 +135,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
                     Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.0f, 1.0f, 0.0f);
 
-                    if (mTextureDataHandle == UNSET_TEXTURE_DATA_HANDLE) {
-                        mTextureDataHandle = loadTexture(gameObject.getModel().getMaterials().get("Material").texture);
-                    }
+                    mTextureDataHandle = loadTexture(gameObject.getModel().getMaterials().get("Material").texture);
+
                     GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
                     GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
                     GLES20.glUniform1i(mTextureUniformHandle, 0);

@@ -287,6 +287,12 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         mGLView.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        getSupportLoaderManager().destroyLoader(Loaders.GAME_WORLD_LOADER);
+        super.onDestroy();
+    }
+
     public static void startMe(@NonNull Context context, @NonNull Task gameFieldData, @NonNull Mode mode) {
         Intent intent = new Intent(context, GameFieldActivity.class);
         intent.putExtra(WORLD_DATA_EXTRA, gameFieldData);

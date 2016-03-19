@@ -2,110 +2,52 @@ package stydying.algo.com.algostudying.network.services;
 
 import android.util.Base64;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.util.List;
 
-import okhttp3.Headers;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.errors.NetworkException;
-import stydying.algo.com.algostudying.network.NetworkProvider;
-import stydying.algo.com.algostudying.network.parsers.EntityParser;
+import stydying.algo.com.algostudying.network.CallsProcessor;
+import stydying.algo.com.algostudying.network.interfaces.UserInterface;
 
 /**
  * Created by Anton on 02.02.2016.
  */
 public class UsersService {
 
+    private static UserInterface api;
+
     public static User login(String login, String pass) throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/login"),
-                RequestBody.create(null, ""),
-                createAuthHeaders(login, pass),
-                new EntityParser<>(User.class));
+        return new CallsProcessor<User>().executeCall(api().login(createAuthHeaders(login, pass)));
     }
 
     public static User register(String login, String pass, String name, User.Type type) throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/register"),
-                RequestBody.create(MediaType.parse("application/json"),
-                        new Gson().toJson(new RegisterData(type.name(), name))),
+        return new CallsProcessor<User>().executeCall(api().register(
                 createAuthHeaders(login, pass),
-                new EntityParser<>(User.class));
-    }
-
-    public static void updateUser(String login, String pass, String name) throws NetworkException {
-        NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/update_user"),
-                RequestBody.create(MediaType.parse("application/json"),
-                        new Gson().toJson(new NewUserData(pass, name, login))),
-                null);
-    }
-
-    public static List<User> getUsers() throws NetworkException {
-        return NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/get_users"),
-                RequestBody.create(null, ""),
-                null,
-                new EntityParser<>(new TypeToken<List<User>>() {
-                }));
+                new UserInterface.RegisterData(type.name(), name)));
     }
 
     public static void removeUser(String userToRemoveLogin) throws NetworkException {
-        NetworkProvider.getInstance().executePost(
-                NetworkProvider.createUrl("/remove_user"),
-                RequestBody.create(MediaType.parse("application/json"),
-                        new Gson().toJson(new RemoveUserInfo(userToRemoveLogin))),
-                null);
+        new CallsProcessor<>().executeCall(api()
+                .removeUser(new UserInterface.RemoveUserInfo(userToRemoveLogin)));
     }
 
-    private static Headers createAuthHeaders(String login, String pass) {
-        return new Headers.Builder()
-                .add("Authentication", Base64.encodeToString((login + "%" + pass).getBytes(), Base64.DEFAULT).trim())
-                .build();
+    public static void updateUser(String login, String pass, String name) throws NetworkException {
+        new CallsProcessor<>().executeCall(api().updateUser(
+                new UserInterface.NewUserData(pass, name, login)));
     }
 
-    private static final class RemoveUserInfo {
-        private String login;
-
-        public RemoveUserInfo() {
-        }
-
-        public RemoveUserInfo(String login) {
-            this.login = login;
-        }
+    public static List<User> getUsers() throws NetworkException {
+        return new CallsProcessor<List<User>>().executeCall(api().getUsers());
     }
 
-    private static final class RegisterData {
-
-        private String type;
-        private String name;
-
-        public RegisterData() {
+    private static UserInterface api() {
+        if (api == null) {
+            api = CallsProcessor.retrofit().create(UserInterface.class);
         }
-
-        public RegisterData(String type, String name) {
-            this.type = type;
-            this.name = name;
-        }
+        return api;
     }
 
-    private static final class NewUserData {
-        private String pass;
-        private String name;
-        private String login;
-
-        public NewUserData() {
-        }
-
-        public NewUserData(String pass, String name, String login) {
-            this.pass = pass;
-            this.name = name;
-            this.login = login;
-        }
+    private static String createAuthHeaders(String login, String pass) {
+        return Base64.encodeToString((login + "%" + pass).getBytes(), Base64.DEFAULT).trim();
     }
-
 }
