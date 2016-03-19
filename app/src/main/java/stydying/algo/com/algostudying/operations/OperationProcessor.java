@@ -9,6 +9,11 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import stydying.algo.com.algostudying.AlgoApplication;
 import stydying.algo.com.algostudying.errors.BaseException;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.events.BusProvider;
@@ -27,7 +32,6 @@ public class OperationProcessor extends IntentService {
     private static final String OPERATION_CLASS_EXTRA
             = "stydying.algo.com.algostudying.operations.OperationProcessor.OPERATION_CLASS_EXTRA";
 
-
     public OperationProcessor() {
         super("OperationProcessor");
     }
@@ -37,8 +41,24 @@ public class OperationProcessor extends IntentService {
         Operation operation = getOperation(intent);
         if (operation != null) {
             try {
-                Object result = operation.execute(this);
+                Object result;
+                switch (operation.type()) {
+                    case CACHE:
+                        result = OperationsManager.get(this).shouldLoadFromNetwork(operation)
+                                ? operation.loadFromNetwork(this)
+                                : operation.loadFromLocal(this);
+                        break;
+                    case LOCAL_ONLY:
+                        result = operation.loadFromLocal(this);
+                        break;
+                    case NETWORK_ONLY:
+                        result = operation.loadFromNetwork(this);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown operation type");
+                }
                 postEvent(new OperationSuccessEvent(operation.getClass(), result));
+                OperationsManager.get(this).handleOperationExecuted(operation);
             } catch (BaseException baseException) {
                 Log.d(LOG_TAG, "Error on executing operation", baseException);
                 postEvent(new OperationErrorEvent(operation.getClass(), baseException));
@@ -78,7 +98,51 @@ public class OperationProcessor extends IntentService {
         return null;
     }
 
-    public interface Operation {
-        Object execute(Context context) throws NetworkException;
+    public interface Operation<T> {
+
+        enum OperationType {
+            CACHE, LOCAL_ONLY, NETWORK_ONLY
+        }
+
+        T loadFromNetwork(Context context) throws NetworkException;
+
+        T loadFromLocal(Context context);
+
+        OperationType type();
+    }
+
+    public static final class OperationsManager {
+
+        private static final long FROM_NETWORK_DELAY = TimeUnit.MINUTES.toMillis(2);
+
+        private Map<Class<? extends Operation>, Long> operationTimes;
+
+        public OperationsManager() {
+            this.operationTimes = new HashMap<>();
+        }
+
+        private boolean shouldLoadFromNetwork(Operation operation) {
+            Long laseNetworkExecutionTime = operationTimes.get(operation.getClass());
+            return laseNetworkExecutionTime == null
+                    || laseNetworkExecutionTime - System.currentTimeMillis() > FROM_NETWORK_DELAY;
+        }
+
+        public void resetDelayForOperation(Class<? extends Operation> operationClass) {
+            if (operationTimes.containsKey(operationClass)) {
+                operationTimes.remove(operationClass);
+            }
+        }
+
+        public void onLogout() {
+            operationTimes.clear();
+        }
+
+        private void handleOperationExecuted(Operation operation) {
+            operationTimes.put(operation.getClass(), System.currentTimeMillis());
+        }
+
+        public static OperationsManager get(Context context) {
+            return ((AlgoApplication) context.getApplicationContext()).getOperationsManager();
+        }
     }
 }

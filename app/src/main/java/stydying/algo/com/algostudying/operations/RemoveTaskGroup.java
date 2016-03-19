@@ -24,9 +24,19 @@ public class RemoveTaskGroup implements OperationProcessor.Operation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public Object loadFromNetwork(Context context) throws NetworkException {
         TasksService.removeTaskGroup(id);
         new Delete().from(TaskGroup.class).where(TaskGroup_Table._id.eq(id)).execute();
         return null;
+    }
+
+    @Override
+    public Object loadFromLocal(Context context) {
+        return null;
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.NETWORK_ONLY;
     }
 }

@@ -3,6 +3,10 @@ package stydying.algo.com.algostudying.operations;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.raizlabs.android.dbflow.sql.language.Select;
+
+import stydying.algo.com.algostudying.data.entities.stats.User;
+import stydying.algo.com.algostudying.data.entities.stats.User_Table;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.network.services.UsersService;
@@ -26,12 +30,27 @@ public class UpdateUserOperation implements OperationProcessor.Operation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public Object loadFromNetwork(Context context) throws NetworkException {
         UsersService.updateUser(login, pass, name);
         LoginManager loginManager = LoginManager.getInstance(context);
         if (TextUtils.equals(loginManager.getCurrentUser().getLogin(), login)) {
             LoginManager.getInstance(context).updateCurrentUserDetails(name, pass);
+        } else {
+            User existedUser = new Select().from(User.class).where(User_Table.login.eq(login)).querySingle();
+            existedUser.setPass(pass);
+            existedUser.setName(name);
+            existedUser.save();
         }
         return null;
+    }
+
+    @Override
+    public Object loadFromLocal(Context context) {
+        return null;
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.NETWORK_ONLY;
     }
 }

@@ -12,7 +12,7 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 19.03.2016.
  */
-public class EditTaskOperation extends BaseEditOperation {
+public class EditTaskOperation extends BaseEditOperation<Task> {
 
     private Task task;
 
@@ -25,7 +25,17 @@ public class EditTaskOperation extends BaseEditOperation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public Task loadFromNetwork(Context context) throws NetworkException {
         return TasksService.updateTask(task, task.getTaskGroup().getId(), userIds);
+    }
+
+    @Override
+    public Task loadFromLocal(Context context) {
+        return null;
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.NETWORK_ONLY;
     }
 }

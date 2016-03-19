@@ -9,7 +9,7 @@ import stydying.algo.com.algostudying.operations.OperationProcessor;
 /**
  * Created by Anton on 19.03.2016.
  */
-public abstract class BaseEditOperation implements OperationProcessor.Operation {
+public abstract class BaseEditOperation<T> implements OperationProcessor.Operation<T> {
 
     protected List<String> userIds;
 

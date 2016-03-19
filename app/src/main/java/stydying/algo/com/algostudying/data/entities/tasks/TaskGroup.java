@@ -36,7 +36,7 @@ public class TaskGroup extends BaseModel implements Parcelable {
     @Column
     String title;
     List<Task> tasks;
-    @ForeignKey
+    @ForeignKey(saveForeignKeyModel = false)
     transient ForeignKeyContainer<User> userForeignKeyContainer;
 
     public TaskGroup() {
@@ -128,6 +128,5 @@ public class TaskGroup extends BaseModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(_id);
         dest.writeString(title);
-        dest.writeList(tasks);
     }
 }

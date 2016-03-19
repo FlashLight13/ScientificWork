@@ -3,8 +3,10 @@ package stydying.algo.com.algostudying.logic.managers;
 import android.content.Context;
 
 import stydying.algo.com.algostudying.AlgoApplication;
+import stydying.algo.com.algostudying.data.Database;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.logic.Preferences;
+import stydying.algo.com.algostudying.operations.OperationProcessor;
 
 /**
  * Created by Anton on 04.02.2016.
@@ -24,6 +26,8 @@ public class LoginManager {
 
     public void logout(Context context) {
         this.currentUser = null;
+        OperationProcessor.OperationsManager.get(context).onLogout();
+        Database.clear();
         Preferences.UserPreferences.logout(context);
     }
 

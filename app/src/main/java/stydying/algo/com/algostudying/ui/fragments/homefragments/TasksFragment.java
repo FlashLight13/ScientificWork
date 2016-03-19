@@ -114,7 +114,9 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
     public void onSuccess(OperationSuccessEvent event) {
         if (event.isOperation(GetTaskGroupsNames.class)) {
             adapter().refill((List<TaskGroup>) event.data());
-            tabs.setTabsFromPagerAdapter(adapter());
+            if (adapter() != null) {
+                tabs.setTabsFromPagerAdapter(adapter());
+            }
             placeholderView.success();
 
             supportInvalidateOptionsMenu();

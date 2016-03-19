@@ -11,7 +11,7 @@ import stydying.algo.com.algostudying.errors.NetworkException;
 /**
  * Created by Anton on 19.03.2016.
  */
-public class LoadTaskGroupOperation implements OperationProcessor.Operation {
+public class LoadTaskGroupOperation implements OperationProcessor.Operation<TaskGroup> {
 
     private long id;
 
@@ -23,7 +23,17 @@ public class LoadTaskGroupOperation implements OperationProcessor.Operation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public TaskGroup loadFromNetwork(Context context) throws NetworkException {
+        return null;
+    }
+
+    @Override
+    public TaskGroup loadFromLocal(Context context) {
         return new Select().from(TaskGroup.class).where(TaskGroup_Table._id.eq(id)).querySingle();
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.LOCAL_ONLY;
     }
 }

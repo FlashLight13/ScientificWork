@@ -2,7 +2,7 @@ package stydying.algo.com.algostudying.operations;
 
 import android.content.Context;
 
-import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.Select;
 
 import java.util.List;
 
@@ -14,13 +14,13 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 16.02.2016.
  */
-public class GetTaskGroupsNames implements OperationProcessor.Operation {
+public class GetTaskGroupsNames implements OperationProcessor.Operation<List<TaskGroup>> {
 
     public GetTaskGroupsNames() {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public List<TaskGroup> loadFromNetwork(Context context) throws NetworkException {
         List<TaskGroup> taskGroupList = TasksService.getTaskGroupsNames();
         for (TaskGroup taskGroup : taskGroupList) {
             createUpdate(taskGroup);
@@ -29,13 +29,20 @@ public class GetTaskGroupsNames implements OperationProcessor.Operation {
     }
 
     private void createUpdate(TaskGroup taskGroup) {
-        if (!taskGroup.exists()) {
-            taskGroup.save();
-        } else {
-            taskGroup.update();
-        }
         for (Task task : taskGroup.getTasks()) {
             task.setTaskGroup(taskGroup);
+            task.save();
         }
+        taskGroup.save();
+    }
+
+    @Override
+    public List<TaskGroup> loadFromLocal(Context context) {
+        return new Select().from(TaskGroup.class).queryList();
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.CACHE;
     }
 }

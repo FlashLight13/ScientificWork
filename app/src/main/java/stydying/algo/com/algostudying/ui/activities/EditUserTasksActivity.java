@@ -6,10 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +122,14 @@ public class EditUserTasksActivity extends BaseActivity {
     protected void onPause() {
         BusProvider.bus().unregister(this);
         super.onPause();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            fragment.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override

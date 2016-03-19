@@ -33,7 +33,7 @@ public class Task extends BaseModel implements Parcelable {
     String title;
     @Column
     String description;
-    @ForeignKey
+    @ForeignKey(saveForeignKeyModel = false)
     transient ForeignKeyContainer<TaskGroup> taskGroupForeignKeyContainer;
 
     private String[][][] gameField;

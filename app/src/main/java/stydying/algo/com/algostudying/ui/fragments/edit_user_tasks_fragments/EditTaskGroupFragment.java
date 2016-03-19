@@ -3,9 +3,8 @@ package stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,8 @@ public class EditTaskGroupFragment extends BaseFragment {
     @Bind(R.id.input_title)
     TextInputLayout inputTitle;
 
+    private long id;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,8 +45,9 @@ public class EditTaskGroupFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
+            id = args.getLong(EditUserTasksActivity.ID_EXTRA);
             OperationProcessor.executeOperation(getContext(),
-                    new LoadTaskGroupOperation(args.getLong(EditUserTasksActivity.ID_EXTRA)));
+                    new LoadTaskGroupOperation(id));
         }
     }
 
@@ -62,8 +64,16 @@ public class EditTaskGroupFragment extends BaseFragment {
     }
 
     private void done() {
-        EditUserTasksActivity activity = (EditUserTasksActivity) getActivity();
-        OperationProcessor.executeOperation(activity, new EditTaskGroupOperation());
+        if (TextUtils.isEmpty(ViewsUtils.getEditText(inputTitle).getText())) {
+            inputTitle.setError(getString(R.string.error_empty_not_allowed));
+        } else {
+            inputTitle.setError(null);
+            EditUserTasksActivity activity = (EditUserTasksActivity) getActivity();
+            OperationProcessor.executeOperation(activity, new EditTaskGroupOperation(
+                    id,
+                    ViewsUtils.getEditText(inputTitle).getText().toString(),
+                    activity.getSelectedUsers()));
+        }
     }
 
     @Override
@@ -87,9 +97,5 @@ public class EditTaskGroupFragment extends BaseFragment {
     public void onPause() {
         BusProvider.bus().unregister(this);
         super.onPause();
-    }
-
-    private TextInputLayout getEditText() {
-        return (TextInputLayout) getView();
     }
 }

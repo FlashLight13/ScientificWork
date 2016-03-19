@@ -27,8 +27,18 @@ public class RegisterOperation implements OperationProcessor.Operation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public Object loadFromNetwork(Context context) throws NetworkException {
         UsersService.register(login, pass, name, type);
         return null;
+    }
+
+    @Override
+    public Object loadFromLocal(Context context) {
+        return null;
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.NETWORK_ONLY;
     }
 }

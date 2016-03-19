@@ -81,6 +81,8 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             @Override
             public void onRetry() {
                 errorPlaceholder.loading();
+                OperationProcessor.OperationsManager.get(UsersFragment.this.getContext())
+                        .resetDelayForOperation(LoadUsersOperation.class);
                 OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
             }
         });
@@ -88,6 +90,8 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                OperationProcessor.OperationsManager.get(UsersFragment.this.getContext())
+                        .resetDelayForOperation(LoadUsersOperation.class);
                 OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
                 refreshLayout.setRefreshing(true);
             }
@@ -175,7 +179,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             while (iterator.hasNext()) {
                 ListItem current = (ListItem) iterator.next();
                 if (current.type == ListItem.ITEM) {
-                    if (((User) current.data).getLogin().equals(login)){
+                    if (((User) current.data).getLogin().equals(login)) {
                         iterator.remove();
                         notifyDataSetChanged();
                         return;

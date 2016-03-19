@@ -10,7 +10,7 @@ import stydying.algo.com.algostudying.network.services.UsersService;
 /**
  * Created by Anton on 03.02.2016.
  */
-public class LoginOperation implements OperationProcessor.Operation {
+public class LoginOperation implements OperationProcessor.Operation<User> {
 
     private String login;
     private String pass;
@@ -24,7 +24,7 @@ public class LoginOperation implements OperationProcessor.Operation {
     }
 
     @Override
-    public Object execute(Context context) throws NetworkException {
+    public User loadFromNetwork(Context context) throws NetworkException {
         LoginManager loginManager = LoginManager.getInstance(context);
         User user;
         if (!loginManager.isLoggedIn()) {
@@ -34,5 +34,15 @@ public class LoginOperation implements OperationProcessor.Operation {
             user = loginManager.getCurrentUser();
         }
         return user;
+    }
+
+    @Override
+    public User loadFromLocal(Context context) {
+        return null;
+    }
+
+    @Override
+    public OperationType type() {
+        return OperationType.NETWORK_ONLY;
     }
 }

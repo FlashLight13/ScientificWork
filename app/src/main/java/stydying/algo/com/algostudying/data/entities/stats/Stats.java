@@ -31,7 +31,7 @@ public class Stats extends BaseModel implements Parcelable {
     int triesCount;
     @Column
     int commandsCount;
-    @ForeignKey
+    @ForeignKey(saveForeignKeyModel = false)
     transient ForeignKeyContainer<User> userForeignKeyContainer;
 
     public Stats() {
