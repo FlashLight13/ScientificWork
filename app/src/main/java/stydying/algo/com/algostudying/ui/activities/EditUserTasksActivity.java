@@ -127,9 +127,11 @@ public class EditUserTasksActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            fragment.onOptionsItemSelected(item);
+            if (fragment.onOptionsItemSelected(item)) {
+                return true;
+            }
         }
-        return true;
+        return false;
     }
 
     @Override
