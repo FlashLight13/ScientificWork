@@ -39,6 +39,7 @@
     <string name="error_world_group_empty">Выберите группу</string>
     <string name="error_placeholder_retry">Нажмите, чтобы перезагрузить</string>
     <string name="error_failed_to_load_world">Не удалось загрузить мир</string>
+    <string name="error_failed_to_load_task">Не удалось загрузить уровень</string>
 
     <!-- PROFILE TAB -->
     <string name="tab_title_stats">Статистика</string>

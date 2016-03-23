@@ -1,5 +1,6 @@
 package stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -60,6 +61,9 @@ public class EditTaskGroupFragment extends BaseFragment {
         }
         if (event.isOperation(EditTaskGroupOperation.class)) {
             Toast.makeText(getActivity(), R.string.message_edit_done, Toast.LENGTH_SHORT).show();
+            Activity activity = getActivity();
+            activity.setResult(Activity.RESULT_OK, activity.getIntent());
+            activity.finish();
         }
     }
 
@@ -72,7 +76,7 @@ public class EditTaskGroupFragment extends BaseFragment {
             OperationProcessor.executeOperation(activity, new EditTaskGroupOperation(
                     id,
                     ViewsUtils.getEditText(inputTitle).getText().toString(),
-                    activity.getSelectedUsers()));
+                    activity.getSelectedUserIds()));
         }
     }
 

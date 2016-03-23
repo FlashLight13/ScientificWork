@@ -1,6 +1,8 @@
 package stydying.algo.com.algostudying.ui.fragments.homefragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -35,6 +37,7 @@ import stydying.algo.com.algostudying.operations.RemoveTaskGroup;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
 import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
+import stydying.algo.com.algostudying.ui.views.SwipeControlledViewPager;
 
 /**
  * Created by Anton on 18.07.2015.
@@ -42,7 +45,7 @@ import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
 public class TasksFragment extends BaseFragment implements LoadingPlaceholderView.OnRetryListener {
 
     @Bind(R.id.pager)
-    ViewPager tasksPager;
+    SwipeControlledViewPager tasksPager;
     @Bind(R.id.tabs)
     TabLayout tabs;
     @Bind(R.id.error_placeholder)
@@ -72,13 +75,19 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
                 super.onPageSelected(position);
                 supportInvalidateOptionsMenu();
             }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                adapter().onPageScrollStateChanged(state, tasksPager.getCurrentItem());
+            }
         });
 
         tabs.setupWithViewPager(tasksPager);
 
         placeholderView.loading();
         placeholderView.setOnRetryListener(this);
-        onRetry();
+        OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
     }
 
     @Override
@@ -95,8 +104,17 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
     private void editGroup() {
         TaskGroup taskGroup = adapter().getTaskGroup(tasksPager.getCurrentItem());
-        EditUserTasksActivity.startMe(getContext(), EditUserTasksActivity.Mode.TASK_GROUP,
+        EditUserTasksActivity.startMe(getActivity(), EditUserTasksActivity.Mode.TASK_GROUP,
                 taskGroup == null ? -1 : taskGroup.getId());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EditUserTasksActivity.REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
+            OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void removeGroup() {
@@ -106,6 +124,8 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
     @Override
     public void onRetry() {
+        OperationProcessor.OperationsManager.get(getContext())
+                .resetDelayForOperation(GetTaskGroupsNames.class);
         OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
     }
 
@@ -114,11 +134,9 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
     public void onSuccess(OperationSuccessEvent event) {
         if (event.isOperation(GetTaskGroupsNames.class)) {
             adapter().refill((List<TaskGroup>) event.data());
-            if (adapter() != null) {
-                tabs.setTabsFromPagerAdapter(adapter());
-            }
-            placeholderView.success();
+            tabs.setupWithViewPager(tasksPager);
 
+            placeholderView.success();
             supportInvalidateOptionsMenu();
         }
     }
@@ -175,7 +193,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
         @Override
         public Fragment getItem(int position) {
-            return position == 0 ? new SetupNewTaskFragment() : super.getItem(position - 1);
+            return position == 0 ? new ConfigureTaskFragment() : super.getItem(position - 1);
         }
 
         @Override
@@ -188,7 +206,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
         @Override
         public void refill(List<TaskGroup> taskGroups) {
             super.refill(taskGroups);
-            ((SetupNewTaskFragment) registeredFragments.get(0)).setTaskGroups(taskGroups);
+            ((ConfigureTaskFragment) registeredFragments.get(0)).setTaskGroups(taskGroups);
         }
 
         @Override
@@ -200,6 +218,14 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
         @Nullable
         protected TaskGroup getTaskGroup(int position) {
             return position == 0 ? null : super.getTaskGroup(position - 1);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state, int position) {
+            Fragment fragment = registeredFragments.get(position);
+            if (fragment instanceof ConfigureTaskFragment) {
+                ((ConfigureTaskFragment) fragment).onPageScrollStateChanged(state);
+            }
         }
     }
 
@@ -253,6 +279,9 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
         @Nullable
         protected TaskGroup getTaskGroup(int position) {
             return taskGroups.get(position);
+        }
+
+        protected void onPageScrollStateChanged(int state, int position) {
         }
     }
 }

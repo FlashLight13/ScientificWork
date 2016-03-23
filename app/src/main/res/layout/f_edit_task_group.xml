@@ -3,9 +3,10 @@
     android:id="@+id/input_title"
     style="@style/TextInputLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/content_margins">
 
-    <EditText
+    <android.support.design.widget.TextInputEditText
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="@string/hint_group_title"

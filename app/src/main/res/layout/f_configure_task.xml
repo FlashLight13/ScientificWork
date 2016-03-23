@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:paddingEnd="@dimen/list_item_sides_margin"
         android:paddingLeft="@dimen/list_item_sides_margin"
         android:paddingRight="@dimen/list_item_sides_margin"
@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height_medium">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     style="@style/ListItemStyle"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -36,6 +36,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <FrameLayout
+                android:id="@+id/picker_width_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height_medium">
 
@@ -61,6 +62,7 @@
             </FrameLayout>
 
             <FrameLayout
+                android:id="@+id/picker_height_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height_medium">
 
@@ -98,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height_medium">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/world_setup_desc_hint"
@@ -107,8 +109,9 @@
             </android.support.design.widget.TextInputLayout>
 
             <FrameLayout
+                style="@style/FloatingActionButtonListFooter"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/bottom_fab_footer" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 

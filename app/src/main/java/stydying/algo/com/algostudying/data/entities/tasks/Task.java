@@ -80,7 +80,7 @@ public class Task extends BaseModel implements Parcelable {
         this.description = task.description;
     }
 
-    private Task(Parcel parcel) {
+    public Task(Parcel parcel) {
         super();
         this.id = parcel.readLong();
         this.title = parcel.readString();
@@ -138,11 +138,16 @@ public class Task extends BaseModel implements Parcelable {
     }
 
     public Task initMap(Context context) {
-        gameField = MapCache.getInstance(context).get(String.valueOf(id));
+        if (gameField == null) {
+            gameField = MapCache.getInstance(context).get(String.valueOf(id));
+        }
         return this;
     }
 
     public void setTaskGroup(TaskGroup taskGroup) {
+        if (taskGroup == null) {
+            taskGroupForeignKeyContainer = null;
+        }
         taskGroupForeignKeyContainer = FlowManager.getContainerAdapter(TaskGroup.class)
                 .toForeignKeyContainer(taskGroup);
     }

@@ -20,13 +20,13 @@ public interface UserInterface {
     Call<User> register(@Header("Authentication") String header, @Body RegisterData json);
 
     @POST("update_user")
-    Call<Object> updateUser(@Body NewUserData newUserData);
+    Call<Void> updateUser(@Body NewUserData newUserData);
 
     @POST("get_users")
     Call<List<User>> getUsers();
 
     @POST("/remove_user")
-    Call<Object> removeUser(@Body RemoveUserInfo info);
+    Call<Void> removeUser(@Body RemoveUserInfo info);
 
     final class RemoveUserInfo {
         private String login;

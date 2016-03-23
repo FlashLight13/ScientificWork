@@ -27,6 +27,7 @@ public class CallsProcessor<T> {
 
     @SuppressWarnings("unchecked")
     public T executeCall(@NonNull Call<T> call) throws NetworkException {
+        String url = call.request().url().toString();
         try {
             retrofit2.Response response = call.execute();
             if (response.isSuccessful()) {
@@ -35,11 +36,13 @@ public class CallsProcessor<T> {
                 throw new NetworkException(response.errorBody().string());
             }
         } catch (NetworkException ne) {
+            Log.d(LOG_TAG, "Error: " + url, ne);
             throw ne;
         } catch (SocketTimeoutException socketTimeoutException) {
+            Log.d(LOG_TAG, "Timeout error on operation: " + url, socketTimeoutException);
             throw NetworkException.failedToConnect();
         } catch (Exception e) {
-            Log.d(LOG_TAG, "Unknown error on executing request", e);
+            Log.d(LOG_TAG, "Unknown error on executing request + " + url, e);
             throw new NetworkException();
         }
     }

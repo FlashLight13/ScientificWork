@@ -16,9 +16,10 @@ import stydying.algo.com.algostudying.network.services.TasksService;
  */
 public class GetTaskOperation implements OperationProcessor.Operation<Task> {
 
+    private OperationType type;
     private long taskId;
     // todo remove this hack
-    private long taskGroupId;
+    private long taskGroupId = -1;
 
     public GetTaskOperation() {
     }
@@ -26,14 +27,23 @@ public class GetTaskOperation implements OperationProcessor.Operation<Task> {
     public GetTaskOperation(Task task) {
         this.taskId = task.getId();
         this.taskGroupId = task.getTaskGroup().getId();
+        this.type = OperationType.CACHE;
+    }
+
+    public GetTaskOperation(long taskId, OperationType operationType) {
+        this.taskId = taskId;
+        this.type = operationType;
     }
 
     @Override
     public Task loadFromNetwork(Context context) throws NetworkException {
         Task task = TasksService.getTask(this.taskId);
         task.saveMap(context);
-        task.setTaskGroup(
-                new Select().from(TaskGroup.class).where(TaskGroup_Table._id.eq(taskGroupId)).querySingle());
+        if (taskGroupId > -1) {
+            task.setTaskGroup(
+                    new Select().from(TaskGroup.class).where(TaskGroup_Table._id.eq(taskGroupId))
+                            .querySingle());
+        }
         return task;
     }
 
@@ -44,6 +54,6 @@ public class GetTaskOperation implements OperationProcessor.Operation<Task> {
 
     @Override
     public OperationType type() {
-        return OperationType.CACHE;
+        return type;
     }
 }

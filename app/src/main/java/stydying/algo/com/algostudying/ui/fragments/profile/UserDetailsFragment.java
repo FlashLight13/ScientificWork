@@ -25,8 +25,10 @@ import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
 import stydying.algo.com.algostudying.operations.UpdateUserOperation;
+import stydying.algo.com.algostudying.ui.activities.UserViewActivity;
 import stydying.algo.com.algostudying.ui.fragments.homefragments.ProfileFragment;
 import stydying.algo.com.algostudying.ui.interfaces.PagerController;
+import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
 import stydying.algo.com.algostudying.utils.ViewsUtils;
 
 /**
@@ -46,11 +48,13 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
     }
 
     @Bind(R.id.input_pass)
-    TextInputLayout inputPass;
+    protected TextInputLayout inputPass;
     @Bind(R.id.input_confirm_pass)
-    TextInputLayout inputConfirmPass;
+    protected TextInputLayout inputConfirmPass;
     @Bind(R.id.input_name)
-    TextInputLayout inputName;
+    protected TextInputLayout inputName;
+    @Bind(R.id.error_placeholder)
+    protected LoadingPlaceholderView placeholderView;
 
     private FloatingActionButton btnAction = null;
     private PagerController pagerController = null;
@@ -73,6 +77,7 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
         super.onViewCreated(view, savedInstanceState);
         setMode(Mode.VIEW);
         initFields();
+        placeholderView.success();
     }
 
     @Override
@@ -93,6 +98,8 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
         if (btnAction != null) {
             btnAction.setEnabled(true);
         }
+        getActivity().setResult(UserViewActivity.RESULT_OK);
+        placeholderView.success();
         setMode(Mode.VIEW);
     }
 
@@ -103,6 +110,7 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
             btnAction.setEnabled(true);
         }
         initFields();
+        placeholderView.success();
     }
 
     private User currentUser() {
@@ -118,6 +126,7 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
         switch (mode) {
             case EDIT:
                 if (btnAction != null) {
+                    placeholderView.loading();
                     if (isPassCorrect(inputConfirmPass, inputPass)) {
                         btnAction.setEnabled(false);
                         OperationProcessor.executeOperation(getContext(), new UpdateUserOperation(

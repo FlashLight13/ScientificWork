@@ -7,7 +7,6 @@ import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.network.CallsProcessor;
 import stydying.algo.com.algostudying.network.interfaces.TaskInterface;
-import stydying.algo.com.algostudying.utils.BaseJsonEntityBuilder;
 
 /**
  * Created by Anton on 05.02.2016.
@@ -17,7 +16,7 @@ public class TasksService {
     private static TaskInterface api;
 
     public static TaskInterface.WorldData createUpdateTask(TaskInterface.WorldData worldData) throws NetworkException {
-        return new CallsProcessor<TaskInterface.WorldData>().executeCall(api().createUpdateTask(worldData));
+        return new CallsProcessor<TaskInterface.WorldData>().executeCall(api().createTask(worldData));
     }
 
     public static List<TaskGroup> getTaskGroupsNames() throws NetworkException {
@@ -25,7 +24,9 @@ public class TasksService {
     }
 
     public static void removeTaskGroup(Long id) throws NetworkException {
-        new CallsProcessor<>().executeCall(api().removeTaskGroup(new BaseJsonEntityBuilder().add("id", id).build()));
+        new CallsProcessor<Void>().executeCall(api().removeTaskGroup(
+                new TaskInterface.BaseIdRequest(id)
+        ));
     }
 
     public static TaskGroup updateTaskGroup(String title, Long id, List<String> userIds) throws NetworkException {
@@ -40,7 +41,7 @@ public class TasksService {
 
     public static Task getTask(Long taskId) throws NetworkException {
         return new CallsProcessor<Task>().executeCall(api().getTask(
-                new BaseJsonEntityBuilder().add("id", taskId).build()));
+                new TaskInterface.BaseIdRequest(taskId)));
     }
 
     private static TaskInterface api() {

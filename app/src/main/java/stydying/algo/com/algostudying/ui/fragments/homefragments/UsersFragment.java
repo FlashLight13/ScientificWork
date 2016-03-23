@@ -1,6 +1,8 @@
 package stydying.algo.com.algostudying.ui.fragments.homefragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -72,7 +74,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User chosenUser = ((PlayersAdapter) parent.getAdapter()).getUser(position);
-                UserViewActivity.startMe(UsersFragment.this.getContext(), chosenUser);
+                UserViewActivity.startMe(UsersFragment.this.getActivity(), chosenUser);
             }
         });
 
@@ -104,7 +106,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             @Override
             public void onHidden(FloatingActionButton fab) {
                 super.onHidden(fab);
-                RegisterActivity.startMe(getContext());
+                RegisterActivity.startMe(getActivity());
             }
         });
     }
@@ -151,6 +153,16 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         if (event.isOperation(RemoveUserOperation.class)) {
             adapter.remove((String) event.data());
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK)
+            if (requestCode == RegisterActivity.REQUEST_CODE
+                    || requestCode == UserViewActivity.REQUEST_CODE) {
+                OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
+            }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

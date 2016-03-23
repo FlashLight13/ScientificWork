@@ -3,12 +3,10 @@ package stydying.algo.com.algostudying.utils;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -107,19 +105,5 @@ public class StreamUtils {
         }
 
         return body.toString();
-    }
-
-    /**
-     * @return true if closed successfully and false the otherwise
-     */
-    public static boolean close(@Nullable Closeable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-                return true;
-            } catch (Exception e) {
-            }
-        }
-        return false;
     }
 }

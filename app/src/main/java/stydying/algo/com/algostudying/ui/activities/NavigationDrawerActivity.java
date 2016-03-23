@@ -58,8 +58,7 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
                 NavigationDrawerActivity.this.onDrawerOpened();
             }
         };
-        drawerLayout.setDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+        drawerLayout.addDrawerListener(drawerToggle);
     }
 
     private void initActionBar() {
@@ -101,6 +100,12 @@ public abstract class NavigationDrawerActivity extends BaseActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        drawerLayout.removeDrawerListener(drawerToggle);
+        super.onDestroy();
     }
 
     protected abstract NavigationTab[] getTabs();

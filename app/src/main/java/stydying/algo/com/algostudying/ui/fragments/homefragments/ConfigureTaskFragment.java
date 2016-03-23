@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,7 @@ import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.events.BusProvider;
+import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.activities.TaskGroupSearchingActivity;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
@@ -29,27 +32,35 @@ import stydying.algo.com.algostudying.utils.ViewsUtils;
 /**
  * Created by Anton on 12.02.2016.
  */
-public class SetupNewTaskFragment extends BaseFragment {
+public class ConfigureTaskFragment extends BaseFragment {
 
-    public static final String INITIAL_TASK_ARG = SetupNewTaskFragment.class.getName() + "INITIAL_TASK_ARG";
+    public static final String INITIAL_TASK_ARG = ConfigureTaskFragment.class.getName() + "INITIAL_TASK_ARG";
 
     @Bind(R.id.input_title)
-    TextInputLayout inputTitle;
+    protected TextInputLayout inputTitle;
     @Bind(R.id.input_description)
-    TextInputLayout inputDescription;
+    protected TextInputLayout inputDescription;
     @Bind(R.id.input_group)
-    TextView inputGroup;
+    protected TextView inputGroup;
     @Bind(R.id.picker_width)
-    SwipeNumberPicker pickerWidth;
+    protected SwipeNumberPicker pickerWidth;
     @Bind(R.id.picker_height)
-    SwipeNumberPicker pickerHeight;
+    protected SwipeNumberPicker pickerHeight;
+
+    @Bind(R.id.picker_width_bar)
+    protected View pickerWidthBar;
+    @Bind(R.id.btn_create)
+    protected FloatingActionButton btnCreate;
+    @Bind(R.id.picker_height_bar)
+    protected View pickerHeightBar;
 
     private TaskGroup selectedGroup;
+    private boolean isBtnVisible;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, R.layout.f_setup_new_task);
+        return super.onCreateView(inflater, container, R.layout.f_configure_task);
     }
 
     @Override
@@ -81,16 +92,23 @@ public class SetupNewTaskFragment extends BaseFragment {
             pickerWidth.setText(String.valueOf(10));
             ViewsUtils.getEditText(inputTitle).setText("");
             ViewsUtils.getEditText(inputDescription).setText("");
-            inputGroup.setText(R.string.world_setup_group_press);
             selectedGroup = null;
         } else {
             pickerHeight.setText(String.valueOf(10));
             pickerWidth.setText(String.valueOf(10));
             ViewsUtils.getEditText(inputTitle).setText(task.getTitle());
             ViewsUtils.getEditText(inputDescription).setText(task.getDescription());
+            selectedGroup = null;
+        }
+        updateGroup(task);
+    }
+
+    protected void updateGroup(@Nullable Task task) {
+        if (task == null || task.getTaskGroup() == null) {
+            inputGroup.setText(R.string.world_setup_group_press);
+        } else {
             inputGroup.setText(
                     getString(R.string.world_setup_group_title, task.getTaskGroup().getTitle()));
-            selectedGroup = null;
         }
     }
 
@@ -117,6 +135,35 @@ public class SetupNewTaskFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        setBtnVisibility(isVisibleToUser);
+    }
+
+    public void onPageScrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_IDLE) {
+            setBtnVisibility(true);
+        } else {
+            ViewsUtils.hideKeyboard(getActivity());
+            setBtnVisibility(false);
+        }
+    }
+
+    private void setBtnVisibility(boolean isVisible) {
+        if (isVisible == isBtnVisible) {
+            return;
+        }
+        if (btnCreate != null) {
+            if (isVisible) {
+                btnCreate.show();
+            } else {
+                btnCreate.hide();
+            }
+            this.isBtnVisible = isVisible;
+        }
+    }
+
     @OnClick(R.id.input_group)
     public void onClickGroup() {
         TaskGroupSearchingActivity.startMe(getActivity(), inputGroup);
@@ -128,14 +175,14 @@ public class SetupNewTaskFragment extends BaseFragment {
             if (!selectedGroup.exists()) {
                 selectedGroup.save();
             }
-            GameFieldActivity.startMe(getContext(), new Task(
-                            ViewsUtils.getEditText(inputTitle).getText().toString(),
-                            selectedGroup,
-                            ViewsUtils.getEditText(inputDescription).getText().toString(),
-                            pickerWidth.getValue(),
-                            pickerHeight.getValue())
-                            .saveMap(getContext()),
-                    GameFieldActivity.Mode.EDIT);
+            Task task = new Task(
+                    ViewsUtils.getEditText(inputTitle).getText().toString(),
+                    selectedGroup,
+                    ViewsUtils.getEditText(inputDescription).getText().toString(),
+                    pickerWidth.getValue(),
+                    pickerHeight.getValue());
+            GameFieldCreationController.getInstance(getContext()).init(getContext(), task);
+            GameFieldActivity.startMe(getContext(), null, GameFieldActivity.Mode.EDIT);
             setTask(null);
         }
     }

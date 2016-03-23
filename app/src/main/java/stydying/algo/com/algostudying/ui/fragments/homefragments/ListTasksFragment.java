@@ -93,7 +93,7 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
 
     @Override
     public void onEditTaskClicked(int position) {
-        EditUserTasksActivity.startMe(getContext(), EditUserTasksActivity.Mode.TASK,
+        EditUserTasksActivity.startMe(getActivity(), EditUserTasksActivity.Mode.TASK,
                 adapter().getItem(position).getId());
     }
 

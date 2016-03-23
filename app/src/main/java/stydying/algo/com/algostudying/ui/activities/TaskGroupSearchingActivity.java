@@ -77,7 +77,8 @@ public class TaskGroupSearchingActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_confirm_group, menu);
-        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        MenuItem item = menu.findItem(R.id.search);
+        searchView = (SearchView) item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -91,6 +92,7 @@ public class TaskGroupSearchingActivity extends BaseActivity {
                 return true;
             }
         });
+        item.expandActionView();
         searchView.setQueryHint(getString(R.string.world_setup_group_hint));
         EditText editText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         editText.setTextColor(ContextCompat.getColor(this, R.color.white));

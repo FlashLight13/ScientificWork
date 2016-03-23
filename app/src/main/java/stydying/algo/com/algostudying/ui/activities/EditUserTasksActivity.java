@@ -1,5 +1,6 @@
 package stydying.algo.com.algostudying.ui.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -28,6 +29,7 @@ import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
+import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
 import stydying.algo.com.algostudying.operations.LoadUsersOperation;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
@@ -43,13 +45,14 @@ public class EditUserTasksActivity extends BaseActivity {
     @Bind(R.id.list)
     ListView listView;
 
+    public static final int REQUEST_CODE = 1313;
     private static final String MODE_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity.MODE_EXTRA";
     public static final String ID_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity.ID_EXTRA";
 
     public enum Mode {
-        TASK_GROUP(EditTaskGroupFragment.class), TASK(EditTaskFragment.class);
+        NEW(null), TASK_GROUP(EditTaskGroupFragment.class), TASK(EditTaskFragment.class);
 
         private Class<? extends BaseFragment> fragmentClass;
 
@@ -57,8 +60,12 @@ public class EditUserTasksActivity extends BaseActivity {
             this.fragmentClass = fragmentClass;
         }
 
+        @Nullable
         BaseFragment fragment(long id) {
             try {
+                if (fragmentClass == null) {
+                    return null;
+                }
                 BaseFragment baseFragment = fragmentClass.newInstance();
                 baseFragment.setArguments(new BundleBuilder().putLong(ID_EXTRA, id).build());
                 return baseFragment;
@@ -69,14 +76,18 @@ public class EditUserTasksActivity extends BaseActivity {
     }
 
     private Mode mode;
+    private boolean isInProgress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_edit_user_tasks);
         this.mode = Mode.valueOf(getIntent().getStringExtra(MODE_EXTRA));
-        getSupportFragmentManager().beginTransaction().replace(
-                R.id.content, mode.fragment(getIntent().getLongExtra(ID_EXTRA, -1)), null).commit();
+        Fragment fragment = mode.fragment(getIntent().getLongExtra(ID_EXTRA, -1));
+        if (fragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.content, fragment, null).commit();
+        }
         OperationProcessor.executeOperation(this, new LoadUsersOperation());
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -94,13 +105,16 @@ public class EditUserTasksActivity extends BaseActivity {
             }
             listView.setAdapter(new UsersAdapter(this, userDatas));
         }
+        if (controller().onSuccess(this, event)) {
+
+        }
     }
 
-    public List<User> getSelectedUsers() {
-        List<User> result = new ArrayList<>();
+    public List<String> getSelectedUserIds() {
+        List<String> result = new ArrayList<>();
         for (UserData userData : ((UsersAdapter) listView.getAdapter()).getUsers()) {
             if (userData.isSelected) {
-                result.add(userData.user);
+                result.add(userData.user.getLogin());
             }
         }
         return result;
@@ -110,6 +124,13 @@ public class EditUserTasksActivity extends BaseActivity {
     public void onError(OperationErrorEvent event) {
         if (event.isOperation(LoadUsersOperation.class)) {
         }
+        if (controller().onError(event)) {
+
+        }
+    }
+
+    private GameFieldCreationController controller() {
+        return GameFieldCreationController.getInstance(this);
     }
 
     @Override
@@ -126,12 +147,38 @@ public class EditUserTasksActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-            if (fragment.onOptionsItemSelected(item)) {
-                return true;
-            }
+        if (super.onOptionsItemSelected(item)) {
+            return true;
         }
-        return false;
+        setInProgress(true);
+        if (mode != Mode.NEW) {
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment.onOptionsItemSelected(item)) {
+                    return true;
+                }
+            }
+        } else {
+            OperationProcessor.executeOperation(this,
+                    controller().setUsers(getSelectedUserIds()).getCreateOperation());
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.menu_edit_done);
+        if (isInProgress) {
+            item.expandActionView();
+        } else {
+            item.collapseActionView();
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void setInProgress(boolean isInProgress) {
+        this.isInProgress = isInProgress;
+        supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -140,11 +187,11 @@ public class EditUserTasksActivity extends BaseActivity {
         return true;
     }
 
-    public static void startMe(@NonNull Context context, @NonNull Mode mode, long id) {
-        Intent intent = new Intent(context, EditUserTasksActivity.class);
+    public static void startMe(@NonNull Activity activity, @NonNull Mode mode, long id) {
+        Intent intent = new Intent(activity, EditUserTasksActivity.class);
         intent.putExtra(MODE_EXTRA, mode.name());
         intent.putExtra(ID_EXTRA, id);
-        context.startActivity(intent);
+        activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
     public static final class UserData {

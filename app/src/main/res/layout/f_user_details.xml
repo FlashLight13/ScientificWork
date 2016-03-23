@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_name"
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_pass"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_confirm_pass"
@@ -67,4 +67,9 @@
                 android:layout_height="@dimen/bottom_fab_footer" />
         </LinearLayout>
     </ScrollView>
+
+    <stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView
+        android:id="@+id/error_placeholder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

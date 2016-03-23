@@ -1,6 +1,6 @@
 package stydying.algo.com.algostudying.ui.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -23,6 +23,7 @@ import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
 import stydying.algo.com.algostudying.operations.RegisterOperation;
+import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
 import stydying.algo.com.algostudying.utils.ViewsUtils;
 
 /**
@@ -30,27 +31,32 @@ import stydying.algo.com.algostudying.utils.ViewsUtils;
  */
 public class RegisterActivity extends BaseActivity {
 
+    public static final int REQUEST_CODE = 1312;
+
     @Bind(R.id.input_name)
-    TextInputLayout inputName;
+    protected TextInputLayout inputName;
     @Bind(R.id.input_login)
-    TextInputLayout inputLogin;
+    protected TextInputLayout inputLogin;
     @Bind(R.id.input_pass)
-    TextInputLayout inputPass;
+    protected TextInputLayout inputPass;
     @Bind(R.id.input_confirm_pass)
-    TextInputLayout inputConfirmPass;
+    protected TextInputLayout inputConfirmPass;
 
     @Bind(R.id.radio_group)
-    RadioGroup radioGroup;
+    protected RadioGroup radioGroup;
     @Bind(R.id.btn_add)
-    FloatingActionButton addButton;
+    protected FloatingActionButton addButton;
     @Bind(R.id.coordinator_layout)
-    CoordinatorLayout coordinatorLayout;
+    protected CoordinatorLayout coordinatorLayout;
+    @Bind(R.id.error_placeholder)
+    protected LoadingPlaceholderView placeholderView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_register);
         initActionBar();
+        placeholderView.success();
     }
 
     private void initActionBar() {
@@ -83,6 +89,8 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void onDismissed(Snackbar snackbar, int event) {
                         super.onDismissed(snackbar, event);
+                        placeholderView.success();
+                        setResult(RESULT_OK);
                         finish();
                     }
                 })
@@ -91,7 +99,15 @@ public class RegisterActivity extends BaseActivity {
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-        Snackbar.make(coordinatorLayout, event.error.message(), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(coordinatorLayout, event.error.message(), Snackbar.LENGTH_SHORT)
+                .setCallback(new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        super.onDismissed(snackbar, event);
+                        placeholderView.success();
+                    }
+                })
+                .show();
     }
 
     @OnClick(R.id.btn_add)
@@ -99,6 +115,7 @@ public class RegisterActivity extends BaseActivity {
         boolean hasError = hasError(inputLogin);
         hasError |= !isPassCorrect(inputConfirmPass, inputPass);
         if (!hasError) {
+            placeholderView.loading();
             OperationProcessor.executeOperation(this,
                     new RegisterOperation(
                             ViewsUtils.getEditText(inputLogin).getText().toString(),
@@ -156,7 +173,7 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    public static void startMe(Context context) {
-        context.startActivity(new Intent(context, RegisterActivity.class));
+    public static void startMe(Activity activity) {
+        activity.startActivityForResult(new Intent(activity, RegisterActivity.class), REQUEST_CODE);
     }
 }

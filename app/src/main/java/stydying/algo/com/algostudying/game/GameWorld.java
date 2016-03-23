@@ -15,6 +15,7 @@ import stydying.algo.com.algostudying.game.objects.EmptyObject;
 import stydying.algo.com.algostudying.game.objects.GameObject;
 import stydying.algo.com.algostudying.game.objects.ObjectSerializator;
 import stydying.algo.com.algostudying.game.objects.Player;
+import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.interfaces.ControlListener;
 import stydying.algo.com.algostudying.ui.interfaces.GameObjectSelectListener;
 import stydying.algo.com.algostudying.ui.interfaces.HeightControlListener;
@@ -36,9 +37,8 @@ public class GameWorld {
     private transient GameObject[][][] map;
 
     private transient GameWorldEditor gameWorldEditor;
-    private Task task;
 
-    public GameWorld(Context context, Task task) {
+    public GameWorld(Context context, Task task, GameFieldActivity.Mode mode) {
         task.initMap(context);
         worldX = task.getGameField().length;
         worldY = task.getGameField()[0].length;
@@ -57,10 +57,9 @@ public class GameWorld {
                 }
             }
         }
-        if (player == null) {
+        if (mode != GameFieldActivity.Mode.EDIT && player == null) {
             throw new IllegalStateException("No player");
         }
-        this.task = task;
 
         gameWorldEditor = new GameWorldEditor(map, worldX, worldY, worldZ);
     }
@@ -219,7 +218,7 @@ public class GameWorld {
         }
     }
 
-    public Task createTask() {
+    public String[][][] createGameWorld() {
         String[][][] result = new String[worldX][worldY][worldZ];
         for (int i = 0; i < worldX; i++) {
             for (int j = 0; j < worldY; j++) {
@@ -228,6 +227,6 @@ public class GameWorld {
                 }
             }
         }
-        return task.setGameField(result);
+        return result;
     }
 }

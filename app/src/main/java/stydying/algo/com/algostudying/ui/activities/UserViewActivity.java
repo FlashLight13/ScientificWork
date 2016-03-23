@@ -1,6 +1,6 @@
 package stydying.algo.com.algostudying.ui.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +15,7 @@ import stydying.algo.com.algostudying.utils.BundleBuilder;
  */
 public class UserViewActivity extends BaseActivity {
 
+    public static final int REQUEST_CODE = 1314;
     private static final String USER_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.UserViewActivity.USER_EXTRA";
 
@@ -42,9 +43,9 @@ public class UserViewActivity extends BaseActivity {
         }
     }
 
-    public static void startMe(Context context, User user) {
-        Intent intent = new Intent(context, UserViewActivity.class);
+    public static void startMe(Activity activity, User user) {
+        Intent intent = new Intent(activity, UserViewActivity.class);
         intent.putExtra(USER_EXTRA, user);
-        context.startActivity(intent);
+        activity.startActivityForResult(intent, REQUEST_CODE);
     }
 }

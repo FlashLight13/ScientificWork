@@ -10,6 +10,7 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -121,6 +122,9 @@ public class User extends BaseModel implements Parcelable {
                     .from(TaskGroup.class)
                     .where(TaskGroup_Table.userForeignKeyContainer_login.eq(login))
                     .queryList();
+            if (taskGroups == null) {
+                taskGroups = new ArrayList<>();
+            }
         }
         return taskGroups;
     }

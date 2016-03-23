@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.List;
 
-import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.network.services.TasksService;
@@ -19,14 +18,16 @@ public class EditTaskOperation extends BaseEditOperation<Task> {
     public EditTaskOperation() {
     }
 
-    public EditTaskOperation(Task editedTask, List<User> users) {
+    public EditTaskOperation(Task editedTask, List<String> users) {
         super(users);
         this.task = editedTask;
     }
 
     @Override
     public Task loadFromNetwork(Context context) throws NetworkException {
-        return TasksService.updateTask(task, task.getTaskGroup().getId(), userIds);
+        Task updatedTask = TasksService.updateTask(task, task.getTaskGroup().getId(), userIds);
+        updatedTask.update();
+        return updatedTask;
     }
 
     @Override

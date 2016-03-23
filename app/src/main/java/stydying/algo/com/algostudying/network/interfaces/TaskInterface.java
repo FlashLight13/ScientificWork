@@ -16,20 +16,31 @@ public interface TaskInterface {
     @POST("/updateTask")
     Call<Task> updateTask(@Body UpdateTaskData data);
 
-    @POST("/createOrUpdateWorld")
-    Call<WorldData> createUpdateTask(@Body WorldData worldData);
+    @POST("/createTask")
+    Call<WorldData> createTask(@Body WorldData worldData);
 
     @POST("/getTaskGroupsNames")
     Call<List<TaskGroup>> getTaskGroupsNames();
 
     @POST("removeTaskGroup")
-    Call<Object> removeTaskGroup(@Body String jsonId);
+    Call<Void> removeTaskGroup(@Body BaseIdRequest idRequest);
 
     @POST("/task")
-    Call<Task> getTask(@Body String jsonId);
+    Call<Task> getTask(@Body BaseIdRequest idRequest);
 
     @POST("updateTaskGroup")
     Call<TaskGroup> updateTaskGroup(@Body UpdateTaskGroupData data);
+
+    final class BaseIdRequest {
+        public long id;
+
+        public BaseIdRequest() {
+        }
+
+        public BaseIdRequest(long id) {
+            this.id = id;
+        }
+    }
 
     final class UpdateTaskGroupData {
         public String title;
@@ -68,14 +79,16 @@ public interface TaskInterface {
     final class WorldData {
         public TaskGroup taskGroup;
         public Task task;
+        public List<String> userIds;
 
         public WorldData() {
         }
 
-        public WorldData(TaskGroup taskGroup, Task task) {
+        public WorldData(TaskGroup taskGroup, Task task, List<String> userIds) {
             super();
             this.taskGroup = taskGroup;
             this.task = task;
+            this.userIds = userIds;
         }
     }
 }

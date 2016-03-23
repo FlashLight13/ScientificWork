@@ -27,12 +27,12 @@ public class UsersService {
     }
 
     public static void removeUser(String userToRemoveLogin) throws NetworkException {
-        new CallsProcessor<>().executeCall(api()
+        new CallsProcessor<Void>().executeCall(api()
                 .removeUser(new UserInterface.RemoveUserInfo(userToRemoveLogin)));
     }
 
     public static void updateUser(String login, String pass, String name) throws NetworkException {
-        new CallsProcessor<>().executeCall(api().updateUser(
+        new CallsProcessor<Void>().executeCall(api().updateUser(
                 new UserInterface.NewUserData(pass, name, login)));
     }
 

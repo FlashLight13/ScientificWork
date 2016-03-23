@@ -11,6 +11,7 @@ import java.io.File;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
 import stydying.algo.com.algostudying.utils.StreamUtils;
+import stydying.algo.com.algostudying.utils.caches.BaseFileCache;
 import stydying.algo.com.algostudying.utils.caches.MapCache;
 
 /**
@@ -22,6 +23,7 @@ public class AlgoApplication extends Application {
     private OperationProcessor.OperationsManager operationsManager;
 
     private MapCache mapCache;
+    private BaseFileCache baseFileCache;
 
     @Override
     public void onCreate() {
@@ -57,6 +59,7 @@ public class AlgoApplication extends Application {
 
     private void initCaches() {
         this.mapCache = new MapCache(this);
+        this.baseFileCache = new BaseFileCache(this);
     }
 
     @NonNull
@@ -72,5 +75,10 @@ public class AlgoApplication extends Application {
     @NonNull
     public MapCache getMapCache() {
         return this.mapCache;
+    }
+
+    @NonNull
+    public BaseFileCache getBaseFileCache() {
+        return this.baseFileCache;
     }
 }

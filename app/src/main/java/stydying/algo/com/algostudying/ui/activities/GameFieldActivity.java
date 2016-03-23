@@ -36,8 +36,7 @@ import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
 import stydying.algo.com.algostudying.game.objects.Player;
-import stydying.algo.com.algostudying.operations.CreateUpdateTaskOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
 import stydying.algo.com.algostudying.ui.graphics.GameView;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldCellsHeightControl;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldSelectControl;
@@ -107,7 +106,12 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        task = getIntent().getParcelableExtra(WORLD_DATA_EXTRA);
+        if (getIntent().hasExtra(WORLD_DATA_EXTRA)) {
+            task = getIntent().getParcelableExtra(WORLD_DATA_EXTRA);
+        } else {
+            task = GameFieldCreationController.getInstance(this).getTask();
+        }
+
         mode = Mode.valueOf(getIntent().getStringExtra(MODE_EXTRA));
 
         mGLView = new GameView(this);
@@ -149,7 +153,7 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     private void initDrawer() {
         drawerLayout = new android.support.v4.widget.DrawerLayout(this);
         drawerLayout.addView(glassView, glassView.getLayoutParams());
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
             public void onDrawerClosed(View view) {
@@ -164,7 +168,8 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
                 GameFieldActivity.this.onDrawerOpened();
             }
         };
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.setDrawerIndicatorEnabled(false);
+        drawerLayout.addDrawerListener(drawerToggle);
         drawerLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -191,12 +196,11 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
             actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.deep_blue)));
         }
         setTitle(task.getTitle());
-        drawerToggle.syncState();
     }
 
     private void create() {
-        OperationProcessor.executeOperation(this,
-                new CreateUpdateTaskOperation(gameWorld.createTask()));
+        GameFieldCreationController.getInstance(this).setGameField(this, gameWorld.createGameWorld());
+        EditUserTasksActivity.startMe(this, EditUserTasksActivity.Mode.NEW, -1);
     }
 
     private void execute() {
@@ -218,7 +222,7 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
             @Override
             public GameWorld loadInBackground() {
                 try {
-                    GameWorld gameWorld = new GameWorld(getContext(), task);
+                    GameWorld gameWorld = new GameWorld(getContext(), task, mode);
                     gameWorld.initDrawing(GameFieldActivity.this);
                     return gameWorld;
                 } catch (IOException e) {
@@ -231,9 +235,10 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader loader, GameWorld data) {
-        navigationView = mode.getNavigationView(this, data);
-        drawerLayout.addView(navigationView);
         if (data != null) {
+            navigationView = mode.getNavigationView(this, data);
+            drawerToggle.setDrawerIndicatorEnabled(true);
+            drawerLayout.addView(navigationView);
             gameWorld = data;
             mGLView.init(data);
             if (mode == Mode.EDIT) {
@@ -289,13 +294,16 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
 
     @Override
     protected void onDestroy() {
+        drawerLayout.removeDrawerListener(drawerToggle);
         getSupportLoaderManager().destroyLoader(Loaders.GAME_WORLD_LOADER);
         super.onDestroy();
     }
 
-    public static void startMe(@NonNull Context context, @NonNull Task gameFieldData, @NonNull Mode mode) {
+    public static void startMe(@NonNull Context context, @Nullable Task gameFieldData, @NonNull Mode mode) {
         Intent intent = new Intent(context, GameFieldActivity.class);
-        intent.putExtra(WORLD_DATA_EXTRA, gameFieldData);
+        if (gameFieldData != null) {
+            intent.putExtra(WORLD_DATA_EXTRA, gameFieldData);
+        }
         intent.putExtra(MODE_EXTRA, mode.name());
         context.startActivity(intent);
     }
