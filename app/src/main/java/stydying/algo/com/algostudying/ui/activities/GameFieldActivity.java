@@ -13,8 +13,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,8 +23,6 @@ import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
-import java.io.IOException;
-
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.constants.Loaders;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
@@ -34,20 +30,18 @@ import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.CubeBlock;
-import stydying.algo.com.algostudying.game.objects.Player;
-import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
+import stydying.algo.com.algostudying.ui.controller.game_field.EditingController;
+import stydying.algo.com.algostudying.ui.controller.game_field.GameFieldController;
+import stydying.algo.com.algostudying.ui.controller.game_field.PlayController;
 import stydying.algo.com.algostudying.ui.graphics.GameView;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldCellsHeightControl;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldSelectControl;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
-import stydying.algo.com.algostudying.ui.views.game_controls.GameObjectsListView;
-import stydying.algo.com.algostudying.utils.loaders.BaseAsyncLoader;
 
 /**
  * Created by Anton on 06.06.2015.
  */
-public class GameFieldActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<GameWorld> {
+public class GameFieldActivity extends BaseActivity implements GameFieldController.OnDataUpdatedListener {
 
     public enum Mode {
         EDIT, PLAY;
@@ -56,13 +50,7 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         public View getNavigationView(Context context, @Nullable GameWorld gameWorld) {
             switch (this) {
                 case EDIT:
-                    GameObjectsListView gameObjectsListView = new GameObjectsListView(context);
-                    gameObjectsListView.setControlListener(gameWorld == null
-                            ? null
-                            : gameWorld.getGameWorldEditor());
-                    gameObjectsListView.setPossibleObjects(new Class[]{CubeBlock.class, Player.class});
-                    gameObjectsListView.setLayoutParams(new DrawerLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START));
-                    return gameObjectsListView;
+
                 case PLAY:
                     return GameNavigationDrawerView.getInstance(context);
                 default:
@@ -72,9 +60,6 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
 
         private void createOptionsMenu(BaseActivity baseActivity, Menu menu) {
             switch (this) {
-                case EDIT:
-                    baseActivity.getMenuInflater().inflate(R.menu.menu_create_world, menu);
-                    return;
                 case PLAY:
                     baseActivity.getMenuInflater().inflate(R.menu.menu_execute_operations, menu);
                     return;
@@ -84,8 +69,6 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         }
     }
 
-    private static final String WORLD_DATA_EXTRA
-            = "stydying.algo.com.algostudying.ui.activities.GameFieldActivity.WORLD_DATA_EXTRA";
     private static final String MODE_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.GameFieldActivity.MODE_EXTRA";
 
@@ -94,60 +77,39 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     private FrameLayout glassView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-
-    private GameFieldSelectControl gameFieldSelectControl;
-    private GameFieldCellsHeightControl gameFieldCellsHeightControl;
     private View navigationView;
 
-    private Task task;
     private Mode mode;
     private GameWorld gameWorld;
+
+    private GameFieldController gameFieldController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getIntent().hasExtra(WORLD_DATA_EXTRA)) {
-            task = getIntent().getParcelableExtra(WORLD_DATA_EXTRA);
-        } else {
-            task = GameFieldCreationController.getInstance(this).getTask();
-        }
-
         mode = Mode.valueOf(getIntent().getStringExtra(MODE_EXTRA));
+        switch (mode) {
+            case EDIT:
+                gameFieldController = new EditingController(this, this);
+                break;
+            case PLAY:
+                gameFieldController = new PlayController(this, this);
+                break;
+        }
 
         mGLView = new GameView(this);
         setContentView(mGLView);
         initGlassView();
         initDrawer();
         initActionBar();
-        initGameFieldNavigationControl(glassView);
-        initGameFieldCellsHeightControl(glassView);
+
+        gameFieldController.addCellHeightController(glassView);
+        gameFieldController.addNavigationController(glassView);
 
         addContentView(drawerLayout, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-        getSupportLoaderManager().restartLoader(Loaders.GAME_WORLD_LOADER, null, this);
-    }
-
-    private void initGameFieldNavigationControl(@NonNull FrameLayout rootView) {
-        if (mode == Mode.EDIT) {
-            this.gameFieldSelectControl = new GameFieldSelectControl(this);
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    Gravity.BOTTOM | Gravity.END);
-            rootView.addView(gameFieldSelectControl, layoutParams);
-        }
-    }
-
-    private void initGameFieldCellsHeightControl(@NonNull FrameLayout rootView) {
-        if (mode == Mode.EDIT) {
-            this.gameFieldCellsHeightControl = new GameFieldCellsHeightControl(this);
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    Gravity.TOP | Gravity.END);
-            rootView.addView(gameFieldCellsHeightControl, layoutParams);
-        }
+        getSupportLoaderManager().restartLoader(Loaders.GAME_WORLD_LOADER, null, gameFieldController);
     }
 
     private void initDrawer() {
@@ -195,12 +157,7 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
             actionBar.setHomeButtonEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.deep_blue)));
         }
-        setTitle(task.getTitle());
-    }
-
-    private void create() {
-        GameFieldCreationController.getInstance(this).setGameField(this, gameWorld.createGameWorld());
-        EditUserTasksActivity.startMe(this, EditUserTasksActivity.Mode.NEW, -1);
+        setTitle(gameFieldController.getTitle());
     }
 
     private void execute() {
@@ -216,40 +173,13 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
     }
 
     @Override
-    public Loader<GameWorld> onCreateLoader(int id, final Bundle args) {
-        return new BaseAsyncLoader<GameWorld>(this) {
-
-            @Override
-            public GameWorld loadInBackground() {
-                try {
-                    GameWorld gameWorld = new GameWorld(getContext(), task, mode);
-                    gameWorld.initDrawing(GameFieldActivity.this);
-                    return gameWorld;
-                } catch (IOException e) {
-                    Log.d("DebugLogs", "Failed to init world ", e);
-                    return null;
-                }
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader loader, GameWorld data) {
-        if (data != null) {
-            navigationView = mode.getNavigationView(this, data);
+    public void onDataUpdated(@Nullable GameWorld gameWorld) {
+        if (gameWorld != null) {
+            navigationView = mode.getNavigationView(this, gameWorld);
             drawerToggle.setDrawerIndicatorEnabled(true);
             drawerLayout.addView(navigationView);
-            gameWorld = data;
-            mGLView.init(data);
-            if (mode == Mode.EDIT) {
-                gameFieldSelectControl.setControlListener(data.getGameWorldEditor());
-                gameFieldCellsHeightControl.setControlListener(data.getGameWorldEditor());
-            }
+            mGLView.init(gameWorld);
         }
-    }
-
-    @Override
-    public void onLoaderReset(Loader loader) {
     }
 
     @Override
@@ -299,12 +229,15 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
         super.onDestroy();
     }
 
-    public static void startMe(@NonNull Context context, @Nullable Task gameFieldData, @NonNull Mode mode) {
+    public static void startMe(@NonNull Context context,
+                               @Nullable Task gameFieldData,
+                               @NonNull Mode mode) {
         Intent intent = new Intent(context, GameFieldActivity.class);
         if (gameFieldData != null) {
-            intent.putExtra(WORLD_DATA_EXTRA, gameFieldData);
+            intent.putExtra(PlayController.WORLD_DATA_EXTRA, gameFieldData);
         }
         intent.putExtra(MODE_EXTRA, mode.name());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
     }
 
@@ -320,9 +253,6 @@ public class GameFieldActivity extends BaseActivity implements LoaderManager.Loa
             return true;
         }
         switch (item.getItemId()) {
-            case R.id.menu_item_create:
-                create();
-                return true;
             case R.id.menu_item_execute:
                 execute();
                 return true;
