@@ -13,5 +13,5 @@
         android:id="@+id/menu_create_group"
         android:icon="@drawable/ic_add_white_24dp"
         android:title="@string/menu_item_create_group"
-        app:showAsAction="withText|ifRoom" />
+        app:showAsAction="always" />
 </menu>

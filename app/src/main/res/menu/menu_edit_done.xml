@@ -5,6 +5,5 @@
         android:id="@+id/menu_edit_done"
         android:icon="@drawable/ic_check_white_24dp"
         android:title="@string/menu_item_edit_done"
-        app:actionLayout="@layout/v_action_progress"
         app:showAsAction="ifRoom" />
 </menu>

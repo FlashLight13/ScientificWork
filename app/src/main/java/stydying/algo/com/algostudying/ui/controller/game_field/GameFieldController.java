@@ -1,8 +1,5 @@
 package stydying.algo.com.algostudying.ui.controller.game_field;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +15,7 @@ import android.view.ViewGroup;
 import java.io.IOException;
 
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
+import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.utils.loaders.BaseAsyncLoader;
@@ -62,6 +60,7 @@ public abstract class GameFieldController implements LoaderManager.LoaderCallbac
 
     @Override
     public void onLoadFinished(Loader<GameWorld> loader, GameWorld data) {
+        this.gameWorld = data;
         if (onDataUpdatedListener != null) {
             onDataUpdatedListener.onDataUpdated(data);
         }
@@ -86,4 +85,12 @@ public abstract class GameFieldController implements LoaderManager.LoaderCallbac
     public abstract void createOptionsMenu(@NonNull MenuInflater inflater, @NonNull Menu menu);
 
     public abstract boolean onOptionsMenuItemClick(@NonNull MenuItem menuItem);
+
+    public void onResume() {
+        BusProvider.bus().register(this);
+    }
+
+    public void onPause() {
+        BusProvider.bus().unregister(this);
+    }
 }

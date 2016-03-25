@@ -138,6 +138,10 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
             placeholderView.success();
             supportInvalidateOptionsMenu();
+            return;
+        }
+        if (event.isOperation(RemoveTaskGroup.class)) {
+            onRetry();
         }
     }
 

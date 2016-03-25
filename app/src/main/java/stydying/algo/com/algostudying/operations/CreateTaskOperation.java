@@ -2,8 +2,8 @@ package stydying.algo.com.algostudying.operations;
 
 import android.content.Context;
 
+import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
-
 
 import java.util.List;
 
@@ -31,18 +31,31 @@ public class CreateTaskOperation implements OperationProcessor.Operation {
     public CreateTaskOperation(Task task, List<String> users) {
         this.task = task;
         this.taskGroup = task.getTaskGroup();
+        this.taskGroup.setTasks(null);
         this.users = users;
     }
 
     @Override
     public Object loadFromNetwork(Context context) throws NetworkException {
-        TaskInterface.WorldData data = TasksService.createUpdateTask(
-                new TaskInterface.WorldData(taskGroup, task, users));
+        TaskInterface.WorldData data;
+        try {
+            data = TasksService.createUpdateTask(
+                    new TaskInterface.WorldData(taskGroup, task, users));
+        } finally {
+            removeTempData();
+        }
         updateUsers(data.taskGroup, data.userIds);
         updateTaskGroup(data.taskGroup);
         data.task.setTaskGroup(data.taskGroup);
         data.task.save();
         return null;
+    }
+
+    private void removeTempData() {
+        new Delete()
+                .from(TaskGroup.class)
+                .where(TaskGroup_Table._id.eq(TaskGroup.DEFAULT_ID))
+                .execute();
     }
 
     private void updateTaskGroup(TaskGroup taskGroup) {

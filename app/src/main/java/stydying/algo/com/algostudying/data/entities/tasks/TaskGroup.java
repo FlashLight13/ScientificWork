@@ -56,7 +56,6 @@ public class TaskGroup extends BaseModel implements Parcelable {
     private TaskGroup(Parcel parcel) {
         _id = parcel.readLong();
         title = parcel.readString();
-        tasks = parcel.readArrayList(Task.class.getClassLoader());
     }
 
     public String getTitle() {

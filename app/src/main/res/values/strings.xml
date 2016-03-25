@@ -82,4 +82,5 @@
     <string name="header_students">Ученики</string>
     <string name="header_teachers">Учителя</string>
 
+    <string name="tab_login">Логин: %s</string>
 </resources>

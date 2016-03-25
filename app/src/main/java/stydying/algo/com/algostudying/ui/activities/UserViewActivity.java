@@ -2,8 +2,13 @@ package stydying.algo.com.algostudying.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.view.View;
 
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.stats.User;
@@ -43,9 +48,18 @@ public class UserViewActivity extends BaseActivity {
         }
     }
 
-    public static void startMe(Activity activity, User user) {
+    public static void startMe(@Nullable View fromView, @NonNull Activity activity, @NonNull User user) {
+        Bundle options = null;
+        if (fromView != null) {
+            options = ActivityOptionsCompat.makeScaleUpAnimation(
+                    fromView, 0, 0, fromView.getWidth(), fromView.getHeight()).toBundle();
+        }
         Intent intent = new Intent(activity, UserViewActivity.class);
         intent.putExtra(USER_EXTRA, user);
-        activity.startActivityForResult(intent, REQUEST_CODE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            activity.startActivityForResult(intent, REQUEST_CODE, options);
+        } else {
+            activity.startActivityForResult(intent, REQUEST_CODE);
+        }
     }
 }

@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.Gravity;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 
 import com.squareup.otto.Subscribe;
@@ -43,7 +45,7 @@ import stydying.algo.com.algostudying.utils.BundleBuilder;
 public class EditUserTasksActivity extends BaseActivity {
 
     @Bind(R.id.list)
-    ListView listView;
+    protected ListView listView;
 
     public static final int REQUEST_CODE = 1313;
     private static final String MODE_EXTRA
@@ -88,16 +90,22 @@ public class EditUserTasksActivity extends BaseActivity {
             getSupportFragmentManager().beginTransaction().replace(
                     R.id.content, fragment, null).commit();
         }
-        OperationProcessor.executeOperation(this, new LoadUsersOperation());
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        loadUsers();
+    }
+
+    private void loadUsers() {
+        OperationProcessor.executeOperation(this, new LoadUsersOperation());
+        setInProgress(true);
     }
 
     @Subscribe
     public void onSuccess(OperationSuccessEvent event) {
         if (event.isOperation(LoadUsersOperation.class)) {
+            setInProgress(false);
             List<User> users = event.data();
             List<UserData> userDatas = new ArrayList<>(users.size());
             for (User user : users) {
@@ -106,7 +114,9 @@ public class EditUserTasksActivity extends BaseActivity {
             listView.setAdapter(new UsersAdapter(this, userDatas));
         }
         if (controller().onSuccess(this, event)) {
-
+            setInProgress(false);
+            Snackbar.make(listView, R.string.message_world_created, Snackbar.LENGTH_SHORT).show();
+            finish();
         }
     }
 
@@ -123,9 +133,11 @@ public class EditUserTasksActivity extends BaseActivity {
     @Subscribe
     public void onError(OperationErrorEvent event) {
         if (event.isOperation(LoadUsersOperation.class)) {
+            setInProgress(false);
         }
         if (controller().onError(event)) {
-
+            setInProgress(false);
+            Snackbar.make(listView, R.string.message_world_not_created, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -169,8 +181,10 @@ public class EditUserTasksActivity extends BaseActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.menu_edit_done);
         if (isInProgress) {
+            item.setActionView(R.layout.v_action_progress);
             item.expandActionView();
         } else {
+            item.setActionView(null);
             item.collapseActionView();
         }
         return super.onPrepareOptionsMenu(menu);
@@ -213,7 +227,8 @@ public class EditUserTasksActivity extends BaseActivity {
         }
     }
 
-    private static class UsersAdapter extends BaseAdapter {
+    private static class UsersAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
+        // TODO rework with CursorAdapter
 
         private List<UserData> users;
         private Context context;
@@ -255,13 +270,21 @@ public class EditUserTasksActivity extends BaseActivity {
                 view.setLayoutParams(layoutParams);
                 view.setGravity(Gravity.CENTER_VERTICAL | Gravity.START);
                 view.setPadding(context.getResources().getDimensionPixelSize(R.dimen.list_item_height_medium), 0, 0, 0);
+                view.setOnCheckedChangeListener(this);
             }
 
             UserData userData = getItem(position);
+            view.setTag(position);
             view.setChecked(userData.isSelected);
             view.setText(userData.user.getName());
 
             return view;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            int position = (Integer) buttonView.getTag();
+            getItem(position).isSelected = isChecked;
         }
 
         public List<UserData> getUsers() {

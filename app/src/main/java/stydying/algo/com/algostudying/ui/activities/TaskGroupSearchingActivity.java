@@ -92,8 +92,10 @@ public class TaskGroupSearchingActivity extends BaseActivity {
                 return true;
             }
         });
-        item.expandActionView();
         searchView.setQueryHint(getString(R.string.world_setup_group_hint));
+        searchView.setIconifiedByDefault(false);
+        searchView.requestFocus();
+        item.expandActionView();
         EditText editText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
         editText.setTextColor(ContextCompat.getColor(this, R.color.white));
         editText.setHintTextColor(ContextCompat.getColor(this, R.color.lightest_grey));

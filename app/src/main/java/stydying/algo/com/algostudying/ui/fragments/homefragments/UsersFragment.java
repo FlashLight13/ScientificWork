@@ -74,7 +74,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User chosenUser = ((PlayersAdapter) parent.getAdapter()).getUser(position);
-                UserViewActivity.startMe(UsersFragment.this.getActivity(), chosenUser);
+                UserViewActivity.startMe(view, UsersFragment.this.getActivity(), chosenUser);
             }
         });
 
@@ -102,9 +102,11 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
 
     @OnClick(R.id.btn_add)
     public void onAdd() {
+        listUsers.setEnabled(false);
         btnAdd.hide(new FloatingActionButton.OnVisibilityChangedListener() {
             @Override
             public void onHidden(FloatingActionButton fab) {
+                listUsers.setEnabled(true);
                 super.onHidden(fab);
                 RegisterActivity.startMe(getActivity());
             }

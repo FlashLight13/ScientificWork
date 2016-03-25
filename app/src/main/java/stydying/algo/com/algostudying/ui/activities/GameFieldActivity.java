@@ -7,9 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,24 +17,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
-
-import com.squareup.otto.Subscribe;
 
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.constants.Loaders;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
-import stydying.algo.com.algostudying.events.BusProvider;
-import stydying.algo.com.algostudying.events.OperationErrorEvent;
-import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.ui.controller.game_field.EditingController;
 import stydying.algo.com.algostudying.ui.controller.game_field.GameFieldController;
 import stydying.algo.com.algostudying.ui.controller.game_field.PlayController;
 import stydying.algo.com.algostudying.ui.graphics.GameView;
-import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldCellsHeightControl;
-import stydying.algo.com.algostudying.ui.views.game_controls.GameFieldSelectControl;
-import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
 
 /**
  * Created by Anton on 06.06.2015.
@@ -44,29 +33,7 @@ import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawe
 public class GameFieldActivity extends BaseActivity implements GameFieldController.OnDataUpdatedListener {
 
     public enum Mode {
-        EDIT, PLAY;
-
-        @NonNull
-        public View getNavigationView(Context context, @Nullable GameWorld gameWorld) {
-            switch (this) {
-                case EDIT:
-
-                case PLAY:
-                    return GameNavigationDrawerView.getInstance(context);
-                default:
-                    throw new IllegalStateException("Unknown mode");
-            }
-        }
-
-        private void createOptionsMenu(BaseActivity baseActivity, Menu menu) {
-            switch (this) {
-                case PLAY:
-                    baseActivity.getMenuInflater().inflate(R.menu.menu_execute_operations, menu);
-                    return;
-                default:
-                    throw new IllegalArgumentException("Unknown mode");
-            }
-        }
+        EDIT, PLAY
     }
 
     private static final String MODE_EXTRA
@@ -77,10 +44,8 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
     private FrameLayout glassView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
-    private View navigationView;
 
     private Mode mode;
-    private GameWorld gameWorld;
 
     private GameFieldController gameFieldController;
 
@@ -140,16 +105,6 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
         });
     }
 
-    @Subscribe
-    public void onSuccess(OperationSuccessEvent event) {
-        Toast.makeText(this, R.string.message_world_created, Toast.LENGTH_SHORT).show();
-        finish();
-    }
-
-    public void onError(OperationErrorEvent event) {
-        Toast.makeText(this, R.string.message_world_not_created, Toast.LENGTH_SHORT).show();
-    }
-
     private void initActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -158,12 +113,6 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
             actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.deep_blue)));
         }
         setTitle(gameFieldController.getTitle());
-    }
-
-    private void execute() {
-        if (gameWorld != null && navigationView != null) {
-            gameWorld.executeCommands(((GameNavigationDrawerView) navigationView).getCommands());
-        }
     }
 
     protected void onDrawerClosed() {
@@ -175,9 +124,8 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
     @Override
     public void onDataUpdated(@Nullable GameWorld gameWorld) {
         if (gameWorld != null) {
-            navigationView = mode.getNavigationView(this, gameWorld);
             drawerToggle.setDrawerIndicatorEnabled(true);
-            drawerLayout.addView(navigationView);
+            drawerLayout.addView(gameFieldController.getNavigationDrawerView(gameWorld));
             mGLView.init(gameWorld);
         }
     }
@@ -211,15 +159,15 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
     @Override
     protected void onResume() {
         super.onResume();
-        BusProvider.bus().register(this);
+        gameFieldController.onResume();
         mGLView.onResume();
     }
 
     @Override
     protected void onPause() {
-        BusProvider.bus().unregister(this);
-        super.onPause();
+        gameFieldController.onPause();
         mGLView.onPause();
+        super.onPause();
     }
 
     @Override
@@ -243,20 +191,14 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mode.createOptionsMenu(this, menu);
+        gameFieldController.createOptionsMenu(getMenuInflater(), menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        switch (item.getItemId()) {
-            case R.id.menu_item_execute:
-                execute();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return drawerToggle.onOptionsItemSelected(item)
+                || gameFieldController.onOptionsMenuItemClick(item)
+                || super.onOptionsItemSelected(item);
     }
 }

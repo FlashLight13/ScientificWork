@@ -11,8 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import com.squareup.otto.Subscribe;
 
 import stydying.algo.com.algostudying.R;
+import stydying.algo.com.algostudying.events.OperationErrorEvent;
+import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
 import stydying.algo.com.algostudying.game.objects.Player;
@@ -89,5 +94,16 @@ public class EditingController extends GameFieldController {
             return true;
         }
         return false;
+    }
+
+    @Subscribe
+    public void onSuccess(OperationSuccessEvent event) {
+        Toast.makeText(activity, R.string.message_world_created, Toast.LENGTH_SHORT).show();
+        activity.finish();
+    }
+
+    @Subscribe
+    public void onError(OperationErrorEvent event) {
+        Toast.makeText(activity, R.string.message_world_not_created, Toast.LENGTH_SHORT).show();
     }
 }

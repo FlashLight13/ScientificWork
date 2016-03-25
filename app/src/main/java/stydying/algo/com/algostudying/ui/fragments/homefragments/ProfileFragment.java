@@ -42,7 +42,8 @@ public class ProfileFragment extends BaseFragment implements PagerController {
                         return user.getLogin();
                     }
                 }
-                return LoginManager.getInstance(fragment.getContext()).getCurrentUser().getLogin();
+                return fragment.getString(R.string.tab_login,
+                        LoginManager.getInstance(fragment.getContext()).getCurrentUser().getLogin());
             }
         },
         STATS(StatsFragment.class) {
@@ -85,7 +86,7 @@ public class ProfileFragment extends BaseFragment implements PagerController {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tasksPager.setAdapter(new TasksAdapter(this));
+        tasksPager.setAdapter(new ProfileTabsAdapter(this));
         tasksPager.setOnTouchListener(null);
         tasksPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -132,15 +133,15 @@ public class ProfileFragment extends BaseFragment implements PagerController {
     }
 
     private BaseProfileFragment getCurrentFragment() {
-        return ((TasksAdapter) tasksPager.getAdapter())
+        return ((ProfileTabsAdapter) tasksPager.getAdapter())
                 .getRegisteredFragment(tasksPager.getCurrentItem());
     }
 
-    private final class TasksAdapter extends FragmentPagerAdapter {
+    private final class ProfileTabsAdapter extends FragmentPagerAdapter {
         private SparseArray<BaseProfileFragment> registeredFragments = new SparseArray<>();
         private BaseFragment fragment;
 
-        public TasksAdapter(BaseFragment fragment) {
+        public ProfileTabsAdapter(BaseFragment fragment) {
             super(fragment.getChildFragmentManager());
             this.fragment = fragment;
         }
