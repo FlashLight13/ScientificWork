@@ -19,13 +19,13 @@ public interface UserInterface {
     @POST("/register")
     Call<User> register(@Header("Authentication") String header, @Body RegisterData json);
 
-    @POST("update_user")
+    @POST("/updateUser")
     Call<Void> updateUser(@Body NewUserData newUserData);
 
-    @POST("get_users")
-    Call<List<User>> getUsers();
+    @POST("/getStudents")
+    Call<List<User>> getStudents();
 
-    @POST("/remove_user")
+    @POST("/removeUser")
     Call<Void> removeUser(@Body RemoveUserInfo info);
 
     final class RemoveUserInfo {

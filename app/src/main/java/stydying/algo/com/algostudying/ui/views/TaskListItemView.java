@@ -2,11 +2,8 @@ package stydying.algo.com.algostudying.ui.views;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,24 +12,35 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import stydying.algo.com.algostudying.R;
+import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
+import stydying.algo.com.algostudying.logic.managers.LoginManager;
 
 /**
  * Created by Anton on 03.03.2016.
  */
-public class TaskListItemView extends LinearLayout {
+public class TaskListItemView extends LinearLayout implements View.OnClickListener {
 
     @Bind(R.id.text_title)
-    TextView textTitle;
+    protected TextView textTitle;
     @Bind(R.id.text_description)
-    TextView textDescription;
+    protected TextView textDescription;
     @Bind(R.id.img)
-    ImageView img;
+    protected ImageView img;
+    @Bind(R.id.ic_edit)
+    protected View icEdit;
+    @Bind(R.id.ic_remove)
+    protected View icRemove;
 
     private OnEditTaskListener onEditTaskListenerListener;
+    private OnRemoveTaskListener onRemoveTaskListener;
 
     public interface OnEditTaskListener {
         void onEditTaskClicked(int position);
+    }
+
+    public interface OnRemoveTaskListener {
+        void onRemoveTaskClicked(int position);
     }
 
     public TaskListItemView(Context context) {
@@ -58,35 +66,45 @@ public class TaskListItemView extends LinearLayout {
 
     private void init() {
         ButterKnife.bind(inflate(getContext(), R.layout.v_task, this));
+        icEdit.setOnClickListener(this);
+        icRemove.setOnClickListener(this);
 
-        final Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_mode_edit_black_24dp);
-        textTitle.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-        textTitle.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    final int rightDrawableRight = textTitle.getWidth();
-                    final int rightDrawableLeft = rightDrawableRight - drawable.getIntrinsicWidth();
-                    if (event.getX() > rightDrawableLeft && event.getX() < rightDrawableRight) {
-                        if (onEditTaskListenerListener != null) {
-                            onEditTaskListenerListener.onEditTaskClicked((int) getTag());
-                        }
-                        return true;
-                    }
+        User.Type type = LoginManager.getInstance(getContext()).getCurrentType();
+        icRemove.setVisibility(type == User.Type.ADMIN ? VISIBLE : GONE);
+        icEdit.setVisibility(type == User.Type.ADMIN ? VISIBLE : GONE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.ic_edit:
+                if (onEditTaskListenerListener != null) {
+                    onEditTaskListenerListener.onEditTaskClicked((int) getTag());
                 }
-                return false;
-            }
-        });
+                break;
+            case R.id.ic_remove:
+                if (onRemoveTaskListener != null) {
+                    onRemoveTaskListener.onRemoveTaskClicked((int) getTag());
+                }
+                break;
+        }
     }
 
-    public void setOnEditTaskListenerListener(OnEditTaskListener listener) {
+    public TaskListItemView setOnEditTaskListenerListener(OnEditTaskListener listener) {
         this.onEditTaskListenerListener = listener;
+        return this;
     }
 
-    public void setTask(Task task) {
+    public TaskListItemView setOnRemoveTaskListener(OnRemoveTaskListener onRemoveTaskListener) {
+        this.onRemoveTaskListener = onRemoveTaskListener;
+        return this;
+    }
+
+    public TaskListItemView setTask(Task task) {
         this.textTitle.setText(task.getTitle());
         this.textDescription.setText(task.getDescription());
         // todo implement task image
         img.setVisibility(GONE);
+        return this;
     }
 }

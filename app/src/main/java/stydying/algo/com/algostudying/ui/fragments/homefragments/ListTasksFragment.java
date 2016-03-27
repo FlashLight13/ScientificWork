@@ -24,6 +24,7 @@ import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.GetTaskOperation;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.RemoveTaskOperation;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
@@ -33,13 +34,14 @@ import stydying.algo.com.algostudying.utils.BundleBuilder;
 /**
  * Created by Anton on 25.01.2016.
  */
-public class ListTasksFragment extends BaseFragment implements TaskListItemView.OnEditTaskListener {
+public class ListTasksFragment extends BaseFragment implements TaskListItemView.OnEditTaskListener,
+        TaskListItemView.OnRemoveTaskListener {
 
     private static final String ARG_TASK_GROUP =
             "stydying.algo.com.algostudying.ui.fragments.homefragments.ListTasksFragment.ARG_TASK_GROUP";
 
     @Bind(R.id.list)
-    ListView tasksListView;
+    protected ListView tasksListView;
 
     private TaskGroup taskGroup;
 
@@ -73,7 +75,7 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tasksListView.setAdapter(new TasksAdapter(this).setTasks(taskGroup.getTasks()));
+        tasksListView.setAdapter(new TasksAdapter(this, this).setTasks(taskGroup.getTasks()));
         tasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -97,6 +99,12 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
                 adapter().getItem(position).getId());
     }
 
+    @Override
+    public void onRemoveTaskClicked(int position) {
+        OperationProcessor.executeOperation(getContext(),
+                new RemoveTaskOperation(adapter().getItem(position).getId()));
+    }
+
     @Subscribe
     public void onSuccess(OperationSuccessEvent event) {
         if (event.isOperation(GetTaskOperation.class)) {
@@ -114,10 +122,14 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
     private static class TasksAdapter extends BaseAdapter {
 
         private TaskListItemView.OnEditTaskListener onEditTaskListenerListener;
+        private TaskListItemView.OnRemoveTaskListener onRemoveTaskListener;
+
         private List<Task> tasks = new ArrayList<>();
 
-        public TasksAdapter(@Nullable TaskListItemView.OnEditTaskListener onEditTaskListenerListener) {
+        public TasksAdapter(@Nullable TaskListItemView.OnEditTaskListener onEditTaskListenerListener,
+                            @Nullable TaskListItemView.OnRemoveTaskListener onRemoveTaskListener) {
             this.onEditTaskListenerListener = onEditTaskListenerListener;
+            this.onRemoveTaskListener = onRemoveTaskListener;
         }
 
         public TasksAdapter setTasks(List<Task> tasks) {
@@ -148,8 +160,9 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
                 view = new TaskListItemView(parent.getContext());
             }
             view.setTag(position);
-            view.setTask(getItem(position));
-            view.setOnEditTaskListenerListener(onEditTaskListenerListener);
+            view.setTask(getItem(position))
+                    .setOnEditTaskListenerListener(onEditTaskListenerListener)
+                    .setOnRemoveTaskListener(onRemoveTaskListener);
             return view;
         }
     }

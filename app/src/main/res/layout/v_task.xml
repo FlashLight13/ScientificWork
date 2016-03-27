@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -15,6 +15,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/img"
+        android:layout_toLeftOf="@+id/linearLayout"
+        android:layout_toRightOf="@+id/img"
         android:orientation="vertical">
 
         <TextView
@@ -33,4 +36,28 @@
             android:layout_weight="1" />
 
     </LinearLayout>
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/ic_edit"
+            android:layout_width="@dimen/icon_size_small"
+            android:layout_height="@dimen/icon_size_small"
+            android:layout_margin="@dimen/basic_list_buttons_margin"
+            android:src="@drawable/ic_mode_edit_black_24dp" />
+
+        <ImageView
+            android:id="@+id/ic_remove"
+            android:layout_width="@dimen/icon_size_small"
+            android:layout_height="@dimen/icon_size_small"
+            android:layout_margin="@dimen/basic_list_buttons_margin"
+            android:src="@drawable/ic_clear_black_24dp" />
+    </LinearLayout>
+</RelativeLayout>

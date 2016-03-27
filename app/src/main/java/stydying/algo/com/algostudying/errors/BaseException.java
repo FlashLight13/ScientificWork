@@ -9,6 +9,8 @@ import stydying.algo.com.algostudying.R;
  */
 public class BaseException extends Exception {
 
+    public static final String EMPTY_TASKS_TYPE = "TYPE_EMPTY_TASKS";
+
     protected final int DEFAULT_MESSAGE_RES = -1;
 
     protected String type;
@@ -37,6 +39,11 @@ public class BaseException extends Exception {
 
     @StringRes
     protected int getMessageRes() {
-        return -1;
+        switch (type) {
+            case BaseException.EMPTY_TASKS_TYPE:
+                return R.string.error_no_tasks;
+            default:
+                return DEFAULT_MESSAGE_RES;
+        }
     }
 }

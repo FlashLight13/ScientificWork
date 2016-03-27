@@ -37,7 +37,7 @@ public class UsersService {
     }
 
     public static List<User> getUsers() throws NetworkException {
-        return new CallsProcessor<List<User>>().executeCall(api().getUsers());
+        return new CallsProcessor<List<User>>().executeCall(api().getStudents());
     }
 
     private static UserInterface api() {
@@ -47,7 +47,7 @@ public class UsersService {
         return api;
     }
 
-    private static String createAuthHeaders(String login, String pass) {
+    public static String createAuthHeaders(String login, String pass) {
         return Base64.encodeToString((login + "%" + pass).getBytes(), Base64.DEFAULT).trim();
     }
 }

@@ -19,12 +19,19 @@ public class TasksService {
         return new CallsProcessor<TaskInterface.WorldData>().executeCall(api().createTask(worldData));
     }
 
-    public static List<TaskGroup> getTaskGroupsNames() throws NetworkException {
-        return new CallsProcessor<List<TaskGroup>>().executeCall(api().getTaskGroupsNames());
+    public static List<TaskGroup> getTaskGroupsNames(String login, String pass) throws NetworkException {
+        return new CallsProcessor<List<TaskGroup>>().executeCall(api().getTaskGroupsNames(
+                UsersService.createAuthHeaders(login, pass)));
     }
 
     public static void removeTaskGroup(Long id) throws NetworkException {
         new CallsProcessor<Void>().executeCall(api().removeTaskGroup(
+                new TaskInterface.BaseIdRequest(id)
+        ));
+    }
+
+    public static void removeTask(Long id) throws NetworkException {
+        new CallsProcessor<Void>().executeCall(api().removeTask(
                 new TaskInterface.BaseIdRequest(id)
         ));
     }

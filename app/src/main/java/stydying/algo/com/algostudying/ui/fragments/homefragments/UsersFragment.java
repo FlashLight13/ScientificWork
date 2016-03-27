@@ -14,14 +14,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -73,7 +70,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         listUsers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User chosenUser = ((PlayersAdapter) parent.getAdapter()).getUser(position);
+                User chosenUser = ((PlayersAdapter) parent.getAdapter()).getItem(position);
                 UserViewActivity.startMe(view, UsersFragment.this.getActivity(), chosenUser);
             }
         });
@@ -148,8 +145,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             refreshLayout.setRefreshing(false);
             errorPlaceholder.success();
             List<User> users = event.data();
-            Collections.sort(users, new User.ByTypeComparator());
-            adapter.refill(users, Arrays.asList(R.string.header_teachers, R.string.header_students));
+            adapter.refill(users);
             return;
         }
         if (event.isOperation(RemoveUserOperation.class)) {
@@ -174,13 +170,13 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             view.setClickable(false);
         }
         OperationProcessor.executeOperation(getContext(),
-                new RemoveUserOperation(adapter.getUser(pos).getLogin()));
+                new RemoveUserOperation(adapter.getItem(pos).getLogin()));
     }
 
     private static class PlayersAdapter extends BaseAdapter {
 
         private Context context;
-        private ArrayList<ListItem> data = new ArrayList<>();
+        private ArrayList<User> data = new ArrayList<>();
         private UsersListItemView.OnUserDeleted listener;
 
         public PlayersAdapter(Context context, UsersListItemView.OnUserDeleted listener) {
@@ -191,31 +187,18 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         private void remove(String login) {
             Iterator iterator = data.iterator();
             while (iterator.hasNext()) {
-                ListItem current = (ListItem) iterator.next();
-                if (current.type == ListItem.ITEM) {
-                    if (((User) current.data).getLogin().equals(login)) {
-                        iterator.remove();
-                        notifyDataSetChanged();
-                        return;
-                    }
+                User current = (User) iterator.next();
+                if (current.getLogin().equals(login)) {
+                    iterator.remove();
+                    notifyDataSetChanged();
+                    return;
                 }
             }
         }
 
-        private void refill(List<User> newData, List<Integer> headers) {
+        private void refill(List<User> newData) {
             data.clear();
-            data.ensureCapacity(newData.size() + headers.size());
-            Iterator<Integer> headersIterator = headers.iterator();
-            for (int i = 0; i < newData.size(); i++) {
-                if (i == 0) {
-                    data.add(new ListItem(ListItem.HEADER, headersIterator.next()));
-                } else {
-                    if (newData.get(i).getType() != newData.get(i - 1).getType()) {
-                        data.add(new ListItem(ListItem.HEADER, headersIterator.next()));
-                    }
-                }
-                data.add(new ListItem(ListItem.ITEM, newData.get(i)));
-            }
+            data.addAll(newData);
             notifyDataSetChanged();
         }
 
@@ -224,19 +207,8 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             return data.size();
         }
 
-        public User getUser(int position) {
-            switch (getItemViewType(position)) {
-                case ListItem.HEADER:
-                    return (User) getItem(position + 1).data;
-                case ListItem.ITEM:
-                    return (User) getItem(position).data;
-                default:
-                    throw new IllegalStateException("Unknown item type");
-            }
-        }
-
         @Override
-        public ListItem getItem(int position) {
+        public User getItem(int position) {
             return data.get(position);
         }
 
@@ -247,60 +219,15 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            switch (getItemViewType(position)) {
-                case ListItem.HEADER:
-                    View header;
-                    if (convertView == null || !(convertView instanceof TextView)) {
-                        header = LayoutInflater.from(parent.getContext())
-                                .inflate(R.layout.v_list_header, parent, false);
-                    } else {
-                        header = convertView;
-                    }
-                    ((TextView) header.findViewById(R.id.text)).setText((Integer) getItem(position).data);
-                    return header;
-                case ListItem.ITEM:
-                    UsersListItemView view;
-                    if (convertView == null || !(convertView instanceof UsersListItemView)) {
-                        view = new UsersListItemView(context);
-                    } else {
-                        view = (UsersListItemView) convertView;
-                    }
-                    view.setData(position, (User) getItem(position).data);
-                    view.onUserDeletedListener(listener);
-                    return view;
-                default:
-                    throw new IllegalStateException("Unknown item type");
+            UsersListItemView view;
+            if (convertView == null || !(convertView instanceof UsersListItemView)) {
+                view = new UsersListItemView(context);
+            } else {
+                view = (UsersListItemView) convertView;
             }
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return getItem(position).type;
-        }
-
-        @Override
-        public int getViewTypeCount() {
-            return ListItem.TYPES_COUNT;
-        }
-
-        @Override
-        public boolean isEnabled(int position) {
-            return getItemViewType(position) != ListItem.HEADER;
-        }
-
-        private static final class ListItem {
-            public static final int TYPES_COUNT = 2;
-
-            public static final int HEADER = 0;
-            public static final int ITEM = 1;
-
-            public final int type;
-            public final Object data;
-
-            public ListItem(int type, Object data) {
-                this.type = type;
-                this.data = data;
-            }
+            view.setData(position, getItem(position));
+            view.onUserDeletedListener(listener);
+            return view;
         }
     }
 }

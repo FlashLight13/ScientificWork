@@ -12,14 +12,14 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 16.02.2016.
  */
-public class RemoveTaskGroup implements OperationProcessor.Operation {
+public class RemoveTaskGroupOperation implements OperationProcessor.Operation {
 
     private Long id;
 
-    public RemoveTaskGroup() {
+    public RemoveTaskGroupOperation() {
     }
 
-    public RemoveTaskGroup(TaskGroup taskGroup) {
+    public RemoveTaskGroupOperation(TaskGroup taskGroup) {
         this.id = taskGroup.getId();
     }
 

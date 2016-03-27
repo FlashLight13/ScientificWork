@@ -27,13 +27,15 @@ import butterknife.Bind;
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
+import stydying.algo.com.algostudying.errors.BaseException;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
-import stydying.algo.com.algostudying.operations.GetTaskGroupsNames;
+import stydying.algo.com.algostudying.operations.GetTaskGroupsNamesOperation;
 import stydying.algo.com.algostudying.operations.OperationProcessor;
-import stydying.algo.com.algostudying.operations.RemoveTaskGroup;
+import stydying.algo.com.algostudying.operations.RemoveTaskGroupOperation;
+import stydying.algo.com.algostudying.operations.RemoveTaskOperation;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
 import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
@@ -87,7 +89,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
         placeholderView.loading();
         placeholderView.setOnRetryListener(this);
-        OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
+        OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
     }
 
     @Override
@@ -112,35 +114,45 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EditUserTasksActivity.REQUEST_CODE
                 && resultCode == Activity.RESULT_OK) {
-            OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
+            OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void removeGroup() {
         OperationProcessor.executeOperation(getContext(),
-                new RemoveTaskGroup(adapter().getTaskGroup(tasksPager.getCurrentItem())));
+                new RemoveTaskGroupOperation(adapter().getTaskGroup(tasksPager.getCurrentItem())));
     }
 
     @Override
     public void onRetry() {
         OperationProcessor.OperationsManager.get(getContext())
-                .resetDelayForOperation(GetTaskGroupsNames.class);
-        OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNames());
+                .resetDelayForOperation(GetTaskGroupsNamesOperation.class);
+        OperationProcessor.executeOperation(
+                getContext(),
+                new GetTaskGroupsNamesOperation(OperationProcessor.Operation.OperationType.NETWORK_ONLY));
     }
 
     @SuppressWarnings("unchecked")
     @Subscribe
     public void onSuccess(OperationSuccessEvent event) {
-        if (event.isOperation(GetTaskGroupsNames.class)) {
-            adapter().refill((List<TaskGroup>) event.data());
-            tabs.setupWithViewPager(tasksPager);
+        if (event.isOperation(GetTaskGroupsNamesOperation.class)) {
+            List<TaskGroup> taskGroups = event.data();
+            if (taskGroups.isEmpty()) {
+                placeholderView.error(new BaseException(BaseException.EMPTY_TASKS_TYPE));
+                tabs.setVisibility(View.GONE);
+            } else {
+                placeholderView.success();
+                tabs.setVisibility(View.VISIBLE);
+                adapter().refill(taskGroups);
+                tabs.setupWithViewPager(tasksPager);
+            }
 
-            placeholderView.success();
             supportInvalidateOptionsMenu();
             return;
         }
-        if (event.isOperation(RemoveTaskGroup.class)) {
+        if (event.isOperation(RemoveTaskGroupOperation.class)
+                || event.isOperation(RemoveTaskOperation.class)) {
             onRetry();
         }
     }
@@ -176,7 +188,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-        if (event.isOperation(GetTaskGroupsNames.class)) {
+        if (event.isOperation(GetTaskGroupsNamesOperation.class)) {
             placeholderView.error(event.error);
         }
     }

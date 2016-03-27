@@ -12,7 +12,8 @@
         <ListView
             android:id="@+id/list_users"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:divider="@null" />
     </com.baoyz.widget.PullRefreshLayout>
 
     <stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView

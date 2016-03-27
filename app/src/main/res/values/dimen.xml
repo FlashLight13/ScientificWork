@@ -55,4 +55,6 @@
 
     <dimen name="task_list_item_img_size">72dp</dimen>
     <dimen name="task_list_item_title_margin">8dp</dimen>
+
+    <dimen name="basic_list_buttons_margin">4dp</dimen>
 </resources>

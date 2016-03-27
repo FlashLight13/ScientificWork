@@ -147,9 +147,10 @@ public class Task extends BaseModel implements Parcelable {
     public void setTaskGroup(TaskGroup taskGroup) {
         if (taskGroup == null) {
             taskGroupForeignKeyContainer = null;
+        } else {
+            taskGroupForeignKeyContainer = FlowManager.getContainerAdapter(TaskGroup.class)
+                    .toForeignKeyContainer(taskGroup);
         }
-        taskGroupForeignKeyContainer = FlowManager.getContainerAdapter(TaskGroup.class)
-                .toForeignKeyContainer(taskGroup);
     }
 
     public static final Creator<Task> CREATOR = new Creator<Task>() {

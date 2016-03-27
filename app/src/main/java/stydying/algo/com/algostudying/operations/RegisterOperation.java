@@ -28,7 +28,7 @@ public class RegisterOperation implements OperationProcessor.Operation {
 
     @Override
     public Object loadFromNetwork(Context context) throws NetworkException {
-        UsersService.register(login, pass, name, type);
+        UsersService.register(login, pass, name, type).save();
         return null;
     }
 

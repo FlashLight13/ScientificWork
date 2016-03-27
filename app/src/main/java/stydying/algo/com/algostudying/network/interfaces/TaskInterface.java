@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
@@ -20,16 +21,19 @@ public interface TaskInterface {
     Call<WorldData> createTask(@Body WorldData worldData);
 
     @POST("/getTaskGroupsNames")
-    Call<List<TaskGroup>> getTaskGroupsNames();
+    Call<List<TaskGroup>> getTaskGroupsNames(@Header("Authentication") String header);
 
-    @POST("removeTaskGroup")
+    @POST("/removeTaskGroup")
     Call<Void> removeTaskGroup(@Body BaseIdRequest idRequest);
 
     @POST("/task")
     Call<Task> getTask(@Body BaseIdRequest idRequest);
 
-    @POST("updateTaskGroup")
+    @POST("/updateTaskGroup")
     Call<TaskGroup> updateTaskGroup(@Body UpdateTaskGroupData data);
+
+    @POST("/removeTask")
+    Call<Void> removeTask(BaseIdRequest baseIdRequest);
 
     final class BaseIdRequest {
         public long id;
