@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 
 import stydying.algo.com.algostudying.R;
+import stydying.algo.com.algostudying.errors.BaseException;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
@@ -89,7 +90,12 @@ public class EditingController extends GameFieldController {
     @Override
     public boolean onOptionsMenuItemClick(@NonNull MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.menu_item_create) {
-            GameFieldCreationController.getInstance(activity).setGameField(activity, gameWorld.createGameWorld());
+            try {
+                GameFieldCreationController.getInstance(activity).setGameField(activity, gameWorld.createGameWorld());
+            } catch (BaseException e) {
+                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
             EditUserTasksActivity.startMe(activity, EditUserTasksActivity.Mode.NEW, -1);
             return true;
         }

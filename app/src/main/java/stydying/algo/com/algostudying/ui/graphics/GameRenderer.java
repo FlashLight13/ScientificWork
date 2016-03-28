@@ -51,6 +51,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private GameWorld gameWorld;
     private Camera camera;
+    private FPSCounter fpsCounter = new FPSCounter();
 
     private Map<String, Integer> loadedMaterials = new HashMap<>();
 
@@ -77,6 +78,15 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         final int pointFragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, loadShader(R.raw.point_fragment_shader));
         mPointProgramHandle = createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
                 new String[]{"a_Position"});
+
+        // Set program handles for cube drawing.
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVPMatrix");
+        mMVMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVMatrix");
+        mLightPosHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_LightPos");
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_Texture");
+        mPositionHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Position");
+        mNormalHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Normal");
+        mTextureCoordinateHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_TexCoordinate");
     }
 
     @Override
@@ -102,16 +112,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
 
         GLES20.glUseProgram(mPerVertexProgramHandle);
-
-        // Set program handles for cube drawing.
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVPMatrix");
-        mMVMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVMatrix");
-        mLightPosHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_LightPos");
-        mTextureUniformHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_Texture");
-        mPositionHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Position");
-        mNormalHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Normal");
-        mTextureCoordinateHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_TexCoordinate");
-
         if (gameWorld != null) {
             Iterator<GameObject> gameObjectIterator = gameWorld.getObjectsIterator();
             GameObject gameObject;
@@ -144,6 +144,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glUseProgram(mPointProgramHandle);
         drawLight();
+        fpsCounter.logFrame();
     }
 
     private void drawFace(Model.Face face) {
@@ -180,6 +181,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
         GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, v.capacity() / 3);
+
+        GLES20.glDisableVertexAttribArray(mPositionHandle);
+        GLES20.glDisableVertexAttribArray(mNormalHandle);
+        GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
     }
 
     private void drawLight() {
@@ -276,5 +281,19 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     public void onTouch(MotionEvent motionEvent) {
         camera.onTouchEvent(motionEvent);
+    }
+
+    public class FPSCounter {
+        long startTime = System.nanoTime();
+        int frames = 0;
+
+        public void logFrame() {
+            frames++;
+            if (System.nanoTime() - startTime >= 1000000000) {
+                Log.d("DebugLogs", "fps: " + frames);
+                frames = 0;
+                startTime = System.nanoTime();
+            }
+        }
     }
 }

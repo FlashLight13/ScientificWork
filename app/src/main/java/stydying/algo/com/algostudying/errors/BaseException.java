@@ -10,6 +10,7 @@ import stydying.algo.com.algostudying.R;
 public class BaseException extends Exception {
 
     public static final String EMPTY_TASKS_TYPE = "TYPE_EMPTY_TASKS";
+    public static final String NO_PLAYER = "NO_PLAYER";
 
     protected final int DEFAULT_MESSAGE_RES = -1;
 
@@ -42,6 +43,8 @@ public class BaseException extends Exception {
         switch (type) {
             case BaseException.EMPTY_TASKS_TYPE:
                 return R.string.error_no_tasks;
+            case BaseException.NO_PLAYER:
+                return R.string.error_no_player;
             default:
                 return DEFAULT_MESSAGE_RES;
         }

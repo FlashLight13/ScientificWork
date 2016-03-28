@@ -20,19 +20,29 @@ public class GameView extends GLSurfaceView {
 
         gameRenderer = new GameRenderer(getContext());
         setRenderer(gameRenderer);
+        setRenderMode(RENDERMODE_CONTINUOUSLY);
     }
 
     @Override
-    public boolean onTouchEvent(@NonNull MotionEvent e) {
-        requestRender();
-        if (gameRenderer != null) {
-            gameRenderer.onTouch(e);
-        }
+    public boolean onTouchEvent(final @NonNull MotionEvent e) {
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                if (gameRenderer != null) {
+                    gameRenderer.onTouch(e);
+                }
+            }
+        });
         return true;
     }
 
-    public void init(GameWorld world) {
-        gameRenderer.setWorld(world);
-        requestRender();
+    public void init(final GameWorld world) {
+        queueEvent(new Runnable() {
+            @Override
+            public void run() {
+                gameRenderer.setWorld(world);
+                requestRender();
+            }
+        });
     }
 }

@@ -41,6 +41,7 @@
     <string name="error_failed_to_load_world">Не удалось загрузить мир</string>
     <string name="error_failed_to_load_task">Не удалось загрузить уровень</string>
     <string name="error_no_tasks">Список задач пуст</string>
+    <string name="error_no_player">Невозможно создать мир без игрока</string>
 
     <!-- PROFILE TAB -->
     <string name="tab_title_stats">Статистика</string>
