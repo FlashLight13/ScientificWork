@@ -46,11 +46,7 @@ public abstract class GameObject {
                 model = OBJLoader.loadTexturedModel(new File(PathsHolder.getResDir(context) + "//" + getModelName().toLowerCase() + "//model.obj"));
                 cache.put(key, model);
             }
-            model.init();
         }
-    }
-
-    public void move() {
     }
 
     public Vector3i getWorldCoordinates() {

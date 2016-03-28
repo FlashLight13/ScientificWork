@@ -1,7 +1,6 @@
 package stydying.algo.com.algostudying.ui.graphics;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
@@ -11,7 +10,10 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -24,7 +26,6 @@ import stydying.algo.com.algostudying.utils.vectors.Vector3i;
 
 public class GameRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "LessonTwoRenderer";
-    private static final int UNSET_TEXTURE_DATA_HANDLE = -1;
 
     private float[] mModelMatrix = new float[16];
     private float[] mProjectionMatrix = new float[16];
@@ -38,8 +39,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private int mNormalHandle;
 
     private int mTextureUniformHandle;
-    private int mTextureCoordinateHandle = UNSET_TEXTURE_DATA_HANDLE;
-    private int mTextureDataHandle;
+    private int mTextureCoordinateHandle;
 
     private final float[] mLightPosInModelSpace = new float[]{0.0f, 0.0f, 0.0f, 1.0f};
     private final float[] mLightPosInWorldSpace = new float[4];
@@ -52,6 +52,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private GameWorld gameWorld;
     private Camera camera;
 
+    private Map<String, Integer> loadedMaterials = new HashMap<>();
+
     public GameRenderer(Context context) {
         this.context = context;
         this.camera = new Camera(context);
@@ -62,7 +64,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 
         GLES20.glEnable(GLES20.GL_CULL_FACE);
-
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
 
         final int vertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, loadShader(R.raw.vertex_shader));
@@ -76,7 +77,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         final int pointFragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, loadShader(R.raw.point_fragment_shader));
         mPointProgramHandle = createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
                 new String[]{"a_Position"});
-        mTextureDataHandle = UNSET_TEXTURE_DATA_HANDLE;
     }
 
     @Override
@@ -135,13 +135,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
                     Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.0f, 1.0f, 0.0f);
 
-                    mTextureDataHandle = loadTexture(gameObject.getModel().getMaterials().get("Material").texture);
-
-                    GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-                    GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
-                    GLES20.glUniform1i(mTextureUniformHandle, 0);
-
-                    drawModel(gameObject.getModel());
+                    for (Model.Face face : gameObject.getModel().getFaces()) {
+                        drawFace(face);
+                    }
                 }
             }
         }
@@ -150,22 +146,29 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         drawLight();
     }
 
-    private void drawModel(Model model) {
-        if (model == null) {
+    private void drawFace(Model.Face face) {
+        if (face == null) {
             return;
         }
+        int mTextureDataHandle = loadTexture(face.getMaterial());
+
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+        FloatBuffer v = face.getVertices();
         GLES20.glVertexAttribPointer(mPositionHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, model.getVerticesBuffer());
+                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, v);
 
         GLES20.glEnableVertexAttribArray(mPositionHandle);
 
         GLES20.glVertexAttribPointer(mNormalHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, model.getNormalsBuffer());
+                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, face.getNormals());
 
         GLES20.glEnableVertexAttribArray(mNormalHandle);
 
         GLES20.glVertexAttribPointer(mTextureCoordinateHandle, Model.TEXTURE_DATA_SIZE, GLES20.GL_FLOAT, false,
-                Model.TEXTURE_DATA_SIZE * StreamUtils.BYTES_IN_FLOAT, model.getTextureBuffer());
+                Model.TEXTURE_DATA_SIZE * StreamUtils.BYTES_IN_FLOAT, face.getTextures());
 
         GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
 
@@ -176,7 +179,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
         GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, model.getVerticesBuffer().capacity() / 3);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, v.capacity() / 3);
     }
 
     private void drawLight() {
@@ -240,7 +243,10 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         return programHandle;
     }
 
-    private int loadTexture(Bitmap texture) {
+    private int loadTexture(Model.Material material) {
+        if (loadedMaterials.containsKey(material.name)) {
+            return loadedMaterials.get(material.name);
+        }
         final int[] textureHandle = new int[1];
         GLES20.glGenTextures(1, textureHandle, 0);
         if (textureHandle[0] != 0) {
@@ -250,13 +256,13 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
 
-            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, texture, 0);
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, material.texture, 0);
         }
 
         if (textureHandle[0] == 0) {
             throw new RuntimeException("Error loading texture.");
         }
-
+        loadedMaterials.put(material.name, textureHandle[0]);
         return textureHandle[0];
     }
 

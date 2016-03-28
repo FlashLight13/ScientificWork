@@ -33,7 +33,7 @@ public interface TaskInterface {
     Call<TaskGroup> updateTaskGroup(@Body UpdateTaskGroupData data);
 
     @POST("/removeTask")
-    Call<Void> removeTask(BaseIdRequest baseIdRequest);
+    Call<Void> removeTask(@Body BaseIdRequest baseIdRequest);
 
     final class BaseIdRequest {
         public long id;

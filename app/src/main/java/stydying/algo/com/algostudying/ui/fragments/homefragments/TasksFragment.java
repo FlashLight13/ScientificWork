@@ -138,7 +138,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
     public void onSuccess(OperationSuccessEvent event) {
         if (event.isOperation(GetTaskGroupsNamesOperation.class)) {
             List<TaskGroup> taskGroups = event.data();
-            if (taskGroups.isEmpty()) {
+            if (taskGroups.isEmpty() && LoginManager.getInstance(getContext()).getCurrentType() != User.Type.ADMIN) {
                 placeholderView.error(new BaseException(BaseException.EMPTY_TASKS_TYPE));
                 tabs.setVisibility(View.GONE);
             } else {

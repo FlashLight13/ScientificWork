@@ -16,7 +16,7 @@ public class OBJLoader {
     public static Model loadTexturedModel(File f) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         Model m = new Model();
-        Model.Material currentMaterial = new Model.Material();
+        Model.Material currentMaterial = m.new Material();
         String line = null;
         try {
             while ((line = reader.readLine()) != null) {
@@ -28,7 +28,7 @@ public class OBJLoader {
                     File materialFile = new File(f.getParentFile().getAbsolutePath() + "/" + materialFileName);
                     BufferedReader materialFileReader = new BufferedReader(new FileReader(materialFile));
                     String materialLine;
-                    Model.Material parseMaterial = new Model.Material();
+                    Model.Material parseMaterial = m.new Material();
                     String parseMaterialName = "";
                     while ((materialLine = materialFileReader.readLine()) != null) {
                         if (materialLine.startsWith("#")) {
@@ -36,10 +36,11 @@ public class OBJLoader {
                         }
                         if (materialLine.startsWith("newmtl ")) {
                             if (!parseMaterialName.equals("")) {
+                                parseMaterial.name = parseMaterialName;
                                 m.getMaterials().put(parseMaterialName, parseMaterial);
                             }
                             parseMaterialName = materialLine.split(" ")[1];
-                            parseMaterial = new Model.Material();
+                            parseMaterial = m.new Material();
                         } else if (materialLine.startsWith("Ns ")) {
                             parseMaterial.specularCoefficient = Float.valueOf(materialLine.split(" ")[1]);
                         } else if (materialLine.startsWith("Ka ")) {
@@ -63,6 +64,7 @@ public class OBJLoader {
                             System.err.println("[MTL] Unknown Line: " + materialLine);
                         }
                     }
+                    parseMaterial.name = parseMaterialName;
                     m.getMaterials().put(parseMaterialName, parseMaterial);
                     materialFileReader.close();
                 } else if (line.startsWith("usemtl ")) {
@@ -100,11 +102,8 @@ public class OBJLoader {
                         normalIndicesArray[1] = Integer.parseInt(faceIndices[2].split("/")[2]);
                         normalIndicesArray[2] = Integer.parseInt(faceIndices[3].split("/")[2]);
                     }
-                    m.getFaces().add(new Model.Face(vertexIndicesArray, normalIndicesArray,
+                    m.getFaces().add(m.new Face(vertexIndicesArray, normalIndicesArray,
                             textureCoordinateIndicesArray, currentMaterial));
-                } else if (line.startsWith("s ")) {
-                    boolean enableSmoothShading = !line.contains("off");
-                    m.setSmoothShadingEnabled(enableSmoothShading);
                 } else {
                     System.err.println("[OBJ] Unknown Line: " + line);
                 }
