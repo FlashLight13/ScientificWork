@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity {
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-        loginButton.setErrorText(getString(event.error.message()));
+        loginButton.setErrorText(getString(event.error.getMessageRes()));
         loginButton.setProgress(loginButton.getMinProgress() - 1);
         setInputsEnabled(true);
     }

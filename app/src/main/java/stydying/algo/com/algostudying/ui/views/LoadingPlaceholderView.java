@@ -77,7 +77,7 @@ public class LoadingPlaceholderView extends RelativeLayout {
         progressBar.setVisibility(GONE);
         setVisibility(VISIBLE);
         setClickable(true);
-        textErrorMessage.setText(e.message());
+        textErrorMessage.setText(e.getMessageRes());
     }
 
     public void loading() {

@@ -105,7 +105,7 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-        Toast.makeText(getContext(), event.error.message(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), event.error.getMessageRes(), Toast.LENGTH_SHORT).show();
         if (btnAction != null) {
             btnAction.setEnabled(true);
         }

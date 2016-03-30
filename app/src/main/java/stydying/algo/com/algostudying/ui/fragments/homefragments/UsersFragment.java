@@ -134,7 +134,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             for (int i = 0; i < listUsers.getChildCount(); i++) {
                 listUsers.getChildAt(i).setClickable(true);
             }
-            Snackbar.make(content, event.error.message(), Snackbar.LENGTH_SHORT)
+            Snackbar.make(content, event.error.getMessageRes(), Snackbar.LENGTH_SHORT)
                     .show();
         }
     }

@@ -27,7 +27,7 @@ import butterknife.Bind;
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
-import stydying.algo.com.algostudying.errors.BaseException;
+import stydying.algo.com.algostudying.errors.VerifyException;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
@@ -139,7 +139,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
         if (event.isOperation(GetTaskGroupsNamesOperation.class)) {
             List<TaskGroup> taskGroups = event.data();
             if (taskGroups.isEmpty() && LoginManager.getInstance(getContext()).getCurrentType() != User.Type.ADMIN) {
-                placeholderView.error(new BaseException(BaseException.EMPTY_TASKS_TYPE));
+                placeholderView.error(new VerifyException(VerifyException.EMPTY_TASKS_TYPE));
                 tabs.setVisibility(View.GONE);
             } else {
                 placeholderView.success();

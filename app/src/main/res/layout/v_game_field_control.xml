@@ -4,47 +4,39 @@
     android:layout_height="wrap_content"
     android:background="@color/transparent">
 
-    <FrameLayout
-        android:id="@+id/center"
-        android:layout_width="@dimen/game_field_control_button_size"
-        android:layout_height="@dimen/game_field_control_button_size"
-        android:layout_below="@+id/top"
-        android:layout_toEndOf="@+id/left"
-        android:layout_toRightOf="@+id/left" />
-
-    <FrameLayout
+    <ImageView
         android:id="@+id/left"
         android:layout_width="@dimen/game_field_control_button_size"
         android:layout_height="@dimen/game_field_control_button_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/top"
-        android:background="@color/green" />
+        android:src="@drawable/ic_move_left_48dp" />
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/top"
         android:layout_width="@dimen/game_field_control_button_size"
         android:layout_height="@dimen/game_field_control_button_size"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/left"
         android:layout_toRightOf="@+id/left"
-        android:background="@color/green" />
+        android:src="@drawable/ic_move_top_48dp" />
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/right"
         android:layout_width="@dimen/game_field_control_button_size"
         android:layout_height="@dimen/game_field_control_button_size"
-        android:layout_alignTop="@+id/center"
-        android:layout_toEndOf="@+id/center"
-        android:layout_toRightOf="@+id/center"
-        android:background="@color/green" />
+        android:src="@drawable/ic_move_right_48dp"
+        android:layout_alignTop="@+id/bottom"
+        android:layout_toRightOf="@+id/bottom"
+        android:layout_toEndOf="@+id/bottom" />
 
-    <FrameLayout
+    <ImageView
         android:id="@+id/bottom"
         android:layout_width="@dimen/game_field_control_button_size"
         android:layout_height="@dimen/game_field_control_button_size"
-        android:layout_below="@+id/center"
         android:layout_toEndOf="@+id/left"
         android:layout_toRightOf="@+id/left"
-        android:background="@color/green" />
+        android:src="@drawable/ic_move_bottom_48dp"
+        android:layout_below="@+id/top" />
 </RelativeLayout>

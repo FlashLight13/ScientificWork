@@ -11,6 +11,7 @@ import java.util.List;
 
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.errors.BaseException;
+import stydying.algo.com.algostudying.errors.VerifyException;
 import stydying.algo.com.algostudying.game.commands.Command;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
 import stydying.algo.com.algostudying.game.objects.EmptyObject;
@@ -134,7 +135,7 @@ public class GameWorld {
         return gameWorldEditor;
     }
 
-    public static final class GameWorldEditor implements
+    public final class GameWorldEditor implements
             ControlListener, HeightControlListener, GameObjectSelectListener {
 
         private GameObject[][][] map;
@@ -210,6 +211,9 @@ public class GameWorld {
         }
 
         public void setObjectToSelectedPosition(@NonNull GameObject object) {
+            if (object instanceof Player) {
+                player = (Player) object;
+            }
             int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
             Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
             object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
@@ -217,9 +221,9 @@ public class GameWorld {
         }
     }
 
-    public String[][][] createGameWorld() throws BaseException {
+    public String[][][] createGameWorld() throws VerifyException {
         if (player == null) {
-            throw new BaseException(BaseException.NO_PLAYER);
+            throw new VerifyException(VerifyException.NO_PLAYER);
         }
         String[][][] result = new String[worldX][worldY][worldZ];
         for (int i = 0; i < worldX; i++) {

@@ -22,7 +22,7 @@ public class NetworkException extends BaseException {
     }
 
     @Override
-    protected int getMessageRes() {
+    public int getMessageRes() {
         switch (type) {
             case "SUCH_USER_ALREADY_EXISTS":
                 return R.string.error_user_exists;
@@ -33,7 +33,7 @@ public class NetworkException extends BaseException {
             case FAILED_TO_CONNECT_TYPE:
                 return R.string.error_failed_to_connect;
         }
-        return DEFAULT_MESSAGE_RES;
+        return super.getMessageRes();
     }
 
     public static NetworkException failedToConnect() {

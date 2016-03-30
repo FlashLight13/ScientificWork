@@ -8,11 +8,7 @@ import stydying.algo.com.algostudying.R;
  * Created by Anton on 04.02.2016.
  */
 public class BaseException extends Exception {
-
-    public static final String EMPTY_TASKS_TYPE = "TYPE_EMPTY_TASKS";
-    public static final String NO_PLAYER = "NO_PLAYER";
-
-    protected final int DEFAULT_MESSAGE_RES = -1;
+    protected final int DEFAULT_MESSAGE_RES = R.string.error_unknown;
 
     protected String type;
 
@@ -30,23 +26,7 @@ public class BaseException extends Exception {
     }
 
     @StringRes
-    public int message() {
-        int messageRes = getMessageRes();
-        if (messageRes != DEFAULT_MESSAGE_RES) {
-            return messageRes;
-        }
-        return R.string.error_unknown;
-    }
-
-    @StringRes
-    protected int getMessageRes() {
-        switch (type) {
-            case BaseException.EMPTY_TASKS_TYPE:
-                return R.string.error_no_tasks;
-            case BaseException.NO_PLAYER:
-                return R.string.error_no_player;
-            default:
-                return DEFAULT_MESSAGE_RES;
-        }
+    public int getMessageRes() {
+        return DEFAULT_MESSAGE_RES;
     }
 }

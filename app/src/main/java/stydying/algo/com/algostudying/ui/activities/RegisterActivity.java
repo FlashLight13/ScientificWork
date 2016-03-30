@@ -99,7 +99,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Subscribe
     public void onError(OperationErrorEvent event) {
-        Snackbar.make(coordinatorLayout, event.error.message(), Snackbar.LENGTH_SHORT)
+        Snackbar.make(coordinatorLayout, event.error.getMessageRes(), Snackbar.LENGTH_SHORT)
                 .setCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar snackbar, int event) {
