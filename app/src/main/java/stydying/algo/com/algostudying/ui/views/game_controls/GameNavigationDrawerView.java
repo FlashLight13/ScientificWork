@@ -39,13 +39,13 @@ public class GameNavigationDrawerView extends FrameLayout {
     private static final int NAVIGATION_MAX_PERMITTED_WIDTH_CHILDS = 2;
 
     @Bind(R.id.current_commands)
-    RecyclerView availableCommandsView;
+    protected RecyclerView availableCommandsView;
     @Bind(R.id.bottom_divider)
-    View bottomDivider;
+    protected View bottomDivider;
     @Bind(R.id.commands_container)
-    LinearLayout commandsContainer;
+    protected LinearLayout commandsContainer;
     @Bind(R.id.commands_scroll)
-    HorizontalScrollView commandsScroll;
+    protected HorizontalScrollView commandsScroll;
 
     private CommandsAdapter availableCommandsAdapter;
 
@@ -210,7 +210,8 @@ public class GameNavigationDrawerView extends FrameLayout {
         return ((CommandsAdapter) ((RecyclerView) commandsContainer.getChildAt(0)).getAdapter()).commands;
     }
 
-    private static class CommandsAdapter extends RecyclerView.Adapter<CommandsAdapter.ViewHolder> {
+    private static class CommandsAdapter extends RecyclerView.Adapter<CommandsAdapter.ViewHolder>
+            implements CommandView.OnRemoveListener {
         private List<Command> commands;
         private Context context;
         private boolean isFullCommands;
@@ -267,7 +268,7 @@ public class GameNavigationDrawerView extends FrameLayout {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.commandView.setTag(R.integer.position_key, position);
-            holder.commandView.setData(commands.get(position));
+            holder.commandView.setData(commands.get(position), position).setOnRemoveListener(this);
             holder.commandView.setSelected(position == selectedItemIndex);
         }
 
@@ -288,6 +289,12 @@ public class GameNavigationDrawerView extends FrameLayout {
 
         public void clearSelection() {
             this.selectedItemIndex = -1;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public void onRemove(int position) {
+            commands.remove(position);
             notifyDataSetChanged();
         }
 

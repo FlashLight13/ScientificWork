@@ -1,6 +1,7 @@
 package stydying.algo.com.algostudying.game;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -88,7 +89,6 @@ public class GameWorld {
             private int indexX = 0;
             private int indexY = 0;
             private int indexZ = 0;
-
 
             @Override
             public boolean hasNext() {
@@ -209,13 +209,11 @@ public class GameWorld {
             map[selectedPosition.x][selectedPosition.y][topPosition] = top;
         }
 
-        public void setObjectToSelectedPosition(@Nullable GameObject object) {
-            if (object != null) {
-                int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
-                Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
-                object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
-                map[selectedPosition.x][selectedPosition.y][top + 1] = object;
-            }
+        public void setObjectToSelectedPosition(@NonNull GameObject object) {
+            int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
+            Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
+            object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
+            map[selectedPosition.x][selectedPosition.y][top + 1] = object;
         }
     }
 

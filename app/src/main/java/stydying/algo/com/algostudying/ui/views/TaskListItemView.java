@@ -79,12 +79,12 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
         switch (v.getId()) {
             case R.id.ic_edit:
                 if (onEditTaskListenerListener != null) {
-                    onEditTaskListenerListener.onEditTaskClicked((int) getTag());
+                    onEditTaskListenerListener.onEditTaskClicked((int) getTag(R.integer.position_key));
                 }
                 break;
             case R.id.ic_remove:
                 if (onRemoveTaskListener != null) {
-                    onRemoveTaskListener.onRemoveTaskClicked((int) getTag());
+                    onRemoveTaskListener.onRemoveTaskClicked((int) getTag(R.integer.position_key));
                 }
                 break;
         }
@@ -100,11 +100,12 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
         return this;
     }
 
-    public TaskListItemView setTask(Task task) {
+    public TaskListItemView setTask(Task task, int position) {
         this.textTitle.setText(task.getTitle());
         this.textDescription.setText(task.getDescription());
         // todo implement task image
         img.setVisibility(GONE);
+        setTag(R.integer.position_key, position);
         return this;
     }
 }

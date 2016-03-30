@@ -274,7 +274,7 @@ public class EditUserTasksActivity extends BaseActivity {
             }
 
             UserData userData = getItem(position);
-            view.setTag(position);
+            view.setTag(R.integer.position_key, position);
             view.setChecked(userData.isSelected);
             view.setText(userData.user.getName());
 
@@ -283,7 +283,7 @@ public class EditUserTasksActivity extends BaseActivity {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            int position = (Integer) buttonView.getTag();
+            int position = (Integer) buttonView.getTag(R.integer.position_key);
             getItem(position).isSelected = isChecked;
         }
 

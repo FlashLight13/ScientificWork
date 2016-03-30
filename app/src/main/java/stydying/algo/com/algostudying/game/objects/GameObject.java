@@ -2,6 +2,7 @@ package stydying.algo.com.algostudying.game.objects;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -34,6 +35,13 @@ public abstract class GameObject {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public GameObject(GameObject object) {
+        this.x = object.x;
+        this.y = object.y;
+        this.z = object.z;
+        this.angle = object.angle;
     }
 
     public void initDrawing(Context context) throws IOException {
@@ -95,4 +103,9 @@ public abstract class GameObject {
         isSelected = selected;
         return this;
     }
+
+    public abstract GameObject cloneObject();
+
+    @StringRes
+    public abstract int getDescription();
 }

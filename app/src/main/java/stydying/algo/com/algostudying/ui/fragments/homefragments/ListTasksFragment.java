@@ -159,8 +159,7 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
             if (view == null) {
                 view = new TaskListItemView(parent.getContext());
             }
-            view.setTag(position);
-            view.setTask(getItem(position))
+            view.setTask(getItem(position), position)
                     .setOnEditTaskListenerListener(onEditTaskListenerListener)
                     .setOnRemoveTaskListener(onRemoveTaskListener);
             return view;

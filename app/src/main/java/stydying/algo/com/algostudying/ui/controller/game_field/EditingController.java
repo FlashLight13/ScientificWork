@@ -21,7 +21,9 @@ import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
+import stydying.algo.com.algostudying.game.objects.EmptyObject;
 import stydying.algo.com.algostudying.game.objects.Player;
+import stydying.algo.com.algostudying.game.objects.Sphere;
 import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
@@ -73,12 +75,13 @@ public class EditingController extends GameFieldController {
     @Override
     public View getNavigationDrawerView(@Nullable GameWorld gameWorld) {
         GameObjectsListView gameObjectsListView = new GameObjectsListView(activity);
-        gameObjectsListView.setControlListener(gameWorld == null
-                ? null
-                : gameWorld.getGameWorldEditor());
-        gameObjectsListView.setPossibleObjects(new Class[]{CubeBlock.class, Player.class});
-        gameObjectsListView.setLayoutParams(new DrawerLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START));
+        gameObjectsListView
+                .setControlListener(gameWorld == null ? null : gameWorld.getGameWorldEditor())
+                .setPossibleObjects(new CubeBlock(), new EmptyObject(), new Player(), new Sphere())
+                .setLayoutParams(new DrawerLayout.LayoutParams(
+                        activity.getResources().getDimensionPixelSize(R.dimen.navigation_drawer_width),
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        Gravity.START));
         return gameObjectsListView;
     }
 

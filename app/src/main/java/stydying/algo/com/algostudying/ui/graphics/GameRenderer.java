@@ -111,8 +111,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         long time = SystemClock.uptimeMillis() % 10000L;
         float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
 
-        GLES20.glUseProgram(mPerVertexProgramHandle);
         if (gameWorld != null) {
+            GLES20.glUseProgram(mPerVertexProgramHandle);
             Iterator<GameObject> gameObjectIterator = gameWorld.getObjectsIterator();
             GameObject gameObject;
             Vector3i coordinates;
@@ -133,17 +133,18 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
                     Matrix.setIdentityM(mModelMatrix, 0);
                     Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
-                    Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.0f, 1.0f, 0.0f);
-
+                    //Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.0f, 1.0f, 0.0f);
                     for (Model.Face face : gameObject.getModel().getFaces()) {
                         drawFace(face);
                     }
+
                 }
             }
         }
 
         GLES20.glUseProgram(mPointProgramHandle);
         drawLight();
+        GLES20.glFlush();
         fpsCounter.logFrame();
     }
 

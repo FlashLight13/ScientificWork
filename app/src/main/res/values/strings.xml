@@ -16,6 +16,11 @@
     <string name="cycle_command">Брок команд</string>
     <string name="cycle_command_desc">Представляет собой блок команд</string>
 
+    <string name="player_obj_title">Игрок</string>
+    <string name="cube_obj_title">Куб</string>
+    <string name="sphere_obj_title">Сфера</string>
+    <string name="empty_obj_title">Пустой блок</string>
+
     <string name="drawer_open">OPEN</string>
     <string name="drawer_close">CLOSE</string>
 

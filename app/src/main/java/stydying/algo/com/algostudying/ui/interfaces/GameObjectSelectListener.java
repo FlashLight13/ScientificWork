@@ -1,5 +1,6 @@
 package stydying.algo.com.algostudying.ui.interfaces;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import stydying.algo.com.algostudying.game.objects.GameObject;
@@ -9,5 +10,5 @@ import stydying.algo.com.algostudying.game.objects.GameObject;
  */
 public interface GameObjectSelectListener {
 
-    void setObjectToSelectedPosition(@Nullable GameObject object);
+    void setObjectToSelectedPosition(@NonNull GameObject object);
 }

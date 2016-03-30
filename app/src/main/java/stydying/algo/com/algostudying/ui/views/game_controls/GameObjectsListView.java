@@ -3,9 +3,9 @@ package stydying.algo.com.algostudying.ui.views.game_controls;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,53 +26,41 @@ public class GameObjectsListView extends ListView {
 
     public GameObjectsListView(Context context) {
         super(context);
-        init(context);
+        init();
     }
 
     public GameObjectsListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init();
     }
 
     public GameObjectsListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init();
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public GameObjectsListView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
+        init();
     }
 
-    private void init(Context context) {
-        setAdapter(new ObjectsAdapter(context));
+    private void init() {
+        setAdapter(new ObjectsAdapter());
         setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (listener != null) {
                     ObjectsAdapter adapter = (ObjectsAdapter) getAdapter();
-                    listener.setObjectToSelectedPosition(createNewObject(adapter.getItem(position)));
+                    listener.setObjectToSelectedPosition(adapter.getItem(position).cloneObject());
                 }
             }
         });
     }
 
-    @Nullable
-    private GameObject createNewObject(@Nullable Class<? extends GameObject> objectClass) {
-        try {
-            if (objectClass != null) {
-                return objectClass.newInstance();
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public void setPossibleObjects(Class<? extends GameObject>[] gameObjectsClasses) {
+    public GameObjectsListView setPossibleObjects(GameObject... gameObjectsClasses) {
         ((ObjectsAdapter) getAdapter()).setGameObjects(gameObjectsClasses);
+        return this;
     }
 
     public GameObjectsListView setControlListener(GameObjectSelectListener listener) {
@@ -81,14 +69,9 @@ public class GameObjectsListView extends ListView {
     }
 
     private static final class ObjectsAdapter extends BaseAdapter {
-        private Context context;
-        private Class<? extends GameObject>[] gameObjects = null;
+        private GameObject[] gameObjects;
 
-        public ObjectsAdapter(Context context) {
-            this.context = context;
-        }
-
-        public ObjectsAdapter setGameObjects(Class<? extends GameObject>[] gameObjects) {
+        public ObjectsAdapter setGameObjects(GameObject... gameObjects) {
             this.gameObjects = gameObjects;
             notifyDataSetChanged();
             return this;
@@ -99,10 +82,10 @@ public class GameObjectsListView extends ListView {
             return gameObjects == null ? 0 : gameObjects.length;
         }
 
-        @Nullable
+        @NonNull
         @Override
-        public Class<? extends GameObject> getItem(int position) {
-            return gameObjects == null ? null : gameObjects[position];
+        public GameObject getItem(int position) {
+            return gameObjects[position];
         }
 
         @Override
@@ -114,12 +97,9 @@ public class GameObjectsListView extends ListView {
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView view = (TextView) convertView;
             if (view == null) {
-                view = new TextView(context);
-                view.setTextColor(ContextCompat.getColor(context, R.color.white));
+                view = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.v_game_objects_list_item, parent, false);
             }
-            Class gameObject = getItem(position);
-            String title = gameObject != null ? gameObject.toString() : "";
-            view.setText(title);
+            view.setText(getItem(position).getDescription());
             return view;
         }
     }

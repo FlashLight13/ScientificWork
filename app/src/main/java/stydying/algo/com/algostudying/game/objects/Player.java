@@ -1,5 +1,7 @@
 package stydying.algo.com.algostudying.game.objects;
 
+import stydying.algo.com.algostudying.R;
+
 /**
  * Created by anton on 27.06.15.
  */
@@ -16,6 +18,11 @@ public class Player extends GameObject {
     private int lookDirection;
 
     public Player() {
+    }
+
+    public Player(GameObject object) {
+        super(object);
+        this.lookDirection = ((Player) object).lookDirection;
     }
 
     public Player(int x, int y, int z) {
@@ -45,6 +52,15 @@ public class Player extends GameObject {
     @Override
     protected String getModelName() {
         return ModelNames.PLAYER;
-        //return null;
+    }
+
+    @Override
+    public GameObject cloneObject() {
+        return new Player(this);
+    }
+
+    @Override
+    public int getDescription() {
+        return R.string.player_obj_title;
     }
 }
