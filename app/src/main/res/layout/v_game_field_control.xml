@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/top"
-        android:src="@drawable/ic_move_left_48dp" />
+        android:src="@drawable/ic_move_left_selector" />
 
     <ImageView
         android:id="@+id/top"
@@ -20,13 +20,13 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/left"
         android:layout_toRightOf="@+id/left"
-        android:src="@drawable/ic_move_top_48dp" />
+        android:src="@drawable/ic_move_top_selector" />
 
     <ImageView
         android:id="@+id/right"
         android:layout_width="@dimen/game_field_control_button_size"
         android:layout_height="@dimen/game_field_control_button_size"
-        android:src="@drawable/ic_move_right_48dp"
+        android:src="@drawable/ic_move_right_selector"
         android:layout_alignTop="@+id/bottom"
         android:layout_toRightOf="@+id/bottom"
         android:layout_toEndOf="@+id/bottom" />
@@ -37,6 +37,6 @@
         android:layout_height="@dimen/game_field_control_button_size"
         android:layout_toEndOf="@+id/left"
         android:layout_toRightOf="@+id/left"
-        android:src="@drawable/ic_move_bottom_48dp"
+        android:src="@drawable/ic_move_bottom_selector"
         android:layout_below="@+id/top" />
 </RelativeLayout>

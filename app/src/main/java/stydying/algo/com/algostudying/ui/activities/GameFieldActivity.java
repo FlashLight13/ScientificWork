@@ -154,6 +154,8 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
                 return mGLView.onTouchEvent(event);
             }
         });
+        int padding = getResources().getDimensionPixelSize(R.dimen.content_margins);
+        glassView.setPadding(padding, padding, padding, padding);
     }
 
     @Override
