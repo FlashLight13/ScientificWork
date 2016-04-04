@@ -47,8 +47,10 @@ public class EditingController extends GameFieldController {
     @Override
     public void onLoadFinished(Loader<GameWorld> loader, GameWorld data) {
         super.onLoadFinished(loader, data);
-        gameFieldSelectControl.setControlListener(data.getGameWorldEditor());
-        gameFieldCellsHeightControl.setControlListener(data.getGameWorldEditor());
+        if (data != null) {
+            gameFieldSelectControl.setControlListener(data.getGameWorldEditor());
+            gameFieldCellsHeightControl.setControlListener(data.getGameWorldEditor());
+        }
     }
 
     @Override
