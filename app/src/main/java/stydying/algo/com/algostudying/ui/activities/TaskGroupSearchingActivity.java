@@ -40,7 +40,7 @@ public class TaskGroupSearchingActivity extends BaseActivity {
 
     public static final String TASK_GROUP_EXTRA
             = "stydying.algo.com.algostudying.ui.activities.TaskGroupSearchingActivity.TASK_GROUP_EXTRA";
-    public static final int REQUEST_CODE = 1313;
+    public static final int REQUEST_CODE = 1319;
 
     @Bind(R.id.list)
     ListView listView;
