@@ -28,7 +28,7 @@
     <string name="home_tab_profile">Профиль</string>
     <string name="home_tab_about">Справка</string>
     <string name="home_tab_settings">Настройки</string>
-    <string name="home_tab_users">Пользователи</string>
+    <string name="home_tab_students">Ученики</string>
     <string name="home_tab_logout">Выход</string>
     <string name="create_task_tab_title">Создание уровня</string>
 

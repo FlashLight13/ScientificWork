@@ -59,7 +59,7 @@ public class HomeActivity extends NavigationDrawerActivity {
             TASKS(TasksFragment.class, null, R.string.home_tab_task, R.drawable.ic_content_paste_black_24dp, true),
             STATS(ProfileFragment.class, null, R.string.home_tab_profile, R.drawable.ic_person_outline_black_24dp, true),
             ABOUT(AboutFragment.class, null, R.string.home_tab_about, R.drawable.ic_help_outline_black_24dp, true),
-            USERS(UsersFragment.class, null, R.string.home_tab_users, R.drawable.ic_people_outline_black_24dp, true),
+            SRUDENTS(UsersFragment.class, null, R.string.home_tab_students, R.drawable.ic_people_outline_black_24dp, true),
             SETTINGS(SettingsFragment.class, null, R.string.home_tab_settings, false),
             LOGOUT(null, LOGOUT_TASK, R.string.home_tab_logout, false);
 
