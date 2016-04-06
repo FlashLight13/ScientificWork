@@ -124,8 +124,8 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 coordinates = gameObject.getCoordinates();
                 if (gameObject.getModel() != null) {
                     Matrix.setIdentityM(mLightModelMatrix, 0);
-                    Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, -5.0f);
-                    Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
+                    Matrix.translateM(mLightModelMatrix, 0, 0.0f, 100.0f, 0.0f);
+                    //Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
                     Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
 
                     Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
