@@ -31,47 +31,51 @@ public class RotationGestureDetector {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                ptrID1 = event.getPointerId(event.getActionIndex());
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                ptrID2 = event.getPointerId(event.getActionIndex());
-                if (ptrID2 != INVALID_POINTER_ID && ptrID1 != INVALID_POINTER_ID) {
-                    sX = event.getX(event.findPointerIndex(ptrID1));
-                    sY = event.getY(event.findPointerIndex(ptrID1));
-                    fX = event.getX(event.findPointerIndex(ptrID2));
-                    fY = event.getY(event.findPointerIndex(ptrID2));
-                }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                if (ptrID1 != INVALID_POINTER_ID && ptrID2 != INVALID_POINTER_ID) {
-                    float nfX, nfY, nsX, nsY;
-                    nsX = event.getX(event.findPointerIndex(ptrID1));
-                    nsY = event.getY(event.findPointerIndex(ptrID1));
-                    nfX = event.getX(event.findPointerIndex(ptrID2));
-                    nfY = event.getY(event.findPointerIndex(ptrID2));
-
-                    mAngle += angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY)
-                            / rotationSensitiveLevel;
-                    mAngle = mAngle % 360;
-
-                    if (mListener != null) {
-                        mListener.OnRotation(this);
-                        return true;
+        try {
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    ptrID1 = event.getPointerId(event.getActionIndex());
+                    break;
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    ptrID2 = event.getPointerId(event.getActionIndex());
+                    if (ptrID2 != INVALID_POINTER_ID && ptrID1 != INVALID_POINTER_ID) {
+                        sX = event.getX(event.findPointerIndex(ptrID1));
+                        sY = event.getY(event.findPointerIndex(ptrID1));
+                        fX = event.getX(event.findPointerIndex(ptrID2));
+                        fY = event.getY(event.findPointerIndex(ptrID2));
                     }
-                }
-                break;
-            case MotionEvent.ACTION_UP:
-                ptrID1 = INVALID_POINTER_ID;
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-                ptrID2 = INVALID_POINTER_ID;
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                ptrID1 = INVALID_POINTER_ID;
-                ptrID2 = INVALID_POINTER_ID;
-                break;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    if (ptrID1 != INVALID_POINTER_ID && ptrID2 != INVALID_POINTER_ID) {
+                        float nfX, nfY, nsX, nsY;
+                        nsX = event.getX(event.findPointerIndex(ptrID1));
+                        nsY = event.getY(event.findPointerIndex(ptrID1));
+                        nfX = event.getX(event.findPointerIndex(ptrID2));
+                        nfY = event.getY(event.findPointerIndex(ptrID2));
+
+                        mAngle += angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY)
+                                / rotationSensitiveLevel;
+                        mAngle = mAngle % 360;
+
+                        if (mListener != null) {
+                            mListener.OnRotation(this);
+                            return true;
+                        }
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    ptrID1 = INVALID_POINTER_ID;
+                    break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    ptrID2 = INVALID_POINTER_ID;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    ptrID1 = INVALID_POINTER_ID;
+                    ptrID2 = INVALID_POINTER_ID;
+                    break;
+            }
+        } catch (Exception e) {
+            // silently catch exception
         }
         return false;
     }

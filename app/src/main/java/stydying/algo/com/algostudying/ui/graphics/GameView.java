@@ -20,7 +20,6 @@ public class GameView extends GLSurfaceView {
 
         gameRenderer = new GameRenderer(getContext());
         setRenderer(gameRenderer);
-        setRenderMode(RENDERMODE_CONTINUOUSLY);
     }
 
     @Override

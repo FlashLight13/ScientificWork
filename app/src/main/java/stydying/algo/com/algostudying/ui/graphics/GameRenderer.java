@@ -10,7 +10,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,7 +50,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private Context context;
     private GameWorld gameWorld;
     private Camera camera;
-    private FPSCounter fpsCounter = new FPSCounter();
 
     private Map<String, Integer> loadedMaterials = new HashMap<>();
 
@@ -123,69 +121,62 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                 }
                 coordinates = gameObject.getCoordinates();
                 if (gameObject.getModel() != null) {
-                    Matrix.setIdentityM(mLightModelMatrix, 0);
-                    Matrix.translateM(mLightModelMatrix, 0, 0.0f, 100.0f, 0.0f);
-                    //Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
-                    Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
+                    gameObject.getModel().initDrawings();
+                    for (Model.DrawingBlock block : gameObject.getModel().getDrawingBlocks()) {
+                        Matrix.setIdentityM(mLightModelMatrix, 0);
+                        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 100.0f, 0.0f);
+                        //Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
+                        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
 
-                    Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
-                    Matrix.multiplyMV(mLightPosInEyeSpace, 0, camera.mViewMatrix(), 0, mLightPosInWorldSpace, 0);
+                        Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
+                        Matrix.multiplyMV(mLightPosInEyeSpace, 0, camera.mViewMatrix(), 0, mLightPosInWorldSpace, 0);
 
-                    Matrix.setIdentityM(mModelMatrix, 0);
-                    Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
-                    //Matrix.rotateM(mModelMatrix, 0, 0.5f, 0.0f, 1.0f, 0.0f);
-                    for (Model.Face face : gameObject.getModel().getFaces()) {
-                        drawFace(face);
+                        Matrix.setIdentityM(mModelMatrix, 0);
+                        Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
+                        int mTextureDataHandle = loadTexture(block.getMaterial());
+                        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+                        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
+                        GLES20.glUniform1i(mTextureUniformHandle, 0);
+
+                        final int[] buffers = block.getBuffers();
+
+                        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[Model.VERTICIES_BUFFER]);
+                        GLES20.glEnableVertexAttribArray(mPositionHandle);
+                        GLES20.glVertexAttribPointer(mPositionHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
+                                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, 0);
+
+                        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[Model.NORMALS_BUFFER]);
+                        GLES20.glEnableVertexAttribArray(mNormalHandle);
+                        GLES20.glVertexAttribPointer(mNormalHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
+                                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, 0);
+
+                        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, buffers[Model.TEXTURES_BUFFER]);
+                        GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
+                        GLES20.glVertexAttribPointer(mTextureCoordinateHandle, Model.TEXTURE_DATA_SIZE, GLES20.GL_FLOAT, false,
+                                Model.TEXTURE_DATA_SIZE * StreamUtils.BYTES_IN_FLOAT, 0);
+
+                        Matrix.multiplyMM(mMVPMatrix, 0, camera.mViewMatrix(), 0, mModelMatrix, 0);
+                        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVPMatrix, 0);
+
+                        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
+                        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+
+                        GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
+                        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, block.getVertexesCount());
+
+                        // Free resources
+                        GLES20.glDisableVertexAttribArray(mPositionHandle);
+                        GLES20.glDisableVertexAttribArray(mNormalHandle);
+                        GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
+                        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
+                        GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
                     }
-
                 }
             }
         }
 
         GLES20.glUseProgram(mPointProgramHandle);
         drawLight();
-        GLES20.glFlush();
-        fpsCounter.logFrame();
-    }
-
-    private void drawFace(Model.Face face) {
-        if (face == null) {
-            return;
-        }
-        int mTextureDataHandle = loadTexture(face.getMaterial());
-
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
-        GLES20.glUniform1i(mTextureUniformHandle, 0);
-
-        FloatBuffer v = face.getVertices();
-        GLES20.glVertexAttribPointer(mPositionHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, v);
-
-        GLES20.glEnableVertexAttribArray(mPositionHandle);
-
-        GLES20.glVertexAttribPointer(mNormalHandle, Model.COORDS_PER_VERTEX, GLES20.GL_FLOAT, false,
-                Model.COORDS_PER_VERTEX * StreamUtils.BYTES_IN_FLOAT, face.getNormals());
-
-        GLES20.glEnableVertexAttribArray(mNormalHandle);
-
-        GLES20.glVertexAttribPointer(mTextureCoordinateHandle, Model.TEXTURE_DATA_SIZE, GLES20.GL_FLOAT, false,
-                Model.TEXTURE_DATA_SIZE * StreamUtils.BYTES_IN_FLOAT, face.getTextures());
-
-        GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
-
-        Matrix.multiplyMM(mMVPMatrix, 0, camera.mViewMatrix(), 0, mModelMatrix, 0);
-        GLES20.glUniformMatrix4fv(mMVMatrixHandle, 1, false, mMVPMatrix, 0);
-
-        Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
-        GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
-
-        GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, v.capacity() / 3);
-
-        GLES20.glDisableVertexAttribArray(mPositionHandle);
-        GLES20.glDisableVertexAttribArray(mNormalHandle);
-        GLES20.glDisableVertexAttribArray(mTextureCoordinateHandle);
     }
 
     private void drawLight() {
@@ -282,19 +273,5 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     public void onTouch(MotionEvent motionEvent) {
         camera.onTouchEvent(motionEvent);
-    }
-
-    public class FPSCounter {
-        long startTime = System.nanoTime();
-        int frames = 0;
-
-        public void logFrame() {
-            frames++;
-            if (System.nanoTime() - startTime >= 1000000000) {
-                Log.d("DebugLogs", "fps: " + frames);
-                frames = 0;
-                startTime = System.nanoTime();
-            }
-        }
     }
 }
