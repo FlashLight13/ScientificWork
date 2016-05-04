@@ -56,4 +56,33 @@
     <style name="FloatingActionButtonListFooter">
         <item name="android:minHeight">@dimen/bottom_fab_footer</item>
     </style>
+
+    <style name="Table">
+        <item name="android:paddingLeft">@dimen/table_sides_paddings</item>
+        <item name="android:paddingRight">@dimen/table_sides_paddings</item>
+        <item name="android:paddingStart" app:targetApi="17">@dimen/table_sides_paddings</item>
+        <item name="android:paddingEnd" app:targetApi="17">@dimen/table_sides_paddings</item>
+    </style>
+
+    <style name="TableHeader">
+        <item name="android:minHeight">@dimen/table_header_height</item>
+    </style>
+
+    <style name="TableRow">
+        <item name="android:minHeight">@dimen/table_row_height</item>
+    </style>
+
+    <style name="TableHeaderText">
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">@dimen/table_column_padding</item>
+        <item name="android:paddingStart" app:targetApi="17">@dimen/table_column_padding</item>
+    </style>
+
+    <style name="TableRowText">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
 </resources>

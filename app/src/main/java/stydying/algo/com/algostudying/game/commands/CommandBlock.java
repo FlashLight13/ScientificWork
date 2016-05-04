@@ -25,10 +25,13 @@ public class CommandBlock extends Command {
         }
     }
 
-    public void perform(GameWorld gameWorld, Player player) {
+    public boolean perform(GameWorld gameWorld) {
         for (Command currentCommand : commands) {
-            currentCommand.perform(gameWorld, player);
+            if (!currentCommand.perform(gameWorld)) {
+                return false;
+            }
         }
+        return true;
     }
 
     public void addCommand(Command command) {

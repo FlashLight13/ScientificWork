@@ -47,6 +47,9 @@
     <string name="error_failed_to_load_task">Не удалось загрузить уровень</string>
     <string name="error_no_tasks">Список задач пуст</string>
     <string name="error_no_player">Невозможно создать мир без игрока</string>
+    <string name="error_no_spheres">Невозможно создать мир без сфер</string>
+    <string name="error_not_all_spheres_are_collected">Собраны не все сферы!</string>
+    <string name="error_cant_move_there">Выполнение алгоритма привело к ошибке</string>
 
     <!-- PROFILE TAB -->
     <string name="tab_title_stats">Статистика</string>
@@ -90,4 +93,11 @@
     <string name="header_teachers">Учителя</string>
 
     <string name="tab_login">Логин: %s</string>
+
+    <string name="stats_task_group">Группа</string>
+    <string name="stats_task_name">Название</string>
+    <string name="stats_task_average_time">Среднее время</string>
+    <string name="stats_task_tries_count">Количество попыток</string>
+    <string name="stats_task_commands_count">Количество команд в алгоритме</string>
+    <string name="stats_empty">Чтобы получить статистику выполните хотя бы одно задание</string>
 </resources>

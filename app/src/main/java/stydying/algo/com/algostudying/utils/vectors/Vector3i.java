@@ -11,6 +11,12 @@ public class Vector3i implements Serializable {
     public int y;
     public int z;
 
+    public Vector3i(Vector3i vector3i) {
+        this.x = vector3i.x;
+        this.y = vector3i.y;
+        this.z = vector3i.z;
+    }
+
     public Vector3i(int x, int y, int z) {
         this.x = x;
         this.y = y;

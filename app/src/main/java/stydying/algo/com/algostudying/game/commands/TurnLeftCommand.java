@@ -20,8 +20,9 @@ public class TurnLeftCommand extends Command {
     }
 
     @Override
-    public void perform(GameWorld gameWorld, Player player) {
-        player.turnToTheLeft();
+    public boolean perform(GameWorld gameWorld) {
+        gameWorld.getPlayer().turnToTheLeft();
+        return true;
     }
 
     @Override

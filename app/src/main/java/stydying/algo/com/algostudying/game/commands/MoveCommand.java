@@ -2,7 +2,9 @@ package stydying.algo.com.algostudying.game.commands;
 
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.game.GameWorld;
+import stydying.algo.com.algostudying.game.objects.EmptyObject;
 import stydying.algo.com.algostudying.game.objects.Player;
+import stydying.algo.com.algostudying.game.objects.Sphere;
 import stydying.algo.com.algostudying.utils.vectors.Vector3i;
 
 /**
@@ -19,7 +21,8 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public void perform(GameWorld gameWorld, Player player) {
+    public boolean perform(GameWorld gameWorld) {
+        final Player player = gameWorld.getPlayer();
         Vector3i coordinates = player.getWorldCoordinates();
         int newX = coordinates.x;
         int newY = coordinates.y;
@@ -39,7 +42,14 @@ public class MoveCommand extends Command {
             default:
                 throw new IllegalStateException();
         }
-        player.setWorldCoordinates(newX, newY);
+        if (gameWorld.isInWorldBounds(newX, newY)
+                && (gameWorld.get(newX, newY, coordinates.z) instanceof EmptyObject
+                || gameWorld.get(newX, newY, coordinates.z) instanceof Sphere)) {
+            player.setWorldCoordinates(newX, newY);
+            gameWorld.tryConsumeSphere(newX, newY, coordinates.z);
+            return true;
+        }
+        return false;
     }
 
     @Override

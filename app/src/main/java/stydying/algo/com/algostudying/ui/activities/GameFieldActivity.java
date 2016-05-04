@@ -176,6 +176,7 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
     protected void onDestroy() {
         drawerLayout.removeDrawerListener(drawerToggle);
         getSupportLoaderManager().destroyLoader(Loaders.GAME_WORLD_LOADER);
+        mGLView.release();
         super.onDestroy();
     }
 

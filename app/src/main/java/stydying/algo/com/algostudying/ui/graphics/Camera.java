@@ -6,42 +6,26 @@ import android.opengl.Matrix;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.WindowManager;
 
 import stydying.algo.com.algostudying.ui.RotationGestureDetector;
+
+import static java.lang.Math.*;
 
 /**
  * Created by Anton on 10.02.2016.
  */
 public class Camera {
 
-    private final GestureDetector.SimpleOnGestureListener scrollListener = new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            eyeX += (distanceX / SCREEN_X_MULTIPLIER) * 15;
-            eyeY -= (distanceY / SCREEN_Y_MULTIPLIER) * 15;
-            lookX += (distanceX / SCREEN_X_MULTIPLIER) * 15;
-            lookY -= (distanceY / SCREEN_Y_MULTIPLIER) * 15;
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-    };
-    private final RotationGestureDetector.OnRotationGestureListener rotationGestureListener = new RotationGestureDetector.OnRotationGestureListener() {
-        @Override
-        public void OnRotation(RotationGestureDetector rotationDetector) {
-            angle = rotationDetector.getAngle();
-            eyeX = (float) (eyeZ * Math.cos(Math.toRadians(angle))) + lookX;
-            eyeY = (float) (eyeZ * Math.sin(Math.toRadians(angle))) + lookY;
-        }
-    };
-
     private final GestureDetector scrollGestureDetector;
     private final RotationGestureDetector rotationGestureDetector;
+    private final ScaleGestureDetector scaleGestureDetector;
 
     private final int SCREEN_X_MULTIPLIER;
     private final int SCREEN_Y_MULTIPLIER;
 
-    private float angle = 0.0f;
+    private double deltaAngle = 0.0f;
     private int i = 0;
     private float[] mViewMatrix = new float[16];
 
@@ -58,8 +42,58 @@ public class Camera {
     private float lookZ = 0.0f;
 
     public Camera(Context context) {
-        rotationGestureDetector = new RotationGestureDetector(rotationGestureListener);
-        scrollGestureDetector = new GestureDetector(context, scrollListener);
+        rotationGestureDetector = new RotationGestureDetector(new RotationGestureDetector.OnRotationGestureListener() {
+            @Override
+            public void OnRotation(RotationGestureDetector rotationDetector) {
+                deltaAngle = toRadians(rotationDetector.getDeltaAngle());
+                final double cos = cos(deltaAngle);
+                final double sin = sin(deltaAngle);
+                final float newX = (float) (eyeX * cos - eyeY * sin);
+                final float newY = (float) (eyeX * sin + eyeY * cos);
+                eyeX = newX;
+                eyeY = newY;
+            }
+        });
+        scrollGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                final float deltaX = (distanceX / SCREEN_X_MULTIPLIER) * 15;
+                final float deltaY = (distanceY / SCREEN_Y_MULTIPLIER) * 15;
+                final float resultDeltaX = (float) (deltaX * cos(deltaAngle) - deltaY * sin(deltaAngle));
+                final float resultDeltaY = (float) (deltaX * sin(deltaAngle) + deltaY * cos(deltaAngle));
+                eyeX = eyeX + getSightDirectionMultiplier(cos(deltaAngle)) * resultDeltaX;
+                eyeY = eyeY + getSightDirectionMultiplier(sin(deltaAngle)) * resultDeltaY;
+                lookX = lookX + getSightDirectionMultiplier(cos(deltaAngle)) * resultDeltaX;
+                lookY = lookY + getSightDirectionMultiplier(sin(deltaAngle)) * resultDeltaY;
+                return super.onScroll(e1, e2, distanceX, distanceY);
+            }
+        });
+
+        scaleGestureDetector = new ScaleGestureDetector(context, new ScaleGestureDetector.OnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                final float scale = 10;
+                if (detector.getScaleFactor() > 0) {
+                    eyeX += scale;
+                    eyeY += scale;
+                } else {
+                    eyeX -= scale;
+                    eyeY -= scale;
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                return true;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
+
+            }
+        });
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -74,13 +108,29 @@ public class Camera {
     }
 
     public void onTouchEvent(MotionEvent motionEvent) {
-        scrollGestureDetector.onTouchEvent(motionEvent);
-        rotationGestureDetector.onTouchEvent(motionEvent);
+        try {
+            scrollGestureDetector.onTouchEvent(motionEvent);
+            rotationGestureDetector.onTouchEvent(motionEvent);
+            //scaleGestureDetector.onTouchEvent(motionEvent);
+        } catch (Exception e) {
+            // silently catch
+        }
         if (i == 3) {
             Matrix.setLookAtM(mViewMatrix, 0, eyeX, eyeY, eyeZ, lookX, lookY, lookZ, upX, upY, upZ);
             i = 0;
         }
         i++;
+    }
+
+    private int getSightDirectionMultiplier(double value) {
+        if (value == 0) {
+            return 0;
+        }
+        if (value > 0) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     public float[] mViewMatrix() {

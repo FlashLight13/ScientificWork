@@ -1,19 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
-        <include layout="@layout/v_toolbar" />
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
-    </android.support.design.widget.AppBarLayout>
+            <TableLayout
+                android:id="@+id/table_stats"
+                style="@style/Table"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/list_stats"
+                <TableRow
+                    android:id="@+id/header_row"
+                    style="@style/TableHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        style="@style/TableHeaderText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
+                        android:text="@string/stats_task_group" />
+
+                    <TextView
+                        style="@style/TableHeaderText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/stats_task_name" />
+
+                    <TextView
+                        style="@style/TableHeaderText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/stats_task_average_time" />
+
+                    <TextView
+                        style="@style/TableHeaderText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/stats_task_tries_count" />
+
+                    <TextView
+                        style="@style/TableHeaderText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="@string/stats_task_commands_count" />
+                </TableRow>
+            </TableLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/placeholder"
+        style="@style/PlaceholderTextStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="@string/stats_empty" />
+</RelativeLayout>

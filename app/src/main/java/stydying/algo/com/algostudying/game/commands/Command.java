@@ -24,7 +24,7 @@ public abstract class Command implements Cloneable {
         this.descriptionId = command.descriptionId;
     }
 
-    public abstract void perform(GameWorld gameWorld, Player player);
+    public abstract boolean perform(GameWorld gameWorld);
 
     public int getTitleId() {
         return titleId;

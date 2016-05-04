@@ -26,7 +26,11 @@ public abstract class GameObject {
     private int z;
     private float angle;
 
-    private boolean isSelected = false;
+    private State state;
+
+    public enum State {
+        IDLE, SELECTED, INVISIBLE
+    }
 
     public GameObject() {
     }
@@ -96,11 +100,20 @@ public abstract class GameObject {
     protected abstract String getModelName();
 
     public boolean isSelected() {
-        return isSelected;
+        return state == State.SELECTED;
+    }
+
+    public boolean isVisible() {
+        return this.state == State.INVISIBLE;
+    }
+
+    public GameObject setVisible(boolean isVisible) {
+        this.state = isVisible ? State.IDLE : State.INVISIBLE;
+        return this;
     }
 
     public GameObject setSelected(boolean selected) {
-        isSelected = selected;
+        state = selected ? State.SELECTED : State.IDLE;
         return this;
     }
 

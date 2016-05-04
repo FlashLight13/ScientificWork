@@ -23,6 +23,9 @@ public class ObjectSerializator {
         if (Player.class.getName().equals(jsonString)) {
             return new Player();
         }
+        if (Sphere.class.getName().equals(jsonString)) {
+            return new Sphere();
+        }
         throw new IllegalArgumentException("Unknown object: " + jsonString);
     }
 }

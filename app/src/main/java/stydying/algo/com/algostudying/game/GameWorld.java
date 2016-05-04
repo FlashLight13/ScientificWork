@@ -6,18 +6,20 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
-import stydying.algo.com.algostudying.errors.BaseException;
 import stydying.algo.com.algostudying.errors.VerifyException;
 import stydying.algo.com.algostudying.game.commands.Command;
+import stydying.algo.com.algostudying.game.conditions.BaseWinCondition;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
 import stydying.algo.com.algostudying.game.objects.EmptyObject;
 import stydying.algo.com.algostudying.game.objects.GameObject;
 import stydying.algo.com.algostudying.game.objects.ObjectSerializator;
 import stydying.algo.com.algostudying.game.objects.Player;
+import stydying.algo.com.algostudying.game.objects.Sphere;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.interfaces.ControlListener;
 import stydying.algo.com.algostudying.ui.interfaces.GameObjectSelectListener;
@@ -35,14 +37,21 @@ public class GameWorld {
     private int worldX;
     private int worldY;
     private int worldZ;
+    private int spheresCount = 0;
 
     private transient Player player;
     private transient GameObject[][][] map;
+    private List<Sphere> collectedSpheres = new ArrayList<>();
+    private Vector3i initialPlayerPosition;
 
     private transient GameWorldEditor gameWorldEditor;
+    private transient CommandsExecutionThread commandsExecutionThread;
 
     public GameWorld(Context context, Task task, GameFieldActivity.Mode mode) {
         task.initMap(context);
+        if (mode == GameFieldActivity.Mode.PLAY) {
+            commandsExecutionThread = new CommandsExecutionThread(context, new BaseWinCondition(), this);
+        }
         worldX = task.getGameField().length;
         worldY = task.getGameField()[0].length;
         worldZ = task.getGameField()[0][0].length;
@@ -51,11 +60,15 @@ public class GameWorld {
             for (int y = 0; y < worldY; y++) {
                 for (int z = 0; z < worldZ; z++) {
                     map[x][y][z] = ObjectSerializator.gameObjectFromJsonString(task.getGameField()[x][y][z])
-                            .setCoordinates((x - worldX / 2) * GAME_CELL_MULTIPLIER,
-                                    (y - worldY / 2) * GAME_CELL_MULTIPLIER,
+                            .setCoordinates(x * GAME_CELL_MULTIPLIER,
+                                    y * GAME_CELL_MULTIPLIER,
                                     z * GAME_CELL_MULTIPLIER);
                     if (map[x][y][z] instanceof Player) {
                         player = (Player) map[x][y][z];
+                        initialPlayerPosition = new Vector3i(player.getCoordinates());
+                    }
+                    if (map[x][y][z] instanceof Sphere) {
+                        spheresCount++;
                     }
                 }
             }
@@ -68,9 +81,11 @@ public class GameWorld {
     }
 
     public void executeCommands(List<Command> commands) {
-        for (Command command : commands) {
-            command.perform(this, player);
-        }
+        commandsExecutionThread.setCommands(commands).run();
+    }
+
+    public Player getPlayer() {
+        return this.player;
     }
 
     public void initDrawing(Context context) throws IOException {
@@ -117,11 +132,7 @@ public class GameWorld {
                         }
                     }
                 }
-                if (object instanceof CubeBlock) {
-                    return (object).isSelected() ? null : object;
-                } else {
-                    return object;
-                }
+                return object;
             }
 
             @Override
@@ -133,6 +144,14 @@ public class GameWorld {
 
     public GameWorldEditor getGameWorldEditor() {
         return gameWorldEditor;
+    }
+
+    public int getSpheresCount() {
+        return spheresCount;
+    }
+
+    public List<Sphere> getCollectedSpheres() {
+        return collectedSpheres;
     }
 
     public final class GameWorldEditor implements
@@ -153,7 +172,7 @@ public class GameWorld {
         }
 
         public void setSelected(int x, int y, boolean isSelected) {
-            if (x >= 0 && x < worldX && y >= 0 && y < worldY) {
+            if (isInWorldBounds(x, y)) {
                 if (isSelected) {
                     selectedPosition.x = x;
                     selectedPosition.y = y;
@@ -175,22 +194,30 @@ public class GameWorld {
         }
 
         public void moveSelectionLeft() {
-            setSelected(selectedPosition.x, selectedPosition.y, false);
+            if (isInWorldBounds(selectedPosition.x - 1, selectedPosition.y)) {
+                setSelected(selectedPosition.x, selectedPosition.y, false);
+            }
             setSelected(selectedPosition.x - 1, selectedPosition.y, true);
         }
 
         public void moveSelectionTop() {
-            setSelected(selectedPosition.x, selectedPosition.y, false);
+            if (isInWorldBounds(selectedPosition.x, selectedPosition.y + 1)) {
+                setSelected(selectedPosition.x, selectedPosition.y, false);
+            }
             setSelected(selectedPosition.x, selectedPosition.y + 1, true);
         }
 
         public void moveSelectionRight() {
-            setSelected(selectedPosition.x, selectedPosition.y, false);
+            if (isInWorldBounds(selectedPosition.x + 1, selectedPosition.y)) {
+                setSelected(selectedPosition.x, selectedPosition.y, false);
+            }
             setSelected(selectedPosition.x + 1, selectedPosition.y, true);
         }
 
         public void moveSelectionBottom() {
-            setSelected(selectedPosition.x, selectedPosition.y, false);
+            if (isInWorldBounds(selectedPosition.x, selectedPosition.y - 1)) {
+                setSelected(selectedPosition.x, selectedPosition.y, false);
+            }
             setSelected(selectedPosition.x, selectedPosition.y - 1, true);
         }
 
@@ -206,8 +233,9 @@ public class GameWorld {
             int topPosition = Math.max(1, topPosition(selectedPosition.x, selectedPosition.y));
             Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][topPosition].getCoordinates();
             EmptyObject top = new EmptyObject(coordinates.x, coordinates.y, topPosition * GAME_CELL_MULTIPLIER);
-            top.setSelected(true);
             map[selectedPosition.x][selectedPosition.y][topPosition] = top;
+            map[selectedPosition.x][selectedPosition.y][Math.max(0, topPosition(selectedPosition.x, selectedPosition.y))]
+                    .setSelected(true);
         }
 
         public void setObjectToSelectedPosition(@NonNull GameObject object) {
@@ -221,6 +249,30 @@ public class GameWorld {
         }
     }
 
+    public void tryConsumeSphere(int x, int y, int z) {
+        if (map[x][y][z] instanceof Sphere) {
+            collectedSpheres.add((Sphere) map[x][y][z]);
+            map[x][y][z] = new EmptyObject();
+        }
+    }
+
+    public GameObject get(int x, int y, int z) {
+        return map[x][y][z];
+    }
+
+    public void reset() {
+        player.setCoordinates(initialPlayerPosition.x, initialPlayerPosition.y, initialPlayerPosition.z);
+        for (Sphere sphere : collectedSpheres) {
+            Vector3i worldCoordinates = sphere.getWorldCoordinates();
+            map[worldCoordinates.x][worldCoordinates.y][worldCoordinates.z] = sphere;
+        }
+        collectedSpheres.clear();
+    }
+
+    public boolean isInWorldBounds(int x, int y) {
+        return x >= 0 && x < worldX && y >= 0 && y < worldY;
+    }
+
     public String[][][] createGameWorld() throws VerifyException {
         if (player == null) {
             throw new VerifyException(VerifyException.NO_PLAYER);
@@ -229,9 +281,15 @@ public class GameWorld {
         for (int i = 0; i < worldX; i++) {
             for (int j = 0; j < worldY; j++) {
                 for (int k = 0; k < worldZ; k++) {
+                    if (map[i][j][k] instanceof Sphere) {
+                        spheresCount++;
+                    }
                     result[i][j][k] = ObjectSerializator.toJsonString(map[i][j][k]);
                 }
             }
+        }
+        if (spheresCount == 0) {
+            throw new VerifyException(VerifyException.NO_SPHERES);
         }
         return result;
     }

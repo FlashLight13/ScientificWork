@@ -10,13 +10,14 @@ public class RotationGestureDetector {
     private float fX, fY, sX, sY;
     private int ptrID1, ptrID2;
 
-    private float mAngle;
-    private int rotationSensitiveLevel = 15;
+    private float prevAngle;
+    private float currentAngle;
+    private int rotationSensitiveLevel = 1;
 
     private OnRotationGestureListener mListener;
 
-    public float getAngle() {
-        return mAngle;
+    public float getDeltaAngle() {
+        return currentAngle - prevAngle;
     }
 
     public RotationGestureDetector setRotationSensitiveLevel(int rotationSensitiveLevel) {
@@ -53,9 +54,8 @@ public class RotationGestureDetector {
                         nfX = event.getX(event.findPointerIndex(ptrID2));
                         nfY = event.getY(event.findPointerIndex(ptrID2));
 
-                        mAngle += angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY)
-                                / rotationSensitiveLevel;
-                        mAngle = mAngle % 360;
+                        prevAngle = currentAngle;
+                        currentAngle = angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY) / rotationSensitiveLevel;
 
                         if (mListener != null) {
                             mListener.OnRotation(this);

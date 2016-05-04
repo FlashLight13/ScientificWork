@@ -87,6 +87,13 @@ public class Model {
         }
     }
 
+    public void release() {
+        if (drawings != null) {
+            drawings.clear();
+            drawings = null;
+        }
+    }
+
     public Iterable<DrawingBlock> getDrawingBlocks() {
         return drawings.values();
     }

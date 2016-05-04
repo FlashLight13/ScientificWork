@@ -79,7 +79,7 @@ public class EditingController extends GameFieldController {
         GameObjectsListView gameObjectsListView = new GameObjectsListView(activity);
         gameObjectsListView
                 .setControlListener(gameWorld == null ? null : gameWorld.getGameWorldEditor())
-                .setPossibleObjects(new CubeBlock(), new EmptyObject(), new Player(), new Sphere())
+                .setPossibleObjects(new EmptyObject(), new Player(), new Sphere())
                 .setLayoutParams(new DrawerLayout.LayoutParams(
                         activity.getResources().getDimensionPixelSize(R.dimen.navigation_drawer_width),
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -98,7 +98,7 @@ public class EditingController extends GameFieldController {
             try {
                 GameFieldCreationController.getInstance(activity).setGameField(activity, gameWorld.createGameWorld());
             } catch (BaseException e) {
-                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, e.getMessageRes(), Toast.LENGTH_SHORT).show();
                 return true;
             }
             EditUserTasksActivity.startMe(activity, EditUserTasksActivity.Mode.NEW, -1);

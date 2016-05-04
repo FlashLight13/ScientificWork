@@ -34,10 +34,13 @@ public class CycleCommandBlock extends CommandBlock {
     }
 
     @Override
-    public void perform(GameWorld gameWorld, Player player) {
+    public boolean perform(GameWorld gameWorld) {
         for (int i = 0; i < count; i++) {
-            super.perform(gameWorld, player);
+            if (!super.perform(gameWorld)) {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override

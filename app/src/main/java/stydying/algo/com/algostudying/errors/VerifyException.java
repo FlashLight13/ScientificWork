@@ -9,6 +9,7 @@ public class VerifyException extends BaseException {
 
     public static final String EMPTY_TASKS_TYPE = "TYPE_EMPTY_TASKS";
     public static final String NO_PLAYER = "NO_PLAYER";
+    public static final String NO_SPHERES = "NO_SPHERES";
 
     public VerifyException() {
         super();
@@ -29,6 +30,8 @@ public class VerifyException extends BaseException {
                 return R.string.error_no_tasks;
             case NO_PLAYER:
                 return R.string.error_no_player;
+            case NO_SPHERES:
+                return R.string.error_no_spheres;
             default:
                 return super.getMessageRes();
         }

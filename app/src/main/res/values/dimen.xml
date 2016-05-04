@@ -57,4 +57,9 @@
     <dimen name="task_list_item_title_margin">8dp</dimen>
 
     <dimen name="basic_list_buttons_margin">4dp</dimen>
+
+    <dimen name="table_header_height">64dp</dimen>
+    <dimen name="table_row_height">48dp</dimen>
+    <dimen name="table_sides_paddings">24dp</dimen>
+    <dimen name="table_column_padding">56dp</dimen>
 </resources>

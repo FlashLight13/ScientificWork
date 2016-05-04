@@ -109,7 +109,8 @@ public class OBJLoader {
                 }
             }
         } catch (Exception e) {
-            Log.d("DebugLogs", "error int line: " + line, e);
+            //silently catch
+            //Log.d("DebugLogs", "error int line: " + line, e);
         }
         reader.close();
         return m;

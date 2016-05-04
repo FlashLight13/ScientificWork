@@ -34,6 +34,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
     private int mMVPMatrixHandle;
     private int mMVMatrixHandle;
     private int mLightPosHandle;
+    private int mUseFilterHandle;
     private int mPositionHandle;
     private int mNormalHandle;
 
@@ -81,6 +82,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         mMVPMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVPMatrix");
         mMVMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVMatrix");
         mLightPosHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_LightPos");
+        mUseFilterHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_UseFilter");
         mTextureUniformHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_Texture");
         mPositionHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Position");
         mNormalHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Normal");
@@ -125,7 +127,6 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     for (Model.DrawingBlock block : gameObject.getModel().getDrawingBlocks()) {
                         Matrix.setIdentityM(mLightModelMatrix, 0);
                         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 100.0f, 0.0f);
-                        //Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
                         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
 
                         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
@@ -161,7 +162,9 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mMVPMatrix, 0);
                         GLES20.glUniformMatrix4fv(mMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 
+                        GLES20.glUniform1i(mUseFilterHandle, gameObject.isSelected() ? 1 : 0);
                         GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
+
                         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, block.getVertexesCount());
 
                         // Free resources
@@ -273,5 +276,20 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     public void onTouch(MotionEvent motionEvent) {
         camera.onTouchEvent(motionEvent);
+    }
+
+    public void release() {
+        if (gameWorld != null) {
+            final Iterator<GameObject> objectIterator = gameWorld.getObjectsIterator();
+            GameObject gameObject;
+            while (objectIterator.hasNext()) {
+                gameObject = objectIterator.next();
+                if (gameObject != null) {
+                    if (gameObject.getModel() != null) {
+                        gameObject.getModel().release();
+                    }
+                }
+            }
+        }
     }
 }

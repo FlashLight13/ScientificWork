@@ -23,7 +23,7 @@ public class Sphere extends GameObject {
     @Nullable
     @Override
     protected String getModelName() {
-        return null;
+        return ModelNames.SPHERE;
     }
 
     @Override

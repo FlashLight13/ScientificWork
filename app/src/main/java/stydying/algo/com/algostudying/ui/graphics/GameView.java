@@ -35,6 +35,10 @@ public class GameView extends GLSurfaceView {
         return true;
     }
 
+    public void release() {
+        gameRenderer.release();
+    }
+
     public void init(final GameWorld world) {
         queueEvent(new Runnable() {
             @Override
