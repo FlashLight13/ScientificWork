@@ -11,7 +11,9 @@ import android.view.WindowManager;
 
 import stydying.algo.com.algostudying.ui.RotationGestureDetector;
 
-import static java.lang.Math.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 /**
  * Created by Anton on 10.02.2016.

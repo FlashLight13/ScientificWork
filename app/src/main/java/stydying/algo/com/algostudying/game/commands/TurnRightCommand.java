@@ -2,7 +2,6 @@ package stydying.algo.com.algostudying.game.commands;
 
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.Player;
 
 /**
  * Created by anton on 27.06.15.
@@ -20,7 +19,7 @@ public class TurnRightCommand extends Command {
     }
 
     @Override
-    public boolean perform(GameWorld gameWorld) {
+    public boolean perform(GameWorld gameWorld) throws InterruptedException {
         gameWorld.getPlayer().turnToTheRight();
         return true;
     }

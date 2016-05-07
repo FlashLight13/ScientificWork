@@ -1,7 +1,6 @@
 package stydying.algo.com.algostudying.game.commands;
 
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.Player;
 
 /**
  * Created by anton on 27.06.15.
@@ -34,7 +33,7 @@ public class CycleCommandBlock extends CommandBlock {
     }
 
     @Override
-    public boolean perform(GameWorld gameWorld) {
+    public boolean perform(GameWorld gameWorld) throws InterruptedException {
         for (int i = 0; i < count; i++) {
             if (!super.perform(gameWorld)) {
                 return false;

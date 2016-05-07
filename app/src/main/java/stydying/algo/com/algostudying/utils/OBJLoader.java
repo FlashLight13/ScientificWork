@@ -1,23 +1,30 @@
 package stydying.algo.com.algostudying.utils;
 
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import stydying.algo.com.algostudying.ui.graphics.Model;
 import stydying.algo.com.algostudying.utils.vectors.Vector2f;
 import stydying.algo.com.algostudying.utils.vectors.Vector3f;
 
 public class OBJLoader {
-    public static Model loadTexturedModel(File f) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(f));
+
+    private static final String MODEL_FILE_NAME = "model.obj";
+
+    public interface ResourceProvider {
+        InputStream open(String name) throws IOException;
+    }
+
+    public static Model loadTexturedModel(ResourceProvider resourceProvider, String modelName) throws IOException {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resourceProvider.open(modelName + "/" + MODEL_FILE_NAME)));
         Model m = new Model();
         Model.Material currentMaterial = m.new Material();
-        String line = null;
+        String line;
         try {
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("#")) {
@@ -25,8 +32,9 @@ public class OBJLoader {
                 }
                 if (line.startsWith("mtllib ")) {
                     String materialFileName = line.split(" ")[1];
-                    File materialFile = new File(f.getParentFile().getAbsolutePath() + "/" + materialFileName);
-                    BufferedReader materialFileReader = new BufferedReader(new FileReader(materialFile));
+                    BufferedReader materialFileReader
+                            = new BufferedReader(new InputStreamReader(
+                            resourceProvider.open(modelName + "/" + materialFileName)));
                     String materialLine;
                     Model.Material parseMaterial = m.new Material();
                     String parseMaterialName = "";
@@ -59,7 +67,8 @@ public class OBJLoader {
                             parseMaterial.diffuseColour[1] = Float.valueOf(rgb[2]);
                             parseMaterial.diffuseColour[2] = Float.valueOf(rgb[3]);
                         } else if (materialLine.startsWith("map_Kd")) {
-                            parseMaterial.texture = BitmapFactory.decodeFile(f.getParentFile().getAbsolutePath() + "/" + materialLine.split(" ")[1]);
+                            parseMaterial.texture = BitmapFactory.decodeStream(
+                                    resourceProvider.open(modelName + "/" + materialLine.split(" ")[1]));
                         } else {
                             System.err.println("[MTL] Unknown Line: " + materialLine);
                         }
@@ -110,7 +119,6 @@ public class OBJLoader {
             }
         } catch (Exception e) {
             //silently catch
-            //Log.d("DebugLogs", "error int line: " + line, e);
         }
         reader.close();
         return m;

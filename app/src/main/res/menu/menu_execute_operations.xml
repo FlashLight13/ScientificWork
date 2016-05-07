@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_item_execute"
+        android:id="@+id/menu_item_control"
         android:icon="@drawable/ic_play_arrow_white_24dp"
         android:title="@string/menu_item_execute"
         app:showAsAction="always" />

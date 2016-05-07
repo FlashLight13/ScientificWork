@@ -61,6 +61,10 @@ public class BaseFileCache implements Cache<byte[]> {
         }
     }
 
+    public boolean exists(String key) {
+        return new File(cachePath + "//"+ key).exists();
+    }
+
     private void validateDir() throws IOException {
         File file = new File(cachePath);
         if (!file.exists()) {

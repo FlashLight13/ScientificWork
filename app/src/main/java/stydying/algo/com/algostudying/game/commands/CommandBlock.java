@@ -5,7 +5,7 @@ import java.util.List;
 
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.Player;
+import stydying.algo.com.algostudying.game.SettingsController;
 
 /**
  * Created by anton on 27.06.15.
@@ -25,11 +25,13 @@ public class CommandBlock extends Command {
         }
     }
 
-    public boolean perform(GameWorld gameWorld) {
+    @Override
+    public boolean perform(GameWorld gameWorld) throws InterruptedException {
         for (Command currentCommand : commands) {
             if (!currentCommand.perform(gameWorld)) {
                 return false;
             }
+            Thread.sleep(SettingsController.getInstance().getBetweenOperationsDelay());
         }
         return true;
     }

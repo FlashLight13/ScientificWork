@@ -20,7 +20,6 @@ import stydying.algo.com.algostudying.errors.BaseException;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.CubeBlock;
 import stydying.algo.com.algostudying.game.objects.EmptyObject;
 import stydying.algo.com.algostudying.game.objects.Player;
 import stydying.algo.com.algostudying.game.objects.Sphere;
@@ -116,5 +115,10 @@ public class EditingController extends GameFieldController {
     @Subscribe
     public void onError(OperationErrorEvent event) {
         Toast.makeText(activity, R.string.message_world_not_created, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected GameFieldActivity.Mode getMode() {
+        return GameFieldActivity.Mode.EDIT;
     }
 }

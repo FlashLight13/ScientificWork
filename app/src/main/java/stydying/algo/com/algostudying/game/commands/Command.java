@@ -1,7 +1,6 @@
 package stydying.algo.com.algostudying.game.commands;
 
 import stydying.algo.com.algostudying.game.GameWorld;
-import stydying.algo.com.algostudying.game.objects.Player;
 
 /**
  * Created by anton on 27.06.15.
@@ -24,7 +23,7 @@ public abstract class Command implements Cloneable {
         this.descriptionId = command.descriptionId;
     }
 
-    public abstract boolean perform(GameWorld gameWorld);
+    public abstract boolean perform(GameWorld gameWorld) throws InterruptedException;
 
     public int getTitleId() {
         return titleId;

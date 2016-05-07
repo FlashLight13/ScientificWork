@@ -21,7 +21,7 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public boolean perform(GameWorld gameWorld) {
+    public boolean perform(GameWorld gameWorld) throws InterruptedException {
         final Player player = gameWorld.getPlayer();
         Vector3i coordinates = player.getWorldCoordinates();
         int newX = coordinates.x;

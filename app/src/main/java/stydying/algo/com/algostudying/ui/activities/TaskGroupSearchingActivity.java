@@ -136,17 +136,26 @@ public class TaskGroupSearchingActivity extends BaseActivity {
     private static class TasksGroupAdapter extends CursorAdapter {
 
         private TasksGroupAdapter(Context context) {
-            super(context, new Select().from(TaskGroup.class).query(), true);
+            super(context, new Select()
+                    .from(TaskGroup.class)
+                    .where(TaskGroup_Table._id.notEq(TaskGroup.DEFAULT_ID))
+                    .query(), true);
         }
 
         private void query(String searchText) {
             searchText = searchText.trim();
             Cursor newCursor;
             if (TextUtils.isEmpty(searchText)) {
-                newCursor = new Select().from(TaskGroup.class).query();
+                newCursor = new Select()
+                        .from(TaskGroup.class)
+                        .where(TaskGroup_Table._id.notEq(TaskGroup.DEFAULT_ID))
+                        .query();
             } else {
-                newCursor = new Select().from(TaskGroup.class).where(
-                        TaskGroup_Table.title.like(searchText + "%")).query();
+                newCursor = new Select()
+                        .from(TaskGroup.class)
+                        .where(TaskGroup_Table.title.like(searchText + "%"))
+                        .and(TaskGroup_Table._id.notEq(TaskGroup.DEFAULT_ID))
+                        .query();
             }
             swapCursor(newCursor).close();
         }

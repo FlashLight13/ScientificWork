@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <stydying.algo.com.algostudying.ui.preferences.SlidePreference
+        android:key="next_screen_checkbox_preference"
+        android:summary="summary"
+        android:title="title" />
+</PreferenceScreen>

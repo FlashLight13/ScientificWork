@@ -5,7 +5,8 @@ package stydying.algo.com.algostudying.game.objects;
  */
 public class ModelNames {
     public static final String CUBE = "Cube";
-    public static final String EMPTY = null;
     public static final String PLAYER = "Player";
     public static final String SPHERE = "Sphere";
+
+    public static final String EMPTY = null;
 }

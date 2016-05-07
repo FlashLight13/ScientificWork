@@ -9,6 +9,7 @@ import java.util.List;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
+import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup_Table;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.network.services.TasksService;
@@ -48,7 +49,9 @@ public class GetTaskGroupsNamesOperation implements OperationProcessor.Operation
 
     @Override
     public List<TaskGroup> loadFromLocal(Context context) {
-        return new Select().from(TaskGroup.class).queryList();
+        return new Select().from(TaskGroup.class)
+                .where(TaskGroup_Table._id.notEq(TaskGroup.DEFAULT_ID))
+                .queryList();
     }
 
     @Override

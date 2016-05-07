@@ -3,7 +3,6 @@ package stydying.algo.com.algostudying.game;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import stydying.algo.com.algostudying.game.objects.GameObject;
 import stydying.algo.com.algostudying.game.objects.ObjectSerializator;
 import stydying.algo.com.algostudying.game.objects.Player;
 import stydying.algo.com.algostudying.game.objects.Sphere;
+import stydying.algo.com.algostudying.logic.managers.ModelsManager;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.interfaces.ControlListener;
 import stydying.algo.com.algostudying.ui.interfaces.GameObjectSelectListener;
@@ -47,7 +47,8 @@ public class GameWorld {
     private transient GameWorldEditor gameWorldEditor;
     private transient CommandsExecutionThread commandsExecutionThread;
 
-    public GameWorld(Context context, Task task, GameFieldActivity.Mode mode) {
+    public GameWorld(Context context, Task task, GameFieldActivity.Mode mode) throws IOException {
+        ModelsManager.getInstance().init(context);
         task.initMap(context);
         if (mode == GameFieldActivity.Mode.PLAY) {
             commandsExecutionThread = new CommandsExecutionThread(context, new BaseWinCondition(), this);
@@ -77,27 +78,24 @@ public class GameWorld {
             throw new IllegalStateException("No player");
         }
 
-        gameWorldEditor = new GameWorldEditor(map, worldX, worldY, worldZ);
+        gameWorldEditor = new GameWorldEditor(map, worldZ);
     }
 
-    public void executeCommands(List<Command> commands) {
-        commandsExecutionThread.setCommands(commands).run();
+    public void executeCommands(@NonNull List<Command> commands,
+                                @Nullable CommandsExecutionThread.ExecutionListener executionListener) {
+        commandsExecutionThread.setCommands(commands).setExecutionListener(executionListener).start();
+    }
+
+    public boolean isExecuting() {
+        return !commandsExecutionThread.isInterrupted();
+    }
+
+    public void stopExecuting() {
+        commandsExecutionThread.interrupt();
     }
 
     public Player getPlayer() {
         return this.player;
-    }
-
-    public void initDrawing(Context context) throws IOException {
-        Log.d("DebugLogs", "Start init drawing for world " + this.toString());
-        for (GameObject[][] current : map) {
-            for (GameObject[] currentLine : current) {
-                for (GameObject currentCell : currentLine) {
-                    currentCell.initDrawing(context);
-                }
-            }
-        }
-        Log.d("DebugLogs", "Inited drawing for world " + this.toString());
     }
 
     public Iterator<GameObject> getObjectsIterator() {
@@ -160,14 +158,10 @@ public class GameWorld {
         private GameObject[][][] map;
         private Vector2i selectedPosition = new Vector2i(0, 0);
 
-        private int worldX;
-        private int worldY;
-        private int worldZ;
+        private final int worldZ;
 
-        public GameWorldEditor(GameObject[][][] map, int worldX, int worldY, int worldZ) {
+        public GameWorldEditor(GameObject[][][] map, int worldZ) {
             this.map = map;
-            this.worldX = worldX;
-            this.worldY = worldY;
             this.worldZ = worldZ;
         }
 
@@ -240,12 +234,20 @@ public class GameWorld {
 
         public void setObjectToSelectedPosition(@NonNull GameObject object) {
             if (object instanceof Player) {
+                if (player != null) {
+                    return;
+                }
                 player = (Player) object;
             }
             int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
-            Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
-            object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
-            map[selectedPosition.x][selectedPosition.y][top + 1] = object;
+            if (top + 1 > 0 && top + 1 < worldZ) {
+                Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
+                object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
+                if (map[selectedPosition.x][selectedPosition.y][top + 1] instanceof Player) {
+                    player = null;
+                }
+                map[selectedPosition.x][selectedPosition.y][top + 1] = object;
+            }
         }
     }
 

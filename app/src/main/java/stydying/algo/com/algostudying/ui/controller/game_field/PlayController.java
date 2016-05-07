@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import stydying.algo.com.algostudying.R;
+import stydying.algo.com.algostudying.game.CommandsExecutionThread;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
@@ -16,7 +17,7 @@ import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawe
 /**
  * Created by Anton on 24.03.2016.
  */
-public class PlayController extends GameFieldController {
+public class PlayController extends GameFieldController implements CommandsExecutionThread.ExecutionListener {
 
     public static final String WORLD_DATA_EXTRA = PlayController.class.getName() + "WORLD_DATA_EXTRA";
 
@@ -49,12 +50,34 @@ public class PlayController extends GameFieldController {
 
     @Override
     public boolean onOptionsMenuItemClick(@NonNull MenuItem menuItem) {
-        if (menuItem.getItemId() == R.id.menu_item_execute) {
+        if (menuItem.getItemId() == R.id.menu_item_control) {
             if (gameWorld != null && navigationView != null) {
-                gameWorld.executeCommands((navigationView).getCommands());
+                if (gameWorld.isExecuting()) {
+                    gameWorld.stopExecuting();
+                } else {
+                    gameWorld.executeCommands((navigationView).getCommands(), this);
+                }
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected GameFieldActivity.Mode getMode() {
+        return GameFieldActivity.Mode.PLAY;
+    }
+
+    @Override
+    public void prepareOptionsMenu(@NonNull Menu menu) {
+        final boolean isExecuting = gameWorld.isExecuting();
+        final MenuItem menuItem = menu.findItem(R.id.menu_item_control);
+        menuItem.setIcon(isExecuting ? R.drawable.ic_stop_white_24dp : R.drawable.ic_play_arrow_white_24dp);
+        menuItem.setTitle(isExecuting ? R.string.menu_item_execute : R.string.menu_item_stop);
+    }
+
+    @Override
+    public void onFinish() {
+        activity.supportInvalidateOptionsMenu();
     }
 }

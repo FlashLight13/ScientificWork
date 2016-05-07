@@ -193,6 +193,12 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        gameFieldController.prepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         gameFieldController.createOptionsMenu(getMenuInflater(), menu);
         return true;

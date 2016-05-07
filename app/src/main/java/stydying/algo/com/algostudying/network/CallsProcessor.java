@@ -18,8 +18,8 @@ import stydying.algo.com.algostudying.network.interfaces.TaskInterface;
  */
 public class CallsProcessor<T> {
 
-    //private static final String SERVER_URL = "http://192.168.1.225:8080/";
-    private static final String SERVER_URL = "http://algo-algostudying.rhcloud.com:80/";
+    private static final String SERVER_URL = "http://192.168.1.225:8080/";
+    //private static final String SERVER_URL = "http://algo-algostudying.rhcloud.com:80/";
     private static final int TIMEOUT_SECS = 60;
     private static final int CONNECT_TIMEOUT_SECS = 20;
     private static final String LOG_TAG = "NetworkProvider";

@@ -80,6 +80,7 @@
     <string name="menu_item_create_group">Создать группу</string>
     <string name="menu_item_edit_done">Готово</string>
     <string name="menu_item_execute">Выполнить</string>
+    <string name="menu_item_stop">Остановить</string>
 
     <string name="title_user_view">Пользователь</string>
 

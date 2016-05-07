@@ -47,9 +47,7 @@ public abstract class GameFieldController implements LoaderManager.LoaderCallbac
             @Override
             public GameWorld loadInBackground() {
                 try {
-                    GameWorld gameWorld = new GameWorld(getContext(), task, GameFieldActivity.Mode.EDIT);
-                    gameWorld.initDrawing(activity);
-                    return gameWorld;
+                    return new GameWorld(getContext(), task, getMode());
                 } catch (IOException e) {
                     Log.d("DebugLogs", "Failed to init world ", e);
                     return null;
@@ -74,6 +72,11 @@ public abstract class GameFieldController implements LoaderManager.LoaderCallbac
     public String getTitle() {
         return task.getTitle();
     }
+
+    public void prepareOptionsMenu(@NonNull Menu menu) {
+    }
+
+    protected abstract GameFieldActivity.Mode getMode();
 
     public abstract void addCellHeightController(@NonNull ViewGroup rootView);
 

@@ -1,7 +1,6 @@
 package stydying.algo.com.algostudying.ui.interfaces;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import stydying.algo.com.algostudying.game.objects.GameObject;
 
