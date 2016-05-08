@@ -239,14 +239,14 @@ public class GameWorld {
                 }
                 player = (Player) object;
             }
-            int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
-            if (top + 1 > 0 && top + 1 < worldZ) {
+            final int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
+            if (top > 0 && top < worldZ) {
                 Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
                 object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
-                if (map[selectedPosition.x][selectedPosition.y][top + 1] instanceof Player) {
+                if (map[selectedPosition.x][selectedPosition.y][top] instanceof Player) {
                     player = null;
                 }
-                map[selectedPosition.x][selectedPosition.y][top + 1] = object;
+                map[selectedPosition.x][selectedPosition.y][top] = object;
             }
         }
     }
