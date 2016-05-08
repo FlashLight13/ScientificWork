@@ -70,7 +70,7 @@ public class PlayController extends GameFieldController implements CommandsExecu
 
     @Override
     public void prepareOptionsMenu(@NonNull Menu menu) {
-        final boolean isExecuting = gameWorld.isExecuting();
+        final boolean isExecuting = gameWorld != null && gameWorld.isExecuting();
         final MenuItem menuItem = menu.findItem(R.id.menu_item_control);
         menuItem.setIcon(isExecuting ? R.drawable.ic_stop_white_24dp : R.drawable.ic_play_arrow_white_24dp);
         menuItem.setTitle(isExecuting ? R.string.menu_item_execute : R.string.menu_item_stop);
