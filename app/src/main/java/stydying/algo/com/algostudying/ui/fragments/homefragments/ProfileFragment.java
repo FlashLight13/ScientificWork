@@ -21,6 +21,7 @@ import stydying.algo.com.algostudying.ui.fragments.profile.StatsFragment;
 import stydying.algo.com.algostudying.ui.fragments.profile.UserDetailsFragment;
 import stydying.algo.com.algostudying.ui.interfaces.PagerController;
 import stydying.algo.com.algostudying.ui.views.SwipeControlledViewPager;
+import stydying.algo.com.algostudying.utils.BundleBuilder;
 import stydying.algo.com.algostudying.utils.ViewsUtils;
 
 /**
@@ -161,7 +162,13 @@ public class ProfileFragment extends BaseFragment implements PagerController {
             BaseProfileFragment fragment = (BaseProfileFragment) super.instantiateItem(container, position);
             fragment.setButtonAction(btnAction);
             fragment.setPagerController(ProfileFragment.this);
-            fragment.setArguments(getArguments());
+            Bundle args = getArguments();
+            if (args == null) {
+                args = new BundleBuilder()
+                        .putParcelable(USER_ARG, LoginManager.getInstance(getContext()).getCurrentUser())
+                        .build();
+            }
+            fragment.setArguments(args);
             registeredFragments.put(position, fragment);
             return fragment;
         }

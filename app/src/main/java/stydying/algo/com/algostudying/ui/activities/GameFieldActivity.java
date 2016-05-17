@@ -68,6 +68,7 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
         initDrawer();
         initActionBar();
 
+        gameFieldController.onCreate(savedInstanceState);
         gameFieldController.addCellHeightController(glassView);
         gameFieldController.addNavigationController(glassView);
 
@@ -77,10 +78,15 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
         getSupportLoaderManager().restartLoader(Loaders.GAME_WORLD_LOADER, null, gameFieldController);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        gameFieldController.onSaveInstanceState(outState);
+    }
+
     private void initDrawer() {
         drawerLayout = new android.support.v4.widget.DrawerLayout(this);
         drawerLayout.addView(glassView, glassView.getLayoutParams());
-        //drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
 
             public void onDrawerClosed(View view) {
@@ -97,12 +103,12 @@ public class GameFieldActivity extends BaseActivity implements GameFieldControll
         };
         drawerToggle.setDrawerIndicatorEnabled(false);
         drawerLayout.addDrawerListener(drawerToggle);
-        drawerLayout.setOnTouchListener(new View.OnTouchListener() {
+        /*drawerLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return mGLView.onTouchEvent(event);
             }
-        });
+        });*/
     }
 
     private void initActionBar() {

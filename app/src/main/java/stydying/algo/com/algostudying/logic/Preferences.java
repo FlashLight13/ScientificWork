@@ -13,6 +13,7 @@ import stydying.algo.com.algostudying.data.entities.stats.User;
  */
 public class Preferences {
 
+    // TODO rework this amazing-super-mega code using db table
     public static final class UserPreferences {
 
         private static final String USER_KEY

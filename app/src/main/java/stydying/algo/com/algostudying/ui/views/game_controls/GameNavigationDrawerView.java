@@ -28,12 +28,14 @@ import stydying.algo.com.algostudying.game.commands.Command;
 import stydying.algo.com.algostudying.game.commands.CommandBlock;
 import stydying.algo.com.algostudying.game.commands.CycleCommandBlock;
 import stydying.algo.com.algostudying.game.commands.MoveCommand;
+import stydying.algo.com.algostudying.game.commands.MoveUpCommand;
 import stydying.algo.com.algostudying.game.commands.TurnLeftCommand;
 import stydying.algo.com.algostudying.game.commands.TurnRightCommand;
 
 /**
  * Created by Anton on 13.07.2015.
  */
+// TODO REFACTOR ALL THIS MEAT!!!
 public class GameNavigationDrawerView extends FrameLayout {
 
     private static final int NAVIGATION_MAX_PERMITTED_WIDTH_CHILDS = 2;
@@ -81,10 +83,10 @@ public class GameNavigationDrawerView extends FrameLayout {
 
         availableCommandsAdapter = new CommandsAdapter(
                 Arrays.asList(new MoveCommand(),
+                        new MoveUpCommand(),
                         new TurnLeftCommand(),
                         new TurnRightCommand(),
-                        new CycleCommandBlock(),
-                        new CommandBlock())
+                        new CycleCommandBlock())
                 , getContext(), false).setOnClickListener(new CommandsAdapter.OnItemClick() {
             @Override
             public void onItemClicked(View parent, View view, int position) {
@@ -161,6 +163,14 @@ public class GameNavigationDrawerView extends FrameLayout {
                             }
                         });
                     }
+                })
+                .setOnRemoveListener(new CommandView.OnRemoveListener() {
+                    @Override
+                    public void onRemove(CommandView view, int position) {
+                        closeCommandsView((int) view.getTag(R.integer.position_key));
+                        updateWidthIfNeeded();
+                        updateCommandsSelection();
+                    }
                 }));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setTag(R.integer.position_key, commandsContainer.getChildCount());
@@ -169,6 +179,9 @@ public class GameNavigationDrawerView extends FrameLayout {
         commandsContainer.addView(recyclerView);
     }
 
+    /**
+     * Updates yellow border selection to last open commands block
+     */
     private void updateCommandsSelection() {
         if (commandsContainer.getChildCount() > 1) {
             commandsContainer.getChildAt(commandsContainer.getChildCount() - 2).setActivated(false);
@@ -217,6 +230,7 @@ public class GameNavigationDrawerView extends FrameLayout {
         private boolean isFullCommands;
 
         private OnItemClick onClickListener;
+        private CommandView.OnRemoveListener onRemoveListener;
         private int selectedItemIndex = -1;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
@@ -265,6 +279,11 @@ public class GameNavigationDrawerView extends FrameLayout {
             return this;
         }
 
+        public CommandsAdapter setOnRemoveListener(CommandView.OnRemoveListener onRemoveListener) {
+            this.onRemoveListener = onRemoveListener;
+            return this;
+        }
+
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.commandView.setTag(R.integer.position_key, position);
@@ -293,8 +312,11 @@ public class GameNavigationDrawerView extends FrameLayout {
         }
 
         @Override
-        public void onRemove(int position) {
+        public void onRemove(CommandView commandView, int position) {
             commands.remove(position);
+            if (onRemoveListener != null) {
+                onRemoveListener.onRemove(commandView, position);
+            }
             notifyDataSetChanged();
         }
 

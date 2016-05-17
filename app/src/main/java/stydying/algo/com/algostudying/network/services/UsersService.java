@@ -4,6 +4,7 @@ import android.util.Base64;
 
 import java.util.List;
 
+import stydying.algo.com.algostudying.data.entities.stats.Stat;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.network.CallsProcessor;
@@ -40,14 +41,22 @@ public class UsersService {
         return new CallsProcessor<List<User>>().executeCall(api().getStudents());
     }
 
+    public static Stat updateStat(String login, String pass, Stat stat) throws NetworkException {
+        return new CallsProcessor<Stat>().executeCall(api().updateStat(createAuthHeaders(login, pass), stat));
+    }
+
+    public static List<Stat> loadStats(String login) throws NetworkException {
+        return new CallsProcessor<List<Stat>>().executeCall(api().loadStats(new UserInterface.BaseUserRequest(login)));
+    }
+
+    public static String createAuthHeaders(String login, String pass) {
+        return Base64.encodeToString((login + "%" + pass).getBytes(), Base64.DEFAULT).trim();
+    }
+
     private static UserInterface api() {
         if (api == null) {
             api = CallsProcessor.retrofit().create(UserInterface.class);
         }
         return api;
-    }
-
-    public static String createAuthHeaders(String login, String pass) {
-        return Base64.encodeToString((login + "%" + pass).getBytes(), Base64.DEFAULT).trim();
     }
 }

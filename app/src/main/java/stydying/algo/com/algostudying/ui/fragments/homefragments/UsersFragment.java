@@ -145,7 +145,13 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             refreshLayout.setRefreshing(false);
             errorPlaceholder.success();
             List<User> users = event.data();
-            adapter.refill(users);
+            List<User> resultUsers = new ArrayList<>(users.size());
+            for (User current : users) {
+                if (current.getType() == User.Type.STUDENT) {
+                    resultUsers.add(current);
+                }
+            }
+            adapter.refill(resultUsers);
             return;
         }
         if (event.isOperation(RemoveUserOperation.class)) {

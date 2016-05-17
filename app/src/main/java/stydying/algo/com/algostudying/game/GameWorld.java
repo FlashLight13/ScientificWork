@@ -50,9 +50,6 @@ public class GameWorld {
     public GameWorld(Context context, Task task, GameFieldActivity.Mode mode) throws IOException {
         ModelsManager.getInstance().init(context);
         task.initMap(context);
-        if (mode == GameFieldActivity.Mode.PLAY) {
-            commandsExecutionThread = new CommandsExecutionThread(context, new BaseWinCondition(), this);
-        }
         worldX = task.getGameField().length;
         worldY = task.getGameField()[0].length;
         worldZ = task.getGameField()[0][0].length;
@@ -81,17 +78,24 @@ public class GameWorld {
         gameWorldEditor = new GameWorldEditor(map, worldZ);
     }
 
-    public void executeCommands(@NonNull List<Command> commands,
+    public void executeCommands(@NonNull Context context,
+                                @NonNull List<Command> commands,
                                 @Nullable CommandsExecutionThread.ExecutionListener executionListener) {
-        commandsExecutionThread.setCommands(commands).setExecutionListener(executionListener).start();
+        if (commandsExecutionThread == null) {
+            commandsExecutionThread = new CommandsExecutionThread(context, new BaseWinCondition(), this);
+            commandsExecutionThread.setCommands(commands).setExecutionListener(executionListener).start();
+        }
     }
 
     public boolean isExecuting() {
-        return !commandsExecutionThread.isInterrupted();
+        return commandsExecutionThread != null;
     }
 
     public void stopExecuting() {
-        commandsExecutionThread.interrupt();
+        if (commandsExecutionThread != null) {
+            commandsExecutionThread.interrupt();
+            commandsExecutionThread = null;
+        }
     }
 
     public Player getPlayer() {

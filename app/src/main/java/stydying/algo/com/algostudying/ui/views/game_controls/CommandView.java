@@ -22,7 +22,7 @@ import stydying.algo.com.algostudying.game.commands.CommandBlock;
 public class CommandView extends RelativeLayout {
 
     public interface OnRemoveListener {
-        void onRemove(int position);
+        void onRemove(CommandView view, int position);
     }
 
     public enum State {
@@ -71,7 +71,7 @@ public class CommandView extends RelativeLayout {
     @OnClick(R.id.ic_remove)
     protected void onRemoveClicked() {
         if (onRemoveListener != null) {
-            onRemoveListener.onRemove((int) getTag(R.integer.position_key));
+            onRemoveListener.onRemove(this, (int) getTag(R.integer.position_key));
         }
     }
 

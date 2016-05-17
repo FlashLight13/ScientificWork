@@ -107,9 +107,16 @@ public class EditUserTasksActivity extends BaseActivity {
         if (event.isOperation(LoadUsersOperation.class)) {
             setInProgress(false);
             List<User> users = event.data();
+            if (users == null || users.size() == 0) {
+                setInProgress(true);
+                OperationProcessor.executeOperation(this,
+                        controller().setUsers(getSelectedUserIds()).getCreateOperation());
+            }
             List<UserData> userDatas = new ArrayList<>(users.size());
             for (User user : users) {
-                userDatas.add(new UserData(user, false));
+                if (user.getType() == User.Type.STUDENT) {
+                    userDatas.add(new UserData(user, false));
+                }
             }
             listView.setAdapter(new UsersAdapter(this, userDatas));
         }
@@ -122,9 +129,11 @@ public class EditUserTasksActivity extends BaseActivity {
 
     public List<String> getSelectedUserIds() {
         List<String> result = new ArrayList<>();
-        for (UserData userData : ((UsersAdapter) listView.getAdapter()).getUsers()) {
-            if (userData.isSelected) {
-                result.add(userData.user.getLogin());
+        if (listView.getAdapter() != null) {
+            for (UserData userData : ((UsersAdapter) listView.getAdapter()).getUsers()) {
+                if (userData.isSelected) {
+                    result.add(userData.user.getLogin());
+                }
             }
         }
         return result;

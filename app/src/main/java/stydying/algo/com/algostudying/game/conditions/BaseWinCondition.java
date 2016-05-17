@@ -9,7 +9,6 @@ public class BaseWinCondition implements WinCondition {
 
     @Override
     public boolean win(GameWorld gameWorld) {
-
-        return false;
+        return gameWorld.getSpheresCount() == gameWorld.getCollectedSpheres().size();
     }
 }

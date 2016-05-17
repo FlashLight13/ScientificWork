@@ -9,6 +9,8 @@
 
     <string name="move_command">Двигаться</string>
     <string name="move_command_desc">Двигает робота вперед</string>
+    <string name="move_command_up">Двигаться вверх</string>
+    <string name="move_command_up_desc">Двигает робота вперед и вверх</string>
     <string name="turn_left_command">Повернуть налево</string>
     <string name="turn_left_command_desc">Поворачивает робота налево</string>
     <string name="turn_right_command">Повернуть направо</string>
@@ -97,8 +99,15 @@
 
     <string name="stats_task_group">Группа</string>
     <string name="stats_task_name">Название</string>
-    <string name="stats_task_average_time">Среднее время</string>
+    <string name="stats_task_time">Время на задание</string>
     <string name="stats_task_tries_count">Количество попыток</string>
     <string name="stats_task_commands_count">Количество команд в алгоритме</string>
     <string name="stats_empty">Чтобы получить статистику выполните хотя бы одно задание</string>
+    <string name="stats_empty_admin">Ученик еще не выполнил ни одного задания</string>
+
+    <string name="label_task_difficulty_level">Сложность задачи: %s</string>
+    <string name="label_task_difficulty_level_unknown">неизвестно</string>
+    <string name="label_task_difficulty_level_easy">легко</string>
+    <string name="label_task_difficulty_level_medium">средне</string>
+    <string name="label_task_difficulty_level_hard">сложно</string>
 </resources>

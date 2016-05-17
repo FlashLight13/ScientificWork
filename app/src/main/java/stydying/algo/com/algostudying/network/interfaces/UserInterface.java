@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import stydying.algo.com.algostudying.data.entities.stats.Stat;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 
 /**
@@ -27,6 +28,20 @@ public interface UserInterface {
 
     @POST("/removeUser")
     Call<Void> removeUser(@Body RemoveUserInfo info);
+
+    @POST("/update_stats")
+    Call<Stat> updateStat(@Header("Authentication") String header, @Body Stat stat);
+
+    @POST("/load_stats")
+    Call<List<Stat>> loadStats(@Body BaseUserRequest request);
+
+    final class BaseUserRequest {
+        public String login;
+
+        public BaseUserRequest(String login) {
+            this.login = login;
+        }
+    }
 
     final class RemoveUserInfo {
         private String login;

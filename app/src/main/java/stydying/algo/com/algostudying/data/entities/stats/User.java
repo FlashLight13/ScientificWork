@@ -37,14 +37,14 @@ public class User extends BaseModel implements Parcelable {
     @Column
     Type type;
 
-    List<Stats> stats;
+    List<Stat> stats;
     List<TaskGroup> taskGroups;
 
     public User() {
 
     }
 
-    public User(String login, String pass, List<Stats> stats, String name, Type type) {
+    public User(String login, String pass, List<Stat> stats, String name, Type type) {
         super();
         this.login = login;
         this.pass = pass;
@@ -63,23 +63,23 @@ public class User extends BaseModel implements Parcelable {
     private User(Parcel parcel) {
         login = parcel.readString();
         pass = parcel.readString();
-        stats = parcel.readArrayList(Stats.class.getClassLoader());
+        stats = parcel.readArrayList(Stat.class.getClassLoader());
         name = parcel.readString();
         type = Type.valueOf(parcel.readString());
     }
 
     @OneToMany(methods = OneToMany.Method.ALL, variableName = "stats")
-    public List<Stats> getStats() {
+    public List<Stat> getStats() {
         if (stats == null) {
             stats = SQLite.select()
-                    .from(Stats.class)
-                    .where(Stats_Table.userForeignKeyContainer_login.eq(login))
+                    .from(Stat.class)
+                    .where(Stat_Table.userLogin.eq(login))
                     .queryList();
         }
         return stats;
     }
 
-    public void setStats(List<Stats> stats) {
+    public void setStats(List<Stat> stats) {
         this.stats = stats;
     }
 

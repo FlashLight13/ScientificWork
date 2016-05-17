@@ -1,5 +1,6 @@
 package stydying.algo.com.algostudying.ui.controller.game_field;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.Menu;
@@ -9,8 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import stydying.algo.com.algostudying.R;
+import stydying.algo.com.algostudying.data.entities.stats.Stat;
+import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.game.CommandsExecutionThread;
 import stydying.algo.com.algostudying.game.GameWorld;
+import stydying.algo.com.algostudying.logic.managers.LoginManager;
+import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.stats.UpdateStatsOperation;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
 
@@ -22,6 +28,8 @@ public class PlayController extends GameFieldController implements CommandsExecu
     public static final String WORLD_DATA_EXTRA = PlayController.class.getName() + "WORLD_DATA_EXTRA";
 
     private GameNavigationDrawerView navigationView;
+    private long playStartTime;
+    private long accomulatedPlayTime;
 
     public PlayController(GameFieldActivity activity, OnDataUpdatedListener onDataUpdatedListener) {
         super(activity, onDataUpdatedListener);
@@ -55,8 +63,9 @@ public class PlayController extends GameFieldController implements CommandsExecu
                 if (gameWorld.isExecuting()) {
                     gameWorld.stopExecuting();
                 } else {
-                    gameWorld.executeCommands((navigationView).getCommands(), this);
+                    gameWorld.executeCommands(activity, (navigationView).getCommands(), this);
                 }
+                activity.supportInvalidateOptionsMenu();
             }
             return true;
         }
@@ -78,6 +87,50 @@ public class PlayController extends GameFieldController implements CommandsExecu
 
     @Override
     public void onFinish() {
+        gameWorld.stopExecuting();
         activity.supportInvalidateOptionsMenu();
+    }
+
+    private void updateAccumulatedTime() {
+        accomulatedPlayTime += System.currentTimeMillis() - playStartTime;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(getClass().getName() + "playStartTime", playStartTime);
+        updateAccumulatedTime();
+        outState.putLong(getClass().getName() + "accomulatedPlayTime", accomulatedPlayTime);
+    }
+
+    @Override
+    public void onWin(int commandsCount) {
+        updateAccumulatedTime();
+        User currentUser = LoginManager.getInstance(activity).getCurrentUser();
+
+        Stat stat = new Stat();
+        stat.setTaskGroupId(task.getTaskGroup().getId());
+        stat.setTaskId(task.getId());
+        stat.setTime(accomulatedPlayTime);
+        stat.setCommandsCount(commandsCount);
+        stat.setTaskName(task.getTitle());
+        stat.setGroupName(task.getTaskGroup().getTitle());
+
+        OperationProcessor.executeOperation(activity,
+                new UpdateStatsOperation(stat, currentUser.getLogin(), currentUser.getPass()));
+
+        activity.finish();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedState) {
+        super.onCreate(savedState);
+        if (savedState != null) {
+            playStartTime = savedState.getLong(getClass().getName() + "playStartTime");
+            accomulatedPlayTime = savedState.getLong(getClass().getName() + "accomulatedPlayTime");
+        } else {
+            playStartTime = System.currentTimeMillis();
+            accomulatedPlayTime = 0;
+        }
     }
 }

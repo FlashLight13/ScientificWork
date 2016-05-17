@@ -2,7 +2,7 @@ package stydying.algo.com.algostudying.data;
 
 import com.raizlabs.android.dbflow.sql.language.Delete;
 
-import stydying.algo.com.algostudying.data.entities.stats.Stats;
+import stydying.algo.com.algostudying.data.entities.stats.Stat;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
@@ -20,6 +20,6 @@ public class Database {
         new Delete().from(User.class).execute();
         new Delete().from(Task.class).execute();
         new Delete().from(TaskGroup.class).execute();
-        new Delete().from(Stats.class).execute();
+        new Delete().from(Stat.class).execute();
     }
 }

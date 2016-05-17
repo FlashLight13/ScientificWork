@@ -96,4 +96,10 @@ public abstract class GameFieldController implements LoaderManager.LoaderCallbac
     public void onPause() {
         BusProvider.bus().unregister(this);
     }
+
+    public void onCreate(@Nullable Bundle savedState) {
+    }
+
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+    }
 }

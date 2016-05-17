@@ -1,6 +1,8 @@
 package stydying.algo.com.algostudying.game;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
@@ -21,6 +23,11 @@ public class CommandsExecutionThread extends Thread {
          * Notified on executing all commands. Will not be called if thread was interrupted.
          */
         void onFinish();
+
+        /**
+         * Notified on task completed.
+         */
+        void onWin(int commandsCount);
     }
 
     private List<Command> commandList;
@@ -62,7 +69,7 @@ public class CommandsExecutionThread extends Thread {
                         return;
                     }
                     if (!command.perform(gameWorld)) {
-                        notifyListener();
+                        notifyListenerFinish();
                         gameWorld.reset();
                         showError(new BaseException(BaseException.ERROR_EXECUTING_ALGO));
                         return;
@@ -73,21 +80,40 @@ public class CommandsExecutionThread extends Thread {
                     return;
                 }
             }
-            notifyListener();
-            if (!winCondition.win(gameWorld)) {
+            notifyListenerFinish();
+            if (winCondition.win(gameWorld)) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "Ты победил! Ура!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                notifyListenerWin();
+            } else {
                 showError(new BaseException(BaseException.ERROR_NOT_ALL_COLLECTED));
                 gameWorld.reset();
             }
         }
     }
 
-    private void notifyListener() {
+    private void notifyListenerWin() {
+        if (executionListener != null) {
+            executionListener.onWin(commandList.size());
+        }
+    }
+
+    private void notifyListenerFinish() {
         if (executionListener != null) {
             executionListener.onFinish();
         }
     }
 
-    private void showError(@NonNull BaseException exception) {
-        Toast.makeText(context, exception.getMessageRes(), Toast.LENGTH_SHORT).show();
+    private void showError(@NonNull final BaseException exception) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, exception.getMessageRes(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

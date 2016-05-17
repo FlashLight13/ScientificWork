@@ -48,6 +48,8 @@ public class CreateTaskOperation implements OperationProcessor.Operation {
         updateTaskGroup(data.taskGroup);
         data.task.setTaskGroup(data.taskGroup);
         data.task.save();
+        OperationProcessor.OperationsManager.get(context)
+                .resetDelayForOperation(GetTaskGroupsNamesOperation.class);
         return null;
     }
 

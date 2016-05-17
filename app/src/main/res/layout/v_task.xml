@@ -33,7 +33,16 @@
             android:id="@+id/text_description"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/task_list_item_title_margin"
             android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/text_difficulty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/task_list_item_title_margin"
+            android:text="@string/label_task_difficulty_level"
+            android:textSize="@dimen/text_size_small" />
 
     </LinearLayout>
 

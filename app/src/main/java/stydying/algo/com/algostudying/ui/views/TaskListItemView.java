@@ -15,6 +15,7 @@ import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
+import stydying.algo.com.algostudying.utils.TaskDifficultyFormatter;
 
 /**
  * Created by Anton on 03.03.2016.
@@ -25,6 +26,8 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
     protected TextView textTitle;
     @Bind(R.id.text_description)
     protected TextView textDescription;
+    @Bind(R.id.text_difficulty)
+    protected TextView textDifficulty;
     @Bind(R.id.img)
     protected ImageView img;
     @Bind(R.id.ic_edit)
@@ -106,6 +109,7 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
         // todo implement task image
         img.setVisibility(GONE);
         setTag(R.integer.position_key, position);
+        textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), 1));
         return this;
     }
 }

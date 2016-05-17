@@ -26,7 +26,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        style="@style/TableHeaderText"
+                        style="@style/TableRow.TableHeaderText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingLeft="0dp"
@@ -34,25 +34,25 @@
                         android:text="@string/stats_task_group" />
 
                     <TextView
-                        style="@style/TableHeaderText"
+                        style="@style/TableRow.TableHeaderText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/stats_task_name" />
 
                     <TextView
-                        style="@style/TableHeaderText"
+                        style="@style/TableRow.TableHeaderText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@string/stats_task_average_time" />
+                        android:text="@string/stats_task_time" />
 
                     <TextView
-                        style="@style/TableHeaderText"
+                        style="@style/TableRow.TableHeaderText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/stats_task_tries_count" />
 
                     <TextView
-                        style="@style/TableHeaderText"
+                        style="@style/TableRow.TableHeaderText"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/stats_task_commands_count" />
