@@ -115,7 +115,7 @@ public class User extends BaseModel implements Parcelable {
         this.pass = pass;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL, variableName = "stats")
+    @OneToMany(methods = OneToMany.Method.ALL, variableName = "taskGroups")
     public List<TaskGroup> getTaskGroups() {
         if (taskGroups == null) {
             taskGroups = SQLite.select()

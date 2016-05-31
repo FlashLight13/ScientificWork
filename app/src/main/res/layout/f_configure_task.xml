@@ -54,8 +54,8 @@
                     android:layout_gravity="center_vertical|end"
                     app:snp_arrowColor="@color/white"
                     app:snp_backgroundColor="@color/deep_blue"
-                    app:snp_max="10"
-                    app:snp_min="0"
+                    app:snp_max="14"
+                    app:snp_min="7"
                     app:snp_numberColor="@color/white"
                     app:snp_value="95" />
 
@@ -80,8 +80,8 @@
                     android:layout_gravity="center_vertical|end"
                     app:snp_arrowColor="@color/white"
                     app:snp_backgroundColor="@color/deep_blue"
-                    app:snp_max="10"
-                    app:snp_min="1"
+                    app:snp_max="14"
+                    app:snp_min="7"
                     app:snp_numberColor="@color/white"
                     app:snp_value="95" />
 

@@ -3,6 +3,7 @@ package stydying.algo.com.algostudying.data.entities.tasks;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
@@ -11,6 +12,8 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
+
+import java.util.Comparator;
 
 import stydying.algo.com.algostudying.data.Database;
 import stydying.algo.com.algostudying.game.objects.CubeBlock;
@@ -33,6 +36,8 @@ public class Task extends BaseModel implements Parcelable {
     String title;
     @Column
     String description;
+    @Column
+    int difficultyLevel;
     @ForeignKey(saveForeignKeyModel = false)
     transient ForeignKeyContainer<TaskGroup> taskGroupForeignKeyContainer;
 
@@ -42,19 +47,13 @@ public class Task extends BaseModel implements Parcelable {
         super();
     }
 
-    public Task(String title, String[][][] gameField, String description) {
-        super();
-        this.title = title;
-        this.gameField = gameField;
-        this.description = description;
-    }
-
-    public Task(String title, TaskGroup taskGroup, String description, int width, int height) {
+    public Task(String title, TaskGroup taskGroup, String description, int width, int height, int difficultyLevel) {
         super();
         this.title = title;
         this.description = description;
         setTaskGroup(taskGroup);
         initEmptyGameField(width, height);
+        this.difficultyLevel = difficultyLevel;
     }
 
     private void initEmptyGameField(int width, int height) {
@@ -72,14 +71,6 @@ public class Task extends BaseModel implements Parcelable {
         }
     }
 
-    public Task(Task task) {
-        super();
-        this.id = task.id;
-        this.title = task.title;
-        this.gameField = task.gameField;
-        this.description = task.description;
-    }
-
     public Task(Parcel parcel) {
         super();
         this.id = parcel.readLong();
@@ -87,6 +78,16 @@ public class Task extends BaseModel implements Parcelable {
         this.description = parcel.readString();
         TaskGroup taskGroup = parcel.readParcelable(TaskGroup.class.getClassLoader());
         setTaskGroup(taskGroup);
+        this.difficultyLevel = parcel.readInt();
+    }
+
+    public int getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public Task setDifficultyLevel(int difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+        return this;
     }
 
     public String[][][] getGameField() {
@@ -176,5 +177,17 @@ public class Task extends BaseModel implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeParcelable(getTaskGroup(), flags);
+        dest.writeInt(difficultyLevel);
+    }
+
+    public static final class ByTaskDifficultyComparator implements Comparator<Task> {
+
+        @Override
+        public int compare(@Nullable Task lhs, @Nullable Task rhs) {
+            if (lhs == null || rhs == null) {
+                return 0;
+            }
+            return lhs.difficultyLevel - rhs.difficultyLevel;
+        }
     }
 }

@@ -25,6 +25,7 @@ import stydying.algo.com.algostudying.ui.interfaces.ControlListener;
 import stydying.algo.com.algostudying.ui.interfaces.GameObjectSelectListener;
 import stydying.algo.com.algostudying.ui.interfaces.HeightControlListener;
 import stydying.algo.com.algostudying.utils.vectors.Vector2i;
+import stydying.algo.com.algostudying.utils.vectors.Vector3f;
 import stydying.algo.com.algostudying.utils.vectors.Vector3i;
 
 /**
@@ -40,9 +41,10 @@ public class GameWorld {
     private int spheresCount = 0;
 
     private transient Player player;
+    private transient Vector3f worldCenter;
     private transient GameObject[][][] map;
     private List<Sphere> collectedSpheres = new ArrayList<>();
-    private Vector3i initialPlayerPosition;
+    private Vector3f initialPlayerPosition;
 
     private transient GameWorldEditor gameWorldEditor;
     private transient CommandsExecutionThread commandsExecutionThread;
@@ -58,12 +60,12 @@ public class GameWorld {
             for (int y = 0; y < worldY; y++) {
                 for (int z = 0; z < worldZ; z++) {
                     map[x][y][z] = ObjectSerializator.gameObjectFromJsonString(task.getGameField()[x][y][z])
-                            .setCoordinates(x * GAME_CELL_MULTIPLIER,
-                                    y * GAME_CELL_MULTIPLIER,
+                            .setCoordinates(x * GAME_CELL_MULTIPLIER - worldY / GAME_CELL_MULTIPLIER,
+                                    y * GAME_CELL_MULTIPLIER - worldY / GAME_CELL_MULTIPLIER,
                                     z * GAME_CELL_MULTIPLIER);
                     if (map[x][y][z] instanceof Player) {
                         player = (Player) map[x][y][z];
-                        initialPlayerPosition = new Vector3i(player.getCoordinates());
+                        initialPlayerPosition = new Vector3f(player.getCoordinates());
                     }
                     if (map[x][y][z] instanceof Sphere) {
                         spheresCount++;
@@ -75,7 +77,9 @@ public class GameWorld {
             throw new IllegalStateException("No player");
         }
 
-        gameWorldEditor = new GameWorldEditor(map, worldZ);
+        this.gameWorldEditor = new GameWorldEditor(map, worldZ);
+        this.worldCenter = new Vector3f((worldX / 2) * GAME_CELL_MULTIPLIER,
+                (worldY / 2) * GAME_CELL_MULTIPLIER, (worldZ / 2) * GAME_CELL_MULTIPLIER);
     }
 
     public void executeCommands(@NonNull Context context,
@@ -96,6 +100,14 @@ public class GameWorld {
             commandsExecutionThread.interrupt();
             commandsExecutionThread = null;
         }
+    }
+
+    public float getWorldTop() {
+        return worldZ * GAME_CELL_MULTIPLIER;
+    }
+
+    public Vector3f getWorldCenter() {
+        return this.worldCenter;
     }
 
     public Player getPlayer() {
@@ -221,7 +233,7 @@ public class GameWorld {
 
         public void increaseHeightOfTheSelectedPosition() {
             int topPosition = Math.min(worldZ - 1, topPosition(selectedPosition.x, selectedPosition.y) + 1);
-            Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][topPosition].getCoordinates();
+            Vector3f coordinates = map[selectedPosition.x][selectedPosition.y][topPosition].getCoordinates();
             CubeBlock top = new CubeBlock(coordinates.x, coordinates.y, topPosition * GAME_CELL_MULTIPLIER);
             top.setSelected(true);
             map[selectedPosition.x][selectedPosition.y][topPosition] = top;
@@ -229,7 +241,7 @@ public class GameWorld {
 
         public void decreaseHeightOfTheSelectedPosition() {
             int topPosition = Math.max(1, topPosition(selectedPosition.x, selectedPosition.y));
-            Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][topPosition].getCoordinates();
+            Vector3f coordinates = map[selectedPosition.x][selectedPosition.y][topPosition].getCoordinates();
             EmptyObject top = new EmptyObject(coordinates.x, coordinates.y, topPosition * GAME_CELL_MULTIPLIER);
             map[selectedPosition.x][selectedPosition.y][topPosition] = top;
             map[selectedPosition.x][selectedPosition.y][Math.max(0, topPosition(selectedPosition.x, selectedPosition.y))]
@@ -245,7 +257,7 @@ public class GameWorld {
             }
             final int top = topPosition(selectedPosition.x, selectedPosition.y) + 1;
             if (top > 0 && top < worldZ) {
-                Vector3i coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
+                Vector3f coordinates = map[selectedPosition.x][selectedPosition.y][top].getCoordinates();
                 object.setCoordinates(coordinates.x, coordinates.y, top * GAME_CELL_MULTIPLIER);
                 if (map[selectedPosition.x][selectedPosition.y][top] instanceof Player) {
                     player = null;
@@ -276,7 +288,7 @@ public class GameWorld {
     }
 
     public boolean isInWorldBounds(int x, int y) {
-        return x >= 0 && x < worldX && y >= 0 && y < worldY;
+        return x >= worldX / GAME_CELL_MULTIPLIER && x < -worldX / GAME_CELL_MULTIPLIER && y >= worldY / GAME_CELL_MULTIPLIER && y < -worldY / GAME_CELL_MULTIPLIER;
     }
 
     public String[][][] createGameWorld() throws VerifyException {

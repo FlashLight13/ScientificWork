@@ -10,14 +10,14 @@ public class RotationGestureDetector {
     private float fX, fY, sX, sY;
     private int ptrID1, ptrID2;
 
-    private float prevAngle;
-    private float currentAngle;
+    private float angle = 0;
+    private float storedAngle = 0;
     private int rotationSensitiveLevel = 1;
 
     private OnRotationGestureListener mListener;
 
     public float getDeltaAngle() {
-        return currentAngle - prevAngle;
+        return (storedAngle + angle) % 360;
     }
 
     public RotationGestureDetector setRotationSensitiveLevel(int rotationSensitiveLevel) {
@@ -54,8 +54,7 @@ public class RotationGestureDetector {
                         nfX = event.getX(event.findPointerIndex(ptrID2));
                         nfY = event.getY(event.findPointerIndex(ptrID2));
 
-                        prevAngle = currentAngle;
-                        currentAngle = angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY) / rotationSensitiveLevel;
+                        angle = angleBetweenLines(fX, fY, sX, sY, nfX, nfY, nsX, nsY) / rotationSensitiveLevel;
 
                         if (mListener != null) {
                             mListener.OnRotation(this);
@@ -65,19 +64,25 @@ public class RotationGestureDetector {
                     break;
                 case MotionEvent.ACTION_UP:
                     ptrID1 = INVALID_POINTER_ID;
+                    storedAngle += angle;
+                    angle = 0;
                     break;
                 case MotionEvent.ACTION_POINTER_UP:
+                    storedAngle += angle;
+                    angle = 0;
                     ptrID2 = INVALID_POINTER_ID;
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     ptrID1 = INVALID_POINTER_ID;
                     ptrID2 = INVALID_POINTER_ID;
+                    storedAngle += angle;
+                    angle = 0;
                     break;
             }
         } catch (Exception e) {
             // silently catch exception
         }
-        return false;
+        return event.getPointerCount() == 2;
     }
 
     private float angleBetweenLines(float fX, float fY, float sX, float sY, float nfX, float nfY, float nsX, float nsY) {

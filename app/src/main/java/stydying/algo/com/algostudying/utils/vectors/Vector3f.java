@@ -12,6 +12,12 @@ public class Vector3f implements Serializable {
     public float y;
     public float z;
 
+    public Vector3f(Vector3f vector3f) {
+        this.x = vector3f.x;
+        this.y = vector3f.y;
+        this.z = vector3f.z;
+    }
+
     public Vector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;

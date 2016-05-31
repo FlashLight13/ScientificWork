@@ -14,9 +14,9 @@ import stydying.algo.com.algostudying.utils.vectors.Vector3i;
  */
 public abstract class GameObject {
 
-    private int x;
-    private int y;
-    private int z;
+    private float x;
+    private float y;
+    private float z;
     private float angle;
 
     private State state;
@@ -28,7 +28,7 @@ public abstract class GameObject {
     public GameObject() {
     }
 
-    public GameObject(int x, int y, int z) {
+    public GameObject(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -42,9 +42,9 @@ public abstract class GameObject {
     }
 
     public Vector3i getWorldCoordinates() {
-        return new Vector3i(x / GameWorld.GAME_CELL_MULTIPLIER,
-                y / GameWorld.GAME_CELL_MULTIPLIER,
-                z / GameWorld.GAME_CELL_MULTIPLIER);
+        return new Vector3i((int) x / GameWorld.GAME_CELL_MULTIPLIER,
+                (int) y / GameWorld.GAME_CELL_MULTIPLIER,
+                (int) z / GameWorld.GAME_CELL_MULTIPLIER);
     }
 
     public void setWorldCoordinates(int x, int y) {
@@ -52,15 +52,15 @@ public abstract class GameObject {
         this.y = y * GameWorld.GAME_CELL_MULTIPLIER;
     }
 
-    public GameObject setCoordinates(int x, int y, int z) {
+    public GameObject setCoordinates(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
         return this;
     }
 
-    public Vector3i getCoordinates() {
-        return new Vector3i(x, y, z);
+    public Vector3f getCoordinates() {
+        return new Vector3f(x, y, z);
     }
 
     public Vector3f getDisplayingCoordinates() {
@@ -69,6 +69,11 @@ public abstract class GameObject {
 
     public float getAngle() {
         return this.angle;
+    }
+
+    public GameObject setAngle(float angle) {
+        this.angle = angle;
+        return this;
     }
 
     @Nullable

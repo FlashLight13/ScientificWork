@@ -10,7 +10,7 @@ public class CubeBlock extends GameObject {
     public CubeBlock() {
     }
 
-    public CubeBlock(int x, int y, int z) {
+    public CubeBlock(float x, float y, float z) {
         super(x, y, z);
     }
 

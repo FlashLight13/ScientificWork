@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -75,7 +76,9 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tasksListView.setAdapter(new TasksAdapter(this, this).setTasks(taskGroup.getTasks()));
+        List<Task> tasks = taskGroup.getTasks();
+        Collections.sort(tasks, new Task.ByTaskDifficultyComparator());
+        tasksListView.setAdapter(new TasksAdapter(this, this).setTasks(tasks));
         tasksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

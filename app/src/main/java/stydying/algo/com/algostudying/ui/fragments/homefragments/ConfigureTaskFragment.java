@@ -88,14 +88,14 @@ public class ConfigureTaskFragment extends BaseFragment {
 
     private void setTask(@Nullable Task task) {
         if (task == null) {
-            pickerHeight.setText(String.valueOf(10));
-            pickerWidth.setText(String.valueOf(10));
+            pickerHeight.setValue(10, false);
+            pickerWidth.setValue(10, false);
             ViewsUtils.getEditText(inputTitle).setText("");
             ViewsUtils.getEditText(inputDescription).setText("");
             selectedGroup = null;
         } else {
-            pickerHeight.setText(String.valueOf(10));
-            pickerWidth.setText(String.valueOf(10));
+            pickerHeight.setValue(10, false);
+            pickerWidth.setValue(10, false);
             ViewsUtils.getEditText(inputTitle).setText(task.getTitle());
             ViewsUtils.getEditText(inputDescription).setText(task.getDescription());
             selectedGroup = null;
@@ -180,7 +180,8 @@ public class ConfigureTaskFragment extends BaseFragment {
                     selectedGroup,
                     ViewsUtils.getEditText(inputDescription).getText().toString(),
                     pickerWidth.getValue(),
-                    pickerHeight.getValue());
+                    pickerHeight.getValue(),
+                    1);
             GameFieldCreationController.getInstance(getContext()).init(getContext(), task);
             GameFieldActivity.startMe(getContext(), null, GameFieldActivity.Mode.EDIT);
             setTask(null);

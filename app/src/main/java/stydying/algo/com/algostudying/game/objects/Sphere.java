@@ -9,7 +9,7 @@ import stydying.algo.com.algostudying.R;
  */
 public class Sphere extends GameObject {
 
-    public Sphere(int x, int y, int z) {
+    public Sphere(float x, float y, float z) {
         super(x, y, z);
     }
 

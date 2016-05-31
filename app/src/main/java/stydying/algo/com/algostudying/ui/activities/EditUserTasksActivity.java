@@ -107,15 +107,20 @@ public class EditUserTasksActivity extends BaseActivity {
         if (event.isOperation(LoadUsersOperation.class)) {
             setInProgress(false);
             List<User> users = event.data();
-            if (users == null || users.size() == 0) {
+            if (mode == Mode.NEW && (users == null || users.size() == 0)) {
                 setInProgress(true);
                 OperationProcessor.executeOperation(this,
                         controller().setUsers(getSelectedUserIds()).getCreateOperation());
             }
-            List<UserData> userDatas = new ArrayList<>(users.size());
-            for (User user : users) {
-                if (user.getType() == User.Type.STUDENT) {
-                    userDatas.add(new UserData(user, false));
+            List<UserData> userDatas;
+            if (users == null) {
+                userDatas = new ArrayList<>();
+            } else {
+                userDatas = new ArrayList<>(users.size());
+                for (User user : users) {
+                    if (user.getType() == User.Type.STUDENT) {
+                        userDatas.add(new UserData(user, false));
+                    }
                 }
             }
             listView.setAdapter(new UsersAdapter(this, userDatas));

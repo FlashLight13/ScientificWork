@@ -8,7 +8,13 @@ import stydying.algo.com.algostudying.R;
 public class Player extends GameObject {
 
     public enum LookDirection {
-        STRAIT, LEFT, BACK, RIGHT
+        STRAIT(0), LEFT(270), BACK(180), RIGHT(90);
+
+        private float angleInDegrees;
+
+        LookDirection(float angleInDegrees) {
+            this.angleInDegrees = angleInDegrees;
+        }
     }
 
     public enum State {
@@ -25,7 +31,7 @@ public class Player extends GameObject {
         this.lookDirection = ((Player) object).lookDirection;
     }
 
-    public Player(int x, int y, int z) {
+    public Player(float x, float y, float z) {
         super(x, y, z);
     }
 
@@ -39,6 +45,7 @@ public class Player extends GameObject {
         } else {
             lookDirection++;
         }
+        updateAngle();
     }
 
     public void turnToTheRight() {
@@ -47,6 +54,11 @@ public class Player extends GameObject {
         } else {
             lookDirection--;
         }
+        updateAngle();
+    }
+
+    private void updateAngle() {
+        setAngle(LookDirection.values()[lookDirection].angleInDegrees);
     }
 
     @Override

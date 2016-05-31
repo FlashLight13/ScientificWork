@@ -14,7 +14,7 @@ public class EmptyObject extends GameObject {
         super(object);
     }
 
-    public EmptyObject(int x, int y, int z) {
+    public EmptyObject(float x, float y, float z) {
         super(x, y, z);
     }
 

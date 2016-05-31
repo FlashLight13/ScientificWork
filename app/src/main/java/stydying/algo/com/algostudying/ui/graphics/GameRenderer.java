@@ -21,7 +21,7 @@ import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.game.objects.GameObject;
 import stydying.algo.com.algostudying.utils.StreamUtils;
-import stydying.algo.com.algostudying.utils.vectors.Vector3i;
+import stydying.algo.com.algostudying.utils.vectors.Vector3f;
 
 public class GameRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "LessonTwoRenderer";
@@ -69,7 +69,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         final int vertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, loadShader(R.raw.vertex_shader));
         final int fragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, loadShader(R.raw.fragment_shader));
 
-        camera.init();
+        camera.init(new Vector3f(0, 0, 0));
         mPerVertexProgramHandle = createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
                 new String[]{"a_Position", "a_Color", "a_Normal", "a_TexCoordinate"});
 
@@ -115,7 +115,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             GLES20.glUseProgram(mPerVertexProgramHandle);
             Iterator<GameObject> gameObjectIterator = gameWorld.getObjectsIterator();
             GameObject gameObject;
-            Vector3i coordinates;
+            Vector3f coordinates;
             while (gameObjectIterator.hasNext()) {
                 gameObject = gameObjectIterator.next();
                 if (gameObject == null) {
@@ -126,14 +126,18 @@ public class GameRenderer implements GLSurfaceView.Renderer {
                     gameObject.getModel().initDrawings();
                     for (Model.DrawingBlock block : gameObject.getModel().getDrawingBlocks()) {
                         Matrix.setIdentityM(mLightModelMatrix, 0);
-                        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 100.0f, 0.0f);
-                        Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
+                        float lightX = gameWorld.getWorldCenter().x;
+                        float lightY = gameWorld.getWorldCenter().y;
+                        float lightZ = gameWorld.getWorldTop() + 1;
+                        Matrix.translateM(mLightModelMatrix, 0, lightX, lightY, lightZ);
 
                         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
                         Matrix.multiplyMV(mLightPosInEyeSpace, 0, camera.mViewMatrix(), 0, mLightPosInWorldSpace, 0);
 
                         Matrix.setIdentityM(mModelMatrix, 0);
+                        camera.processModelMatrix(mModelMatrix);
                         Matrix.translateM(mModelMatrix, 0, coordinates.x, coordinates.y, coordinates.z);
+                        //Matrix.rotateM(mModelMatrix, 0, gameObject.getAngle(),0, 0, 1);
                         int mTextureDataHandle = loadTexture(block.getMaterial());
                         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
                         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
@@ -272,6 +276,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
 
     public void setWorld(GameWorld gameWorld) {
         this.gameWorld = gameWorld;
+        this.camera.init(gameWorld.getWorldCenter());
     }
 
     public void onTouch(MotionEvent motionEvent) {
