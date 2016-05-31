@@ -26,7 +26,7 @@ public class MoveCommand extends Command {
         Vector3i coordinates = player.getWorldCoordinates();
         int newX = coordinates.x;
         int newY = coordinates.y;
-        switch (player.getSightDirection()) {
+        switch (player.getLookDirection()) {
             case BACK:
                 newY = newY - 1;
                 break;

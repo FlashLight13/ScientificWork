@@ -86,4 +86,9 @@
         <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:gravity">center_vertical</item>
     </style>
+
+    <style name="BorderlessButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/yellow</item>
+        <item name="android:background">@color/yellow</item>
+    </style>
 </resources>

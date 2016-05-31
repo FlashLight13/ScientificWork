@@ -3,6 +3,7 @@ package stydying.algo.com.algostudying.ui.views;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -105,11 +106,14 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
 
     public TaskListItemView setTask(Task task, int position) {
         this.textTitle.setText(task.getTitle());
-        this.textDescription.setText(task.getDescription());
+        String description = task.getDescription();
+        this.textDescription.setVisibility(TextUtils.isEmpty(description) ? GONE : VISIBLE);
+        this.textDescription.setText(description);
         // todo implement task image
         img.setVisibility(GONE);
         setTag(R.integer.position_key, position);
-        textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), task.getDifficultyLevel()));
+        //textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), task.getDifficultyLevel()));
+        textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), 1));
         return this;
     }
 }

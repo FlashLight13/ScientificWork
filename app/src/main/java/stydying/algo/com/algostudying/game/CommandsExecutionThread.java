@@ -85,10 +85,9 @@ public class CommandsExecutionThread extends Thread {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(context, "Ты победил! Ура!", Toast.LENGTH_SHORT).show();
+                        notifyListenerWin();
                     }
                 });
-                notifyListenerWin();
             } else {
                 showError(new BaseException(BaseException.ERROR_NOT_ALL_COLLECTED));
                 gameWorld.reset();

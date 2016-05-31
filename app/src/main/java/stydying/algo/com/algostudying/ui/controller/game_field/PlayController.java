@@ -1,8 +1,10 @@
 package stydying.algo.com.algostudying.ui.controller.game_field;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -118,15 +120,25 @@ public class PlayController extends GameFieldController implements CommandsExecu
 
         OperationProcessor.executeOperation(activity,
                 new UpdateStatsOperation(stat, currentUser.getLogin(), currentUser.getPass()));
-
-        activity.finish();
+        new AlertDialog.Builder(activity)
+                .setTitle(R.string.message_title_win)
+                .setMessage(activity.getString(R.string.message_win, commandsCount))
+                .setPositiveButton(R.string.ok, null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        activity.finish();
+                    }
+                })
+                .setCancelable(true)
+                .show();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedState) {
         super.onCreate(savedState);
         if (savedState != null) {
-            playStartTime = savedState.getLong(getClass().getName() + "playStartTime");
+            playStartTime = savedState.getLong(getClass().getName() + "playS\ntartTime");
             accomulatedPlayTime = savedState.getLong(getClass().getName() + "accomulatedPlayTime");
         } else {
             playStartTime = System.currentTimeMillis();

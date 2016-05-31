@@ -44,7 +44,9 @@ public class GameWorld {
     private transient Vector3f worldCenter;
     private transient GameObject[][][] map;
     private List<Sphere> collectedSpheres = new ArrayList<>();
+
     private Vector3f initialPlayerPosition;
+    private Player.LookDirection initialPlayerLookDirection;
 
     private transient GameWorldEditor gameWorldEditor;
     private transient CommandsExecutionThread commandsExecutionThread;
@@ -60,12 +62,13 @@ public class GameWorld {
             for (int y = 0; y < worldY; y++) {
                 for (int z = 0; z < worldZ; z++) {
                     map[x][y][z] = ObjectSerializator.gameObjectFromJsonString(task.getGameField()[x][y][z])
-                            .setCoordinates(x * GAME_CELL_MULTIPLIER - worldY / GAME_CELL_MULTIPLIER,
-                                    y * GAME_CELL_MULTIPLIER - worldY / GAME_CELL_MULTIPLIER,
+                            .setCoordinates(x * GAME_CELL_MULTIPLIER,
+                                    y * GAME_CELL_MULTIPLIER,
                                     z * GAME_CELL_MULTIPLIER);
                     if (map[x][y][z] instanceof Player) {
                         player = (Player) map[x][y][z];
                         initialPlayerPosition = new Vector3f(player.getCoordinates());
+                        initialPlayerLookDirection = player.getLookDirection();
                     }
                     if (map[x][y][z] instanceof Sphere) {
                         spheresCount++;
@@ -280,6 +283,7 @@ public class GameWorld {
 
     public void reset() {
         player.setCoordinates(initialPlayerPosition.x, initialPlayerPosition.y, initialPlayerPosition.z);
+        player.setLookDirection(initialPlayerLookDirection);
         for (Sphere sphere : collectedSpheres) {
             Vector3i worldCoordinates = sphere.getWorldCoordinates();
             map[worldCoordinates.x][worldCoordinates.y][worldCoordinates.z] = sphere;
@@ -288,7 +292,7 @@ public class GameWorld {
     }
 
     public boolean isInWorldBounds(int x, int y) {
-        return x >= worldX / GAME_CELL_MULTIPLIER && x < -worldX / GAME_CELL_MULTIPLIER && y >= worldY / GAME_CELL_MULTIPLIER && y < -worldY / GAME_CELL_MULTIPLIER;
+        return x >= 0 && x < worldX && y >= 0 && y < worldY;
     }
 
     public String[][][] createGameWorld() throws VerifyException {
