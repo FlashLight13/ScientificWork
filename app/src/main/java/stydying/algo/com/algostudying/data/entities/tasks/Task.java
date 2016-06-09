@@ -6,12 +6,10 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import java.util.Comparator;
 
@@ -31,15 +29,17 @@ public class Task extends BaseModel implements Parcelable {
     public static final int MAX_GAME_WORLD_HEIGHT = 6;
 
     @PrimaryKey
-    long id = DEFAULT_ID;
+    protected long id = DEFAULT_ID;
     @Column
-    String title;
+    protected String title;
     @Column
-    String description;
+    protected String description;
     @Column
-    int difficultyLevel;
-    @ForeignKey(saveForeignKeyModel = false)
-    transient ForeignKeyContainer<TaskGroup> taskGroupForeignKeyContainer;
+    protected int difficultyLevel;
+    @Column
+    protected long taskGroupId;
+
+    transient private TaskGroup taskGroup;
 
     private String[][][] gameField;
 
@@ -76,8 +76,7 @@ public class Task extends BaseModel implements Parcelable {
         this.id = parcel.readLong();
         this.title = parcel.readString();
         this.description = parcel.readString();
-        TaskGroup taskGroup = parcel.readParcelable(TaskGroup.class.getClassLoader());
-        setTaskGroup(taskGroup);
+        this.taskGroupId = parcel.readLong();
         this.difficultyLevel = parcel.readInt();
     }
 
@@ -127,10 +126,12 @@ public class Task extends BaseModel implements Parcelable {
     }
 
     public TaskGroup getTaskGroup() {
-        if (taskGroupForeignKeyContainer == null) {
-            return null;
+        if (taskGroup == null) {
+            this.taskGroup = new Select().from(TaskGroup.class)
+                    .where(TaskGroup_Table._id.eq(taskGroupId))
+                    .querySingle();
         }
-        return taskGroupForeignKeyContainer.load();
+        return taskGroup;
     }
 
     public Task saveMap(Context context) {
@@ -146,12 +147,8 @@ public class Task extends BaseModel implements Parcelable {
     }
 
     public void setTaskGroup(TaskGroup taskGroup) {
-        if (taskGroup == null) {
-            taskGroupForeignKeyContainer = null;
-        } else {
-            taskGroupForeignKeyContainer = FlowManager.getContainerAdapter(TaskGroup.class)
-                    .toForeignKeyContainer(taskGroup);
-        }
+        this.taskGroup = taskGroup;
+        this.taskGroupId = taskGroup.getId();
     }
 
     public static final Creator<Task> CREATOR = new Creator<Task>() {
@@ -176,7 +173,7 @@ public class Task extends BaseModel implements Parcelable {
         dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(description);
-        dest.writeParcelable(getTaskGroup(), flags);
+        dest.writeLong(taskGroupId);
         dest.writeInt(difficultyLevel);
     }
 

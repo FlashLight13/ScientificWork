@@ -19,7 +19,7 @@ import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.LoadTaskGroupOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.edit_operations.EditTaskGroupOperation;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
@@ -47,7 +47,7 @@ public class EditTaskGroupFragment extends BaseFragment {
         Bundle args = getArguments();
         if (args != null) {
             id = args.getLong(EditUserTasksActivity.ID_EXTRA);
-            OperationProcessor.executeOperation(getContext(),
+            OperationProcessingService.executeOperation(getContext(),
                     new LoadTaskGroupOperation(id));
         }
     }
@@ -73,7 +73,7 @@ public class EditTaskGroupFragment extends BaseFragment {
         } else {
             inputTitle.setError(null);
             EditUserTasksActivity activity = (EditUserTasksActivity) getActivity();
-            OperationProcessor.executeOperation(activity, new EditTaskGroupOperation(
+            OperationProcessingService.executeOperation(activity, new EditTaskGroupOperation(
                     id,
                     ViewsUtils.getEditText(inputTitle).getText().toString(),
                     activity.getSelectedUserIds()));

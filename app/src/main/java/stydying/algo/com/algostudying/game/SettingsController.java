@@ -5,7 +5,7 @@ package stydying.algo.com.algostudying.game;
  */
 public class SettingsController {
 
-    private static final long BETWEEN_OPERATIONS_DELAY = 1500;
+    private static final long BETWEEN_OPERATIONS_DELAY = 500;
 
     private static SettingsController instance;
 

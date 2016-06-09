@@ -4,14 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import stydying.algo.com.algostudying.data.Database;
@@ -29,16 +27,16 @@ public class User extends BaseModel implements Parcelable {
     }
 
     @PrimaryKey
-    String login;
+    protected String login;
     @Column
-    String pass;
+    protected String pass;
     @Column
-    String name;
+    protected String name;
     @Column
-    Type type;
+    protected Type type;
 
-    List<Stat> stats;
-    List<TaskGroup> taskGroups;
+    protected List<Stat> stats;
+    protected List<TaskGroup> taskGroups;
 
     public User() {
 
@@ -59,16 +57,13 @@ public class User extends BaseModel implements Parcelable {
         this.pass = pass;
     }
 
-    @SuppressWarnings("unchecked")
     private User(Parcel parcel) {
         login = parcel.readString();
         pass = parcel.readString();
-        stats = parcel.readArrayList(Stat.class.getClassLoader());
         name = parcel.readString();
         type = Type.valueOf(parcel.readString());
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL, variableName = "stats")
     public List<Stat> getStats() {
         if (stats == null) {
             stats = SQLite.select()
@@ -115,12 +110,11 @@ public class User extends BaseModel implements Parcelable {
         this.pass = pass;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL, variableName = "taskGroups")
     public List<TaskGroup> getTaskGroups() {
         if (taskGroups == null) {
             taskGroups = SQLite.select()
                     .from(TaskGroup.class)
-                    .where(TaskGroup_Table.userForeignKeyContainer_login.eq(login))
+                    .where(TaskGroup_Table.userLogin.eq(login))
                     .queryList();
             if (taskGroups == null) {
                 taskGroups = new ArrayList<>();
@@ -154,24 +148,7 @@ public class User extends BaseModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(login);
         dest.writeString(pass);
-        dest.writeList(stats);
         dest.writeString(name);
         dest.writeString(type.name());
-    }
-
-    public static final class ByTypeComparator implements Comparator<User> {
-
-        @Override
-        public int compare(User lhs, User rhs) {
-            if (lhs.getType() == rhs.getType()) {
-                return 0;
-            } else {
-                if (lhs.getType() == Type.ADMIN && rhs.getType() == Type.STUDENT) {
-                    return -1;
-                } else {
-                    return 1;
-                }
-            }
-        }
     }
 }

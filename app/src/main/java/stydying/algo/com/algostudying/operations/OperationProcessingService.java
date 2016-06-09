@@ -19,21 +19,22 @@ import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
+import stydying.algo.com.algostudying.utils.SystemUtils;
 
 /**
  * Created by Anton on 03.02.2016.
  */
-public class OperationProcessor extends IntentService {
+public class OperationProcessingService extends IntentService {
 
-    private static final String LOG_TAG = "OperationProcessor";
+    private static final String LOG_TAG = "OperationProcessService";
 
     private static final String OPERATION_EXTRA
-            = "stydying.algo.com.algostudying.operations.OperationProcessor.OPERATION_EXTRA";
+            = "stydying.algo.com.algostudying.operations.OperationProcessingService.OPERATION_EXTRA";
     private static final String OPERATION_CLASS_EXTRA
-            = "stydying.algo.com.algostudying.operations.OperationProcessor.OPERATION_CLASS_EXTRA";
+            = "stydying.algo.com.algostudying.operations.OperationProcessingService.OPERATION_CLASS_EXTRA";
 
-    public OperationProcessor() {
-        super("OperationProcessor");
+    public OperationProcessingService() {
+        super("OperationProcessingService");
     }
 
     @Override
@@ -44,7 +45,7 @@ public class OperationProcessor extends IntentService {
                 Object result;
                 switch (operation.type()) {
                     case CACHE:
-                        result = OperationsManager.get(this).shouldLoadFromNetwork(operation)
+                        result = OperationsManager.get(this).shouldLoadFromNetwork(this, operation)
                                 ? operation.loadFromNetwork(this)
                                 : operation.loadFromLocal(this);
                         break;
@@ -79,7 +80,7 @@ public class OperationProcessor extends IntentService {
     }
 
     public static void executeOperation(Context context, Operation operation) {
-        Intent intent = new Intent(context, OperationProcessor.class);
+        Intent intent = new Intent(context, OperationProcessingService.class);
         intent.putExtra(OPERATION_EXTRA, new Gson().toJson(operation));
         intent.putExtra(OPERATION_CLASS_EXTRA, operation.getClass().getName());
         context.startService(intent);
@@ -121,10 +122,10 @@ public class OperationProcessor extends IntentService {
             this.operationTimes = new HashMap<>();
         }
 
-        private boolean shouldLoadFromNetwork(Operation operation) {
-            Long laseNetworkExecutionTime = operationTimes.get(operation.getClass());
-            return laseNetworkExecutionTime == null
-                    || laseNetworkExecutionTime - System.currentTimeMillis() > FROM_NETWORK_DELAY;
+        private boolean shouldLoadFromNetwork(Context context, Operation operation) {
+            Long lastNetworkExecutionTime = operationTimes.get(operation.getClass());
+            return SystemUtils.isNetworkAvailable(context) && (lastNetworkExecutionTime == null
+                    || lastNetworkExecutionTime - System.currentTimeMillis() > FROM_NETWORK_DELAY);
         }
 
         public void resetDelayForOperation(Class<? extends Operation> operationClass) {

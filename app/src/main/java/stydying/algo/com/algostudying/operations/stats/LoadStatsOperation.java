@@ -10,12 +10,12 @@ import stydying.algo.com.algostudying.data.entities.stats.Stat;
 import stydying.algo.com.algostudying.data.entities.stats.Stat_Table;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.network.services.UsersService;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 
 /**
  * Created by Anton on 15.05.2016.
  */
-public class LoadStatsOperation implements OperationProcessor.Operation<List<Stat>> {
+public class LoadStatsOperation implements OperationProcessingService.Operation<List<Stat>> {
 
     private String login;
 

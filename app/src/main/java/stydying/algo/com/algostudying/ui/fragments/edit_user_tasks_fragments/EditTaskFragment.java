@@ -12,7 +12,7 @@ import stydying.algo.com.algostudying.data.entities.tasks.Task;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.GetTaskOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.fragments.homefragments.ConfigureTaskFragment;
 import stydying.algo.com.algostudying.utils.ViewsUtils;
@@ -30,9 +30,9 @@ public class EditTaskFragment extends ConfigureTaskFragment {
         btnCreate.setVisibility(View.GONE);
         Bundle args = getArguments();
         if (args != null) {
-            OperationProcessor.executeOperation(getContext(),
+            OperationProcessingService.executeOperation(getContext(),
                     new GetTaskOperation(args.getLong(EditUserTasksActivity.ID_EXTRA),
-                            OperationProcessor.Operation.OperationType.LOCAL_ONLY));
+                            OperationProcessingService.Operation.OperationType.LOCAL_ONLY));
         }
     }
 

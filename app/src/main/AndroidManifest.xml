@@ -80,7 +80,7 @@
             android:screenOrientation="landscape"
             android:theme="@style/AlgoStudyingBaseActivity" />
 
-        <service android:name=".operations.OperationProcessor" />
+        <service android:name=".operations.OperationProcessingService" />
     </application>
 
 </manifest>

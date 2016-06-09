@@ -12,7 +12,7 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 16.02.2016.
  */
-public class RemoveTaskGroupOperation implements OperationProcessor.Operation {
+public class RemoveTaskGroupOperation implements OperationProcessingService.Operation {
 
     private Long id;
 

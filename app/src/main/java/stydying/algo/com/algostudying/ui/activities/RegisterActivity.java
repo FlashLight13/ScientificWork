@@ -21,7 +21,7 @@ import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.RegisterOperation;
 import stydying.algo.com.algostudying.ui.views.LoadingPlaceholderView;
 import stydying.algo.com.algostudying.utils.ViewsUtils;
@@ -116,7 +116,7 @@ public class RegisterActivity extends BaseActivity {
         hasError |= !isPassCorrect(inputConfirmPass, inputPass);
         if (!hasError) {
             placeholderView.loading();
-            OperationProcessor.executeOperation(this,
+            OperationProcessingService.executeOperation(this,
                     new RegisterOperation(
                             ViewsUtils.getEditText(inputLogin).getText().toString(),
                             ViewsUtils.getEditText(inputPass).getText().toString(),

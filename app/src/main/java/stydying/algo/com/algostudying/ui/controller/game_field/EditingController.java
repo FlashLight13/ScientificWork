@@ -100,7 +100,9 @@ public class EditingController extends GameFieldController {
                 Toast.makeText(activity, e.getMessageRes(), Toast.LENGTH_SHORT).show();
                 return true;
             }
-            EditUserTasksActivity.startMe(activity, EditUserTasksActivity.Mode.NEW, -1);
+            if (GameFieldCreationController.getInstance(activity).shouldSelectAvailableStudents()) {
+                EditUserTasksActivity.startMe(activity, EditUserTasksActivity.Mode.NEW, -1);
+            }
             return true;
         }
         return false;

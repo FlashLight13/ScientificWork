@@ -33,7 +33,7 @@ import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.operations.GetTaskGroupsNamesOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.RemoveTaskGroupOperation;
 import stydying.algo.com.algostudying.operations.RemoveTaskOperation;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
@@ -89,7 +89,7 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
 
         placeholderView.loading();
         placeholderView.setOnRetryListener(this);
-        OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
+        OperationProcessingService.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
     }
 
     @Override
@@ -114,23 +114,23 @@ public class TasksFragment extends BaseFragment implements LoadingPlaceholderVie
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EditUserTasksActivity.REQUEST_CODE
                 && resultCode == Activity.RESULT_OK) {
-            OperationProcessor.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
+            OperationProcessingService.executeOperation(getContext(), new GetTaskGroupsNamesOperation());
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void removeGroup() {
-        OperationProcessor.executeOperation(getContext(),
+        OperationProcessingService.executeOperation(getContext(),
                 new RemoveTaskGroupOperation(adapter().getTaskGroup(tasksPager.getCurrentItem())));
     }
 
     @Override
     public void onRetry() {
-        OperationProcessor.OperationsManager.get(getContext())
+        OperationProcessingService.OperationsManager.get(getContext())
                 .resetDelayForOperation(GetTaskGroupsNamesOperation.class);
-        OperationProcessor.executeOperation(
+        OperationProcessingService.executeOperation(
                 getContext(),
-                new GetTaskGroupsNamesOperation(OperationProcessor.Operation.OperationType.NETWORK_ONLY));
+                new GetTaskGroupsNamesOperation(OperationProcessingService.Operation.OperationType.NETWORK_ONLY));
     }
 
     @SuppressWarnings("unchecked")

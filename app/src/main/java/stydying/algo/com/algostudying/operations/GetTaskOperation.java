@@ -14,7 +14,7 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 29.02.2016.
  */
-public class GetTaskOperation implements OperationProcessor.Operation<Task> {
+public class GetTaskOperation implements OperationProcessingService.Operation<Task> {
 
     private OperationType type;
     private long taskId;

@@ -23,7 +23,7 @@ import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.UpdateUserOperation;
 import stydying.algo.com.algostudying.ui.activities.UserViewActivity;
 import stydying.algo.com.algostudying.ui.fragments.homefragments.ProfileFragment;
@@ -129,7 +129,7 @@ public class UserDetailsFragment extends ProfileFragment.BaseProfileFragment {
                     placeholderView.loading();
                     if (isPassCorrect(inputConfirmPass, inputPass)) {
                         btnAction.setEnabled(false);
-                        OperationProcessor.executeOperation(getContext(), new UpdateUserOperation(
+                        OperationProcessingService.executeOperation(getContext(), new UpdateUserOperation(
                                 ViewsUtils.getEditText(inputName).getText().toString(),
                                 ViewsUtils.getEditText(inputPass).getText().toString(),
                                 currentUser().getLogin()));

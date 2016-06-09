@@ -10,12 +10,12 @@ import stydying.algo.com.algostudying.data.entities.stats.Stat;
 import stydying.algo.com.algostudying.data.entities.stats.Stat_Table;
 import stydying.algo.com.algostudying.errors.NetworkException;
 import stydying.algo.com.algostudying.network.services.UsersService;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 
 /**
  * Created by Anton on 15.05.2016.
  */
-public class UpdateStatsOperation implements OperationProcessor.Operation<Stat> {
+public class UpdateStatsOperation implements OperationProcessingService.Operation<Stat> {
 
     private Stat stat;
 
@@ -44,7 +44,7 @@ public class UpdateStatsOperation implements OperationProcessor.Operation<Stat> 
                 performSync(context, unsyncedStat, login, pass);
             }
         }
-        OperationProcessor.OperationsManager.get(context).resetDelayForOperation(LoadStatsOperation.class);
+        OperationProcessingService.OperationsManager.get(context).resetDelayForOperation(LoadStatsOperation.class);
         return null;
     }
 

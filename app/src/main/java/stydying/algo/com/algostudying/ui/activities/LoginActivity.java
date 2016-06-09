@@ -19,7 +19,7 @@ import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
 import stydying.algo.com.algostudying.operations.LoginOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 
 public class LoginActivity extends BaseActivity {
 
@@ -52,7 +52,7 @@ public class LoginActivity extends BaseActivity {
     protected void onClick() {
         String login = inputLogin.getText().toString();
         String pass = inputPass.getText().toString();
-        OperationProcessor.executeOperation(this, new LoginOperation(login, pass));
+        OperationProcessingService.executeOperation(this, new LoginOperation(login, pass));
         loginButton.setProgress(loginButton.getMaxProgress() / 2);
         setInputsEnabled(false);
     }

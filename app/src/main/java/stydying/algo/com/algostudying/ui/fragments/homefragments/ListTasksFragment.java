@@ -24,7 +24,7 @@ import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.GetTaskOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.RemoveTaskOperation;
 import stydying.algo.com.algostudying.ui.activities.EditUserTasksActivity;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
@@ -93,7 +93,7 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
     }
 
     private void launchTask(Task task) {
-        OperationProcessor.executeOperation(getContext(), new GetTaskOperation(task));
+        OperationProcessingService.executeOperation(getContext(), new GetTaskOperation(task));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ListTasksFragment extends BaseFragment implements TaskListItemView.
 
     @Override
     public void onRemoveTaskClicked(int position) {
-        OperationProcessor.executeOperation(getContext(),
+        OperationProcessingService.executeOperation(getContext(),
                 new RemoveTaskOperation(adapter().getItem(position).getId()));
     }
 

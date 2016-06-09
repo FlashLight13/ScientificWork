@@ -19,7 +19,7 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 16.02.2016.
  */
-public class CreateTaskOperation implements OperationProcessor.Operation {
+public class CreateTaskOperation implements OperationProcessingService.Operation {
 
     private Task task;
     private TaskGroup taskGroup;
@@ -48,7 +48,7 @@ public class CreateTaskOperation implements OperationProcessor.Operation {
         updateTaskGroup(data.taskGroup);
         data.task.setTaskGroup(data.taskGroup);
         data.task.save();
-        OperationProcessor.OperationsManager.get(context)
+        OperationProcessingService.OperationsManager.get(context)
                 .resetDelayForOperation(GetTaskGroupsNamesOperation.class);
         return null;
     }

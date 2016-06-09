@@ -3,12 +3,12 @@ package stydying.algo.com.algostudying.operations.edit_operations;
 import java.util.ArrayList;
 import java.util.List;
 
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 
 /**
  * Created by Anton on 19.03.2016.
  */
-public abstract class BaseEditOperation<T> implements OperationProcessor.Operation<T> {
+public abstract class BaseEditOperation<T> implements OperationProcessingService.Operation<T> {
 
     protected List<String> userIds;
 

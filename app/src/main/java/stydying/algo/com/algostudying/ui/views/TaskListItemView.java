@@ -112,8 +112,7 @@ public class TaskListItemView extends LinearLayout implements View.OnClickListen
         // todo implement task image
         img.setVisibility(GONE);
         setTag(R.integer.position_key, position);
-        //textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), task.getDifficultyLevel()));
-        textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), 1));
+        textDifficulty.setText(new TaskDifficultyFormatter().getDifficulty(getContext(), task.getDifficultyLevel()));
         return this;
     }
 }

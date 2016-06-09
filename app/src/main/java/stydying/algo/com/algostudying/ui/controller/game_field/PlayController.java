@@ -17,7 +17,7 @@ import stydying.algo.com.algostudying.data.entities.stats.User;
 import stydying.algo.com.algostudying.game.CommandsExecutionThread;
 import stydying.algo.com.algostudying.game.GameWorld;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.stats.UpdateStatsOperation;
 import stydying.algo.com.algostudying.ui.activities.GameFieldActivity;
 import stydying.algo.com.algostudying.ui.views.game_controls.GameNavigationDrawerView;
@@ -118,7 +118,7 @@ public class PlayController extends GameFieldController implements CommandsExecu
         stat.setTaskName(task.getTitle());
         stat.setGroupName(task.getTaskGroup().getTitle());
 
-        OperationProcessor.executeOperation(activity,
+        OperationProcessingService.executeOperation(activity,
                 new UpdateStatsOperation(stat, currentUser.getLogin(), currentUser.getPass()));
         new AlertDialog.Builder(activity)
                 .setTitle(R.string.message_title_win)

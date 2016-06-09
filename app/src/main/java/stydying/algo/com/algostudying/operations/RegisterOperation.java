@@ -9,7 +9,7 @@ import stydying.algo.com.algostudying.network.services.UsersService;
 /**
  * Created by Anton on 05.02.2016.
  */
-public class RegisterOperation implements OperationProcessor.Operation {
+public class RegisterOperation implements OperationProcessingService.Operation {
 
     private String login;
     private String pass;

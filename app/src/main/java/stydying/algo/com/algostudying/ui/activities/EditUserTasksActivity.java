@@ -28,12 +28,14 @@ import java.util.List;
 import butterknife.Bind;
 import stydying.algo.com.algostudying.R;
 import stydying.algo.com.algostudying.data.entities.stats.User;
+import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
+import stydying.algo.com.algostudying.logic.TaskGroupsBusinessLogic;
 import stydying.algo.com.algostudying.logic.creation.GameFieldCreationController;
 import stydying.algo.com.algostudying.operations.LoadUsersOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.ui.fragments.BaseFragment;
 import stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments.EditTaskFragment;
 import stydying.algo.com.algostudying.ui.fragments.edit_user_tasks_fragments.EditTaskGroupFragment;
@@ -85,7 +87,7 @@ public class EditUserTasksActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.a_edit_user_tasks);
         this.mode = Mode.valueOf(getIntent().getStringExtra(MODE_EXTRA));
-        Fragment fragment = mode.fragment(getIntent().getLongExtra(ID_EXTRA, -1));
+        Fragment fragment = mode.fragment(getTaskGroupId());
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().replace(
                     R.id.content, fragment, null).commit();
@@ -97,8 +99,12 @@ public class EditUserTasksActivity extends BaseActivity {
         loadUsers();
     }
 
+    private long getTaskGroupId() {
+        return getIntent().getLongExtra(ID_EXTRA, TaskGroup.DEFAULT_ID);
+    }
+
     private void loadUsers() {
-        OperationProcessor.executeOperation(this, new LoadUsersOperation());
+        OperationProcessingService.executeOperation(this, new LoadUsersOperation());
         setInProgress(true);
     }
 
@@ -109,7 +115,7 @@ public class EditUserTasksActivity extends BaseActivity {
             List<User> users = event.data();
             if (mode == Mode.NEW && (users == null || users.size() == 0)) {
                 setInProgress(true);
-                OperationProcessor.executeOperation(this,
+                OperationProcessingService.executeOperation(this,
                         controller().setUsers(getSelectedUserIds()).getCreateOperation());
             }
             List<UserData> userDatas;
@@ -119,7 +125,9 @@ public class EditUserTasksActivity extends BaseActivity {
                 userDatas = new ArrayList<>(users.size());
                 for (User user : users) {
                     if (user.getType() == User.Type.STUDENT) {
-                        userDatas.add(new UserData(user, false));
+                        userDatas.add(new UserData(
+                                user,
+                                TaskGroupsBusinessLogic.hasTaskGroup(user, getTaskGroupId())));
                     }
                 }
             }
@@ -184,7 +192,7 @@ public class EditUserTasksActivity extends BaseActivity {
                 }
             }
         } else {
-            OperationProcessor.executeOperation(this,
+            OperationProcessingService.executeOperation(this,
                     controller().setUsers(getSelectedUserIds()).getCreateOperation());
             return true;
         }

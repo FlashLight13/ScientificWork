@@ -26,7 +26,7 @@ import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.stats.LoadStatsOperation;
 import stydying.algo.com.algostudying.ui.fragments.homefragments.ProfileFragment;
 import stydying.algo.com.algostudying.ui.interfaces.PagerController;
@@ -57,7 +57,7 @@ public class StatsFragment extends ProfileFragment.BaseProfileFragment {
         placeholder.setText(TextUtils.equals(currentUserLogin, openedUserLogin)
                 ? R.string.stats_empty
                 : R.string.stats_empty_admin);
-        OperationProcessor.executeOperation(getContext(),
+        OperationProcessingService.executeOperation(getContext(),
                 new LoadStatsOperation(LoginManager.getInstance(getContext()).getCurrentUser().getLogin()));
     }
 

@@ -6,6 +6,7 @@ import android.os.Parcel;
 import java.util.List;
 
 import stydying.algo.com.algostudying.data.entities.tasks.Task;
+import stydying.algo.com.algostudying.data.entities.tasks.TaskGroup;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.CreateTaskOperation;
@@ -46,6 +47,11 @@ public class GameFieldCreationController {
         BaseFileCache.getInstance(context).put(GAME_FILED_CACHE_KEY, parcel.createByteArray());
         parcel.recycle();
         setGameField(context, task.getGameField());
+    }
+
+    public boolean shouldSelectAvailableStudents() {
+        // select available students only for new TaskGroups
+        return this.currentTask.getTaskGroup().getId() == TaskGroup.DEFAULT_ID;
     }
 
     public GameFieldCreationController setGameField(Context context, String[][][] gameField) {

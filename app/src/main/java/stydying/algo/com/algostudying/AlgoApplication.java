@@ -9,7 +9,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import java.io.File;
 
 import stydying.algo.com.algostudying.logic.managers.LoginManager;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.utils.StreamUtils;
 import stydying.algo.com.algostudying.utils.caches.BaseFileCache;
 import stydying.algo.com.algostudying.utils.caches.MapCache;
@@ -20,7 +20,7 @@ import stydying.algo.com.algostudying.utils.caches.MapCache;
 public class AlgoApplication extends Application {
 
     private LoginManager loginManager;
-    private OperationProcessor.OperationsManager operationsManager;
+    private OperationProcessingService.OperationsManager operationsManager;
 
     private MapCache mapCache;
     private BaseFileCache baseFileCache;
@@ -54,7 +54,7 @@ public class AlgoApplication extends Application {
 
     private void initManagers() {
         this.loginManager = new LoginManager(this);
-        this.operationsManager = new OperationProcessor.OperationsManager();
+        this.operationsManager = new OperationProcessingService.OperationsManager();
     }
 
     private void initCaches() {
@@ -68,7 +68,7 @@ public class AlgoApplication extends Application {
     }
 
     @NonNull
-    public OperationProcessor.OperationsManager getOperationsManager() {
+    public OperationProcessingService.OperationsManager getOperationsManager() {
         return this.operationsManager;
     }
 

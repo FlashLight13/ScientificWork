@@ -11,7 +11,7 @@ import stydying.algo.com.algostudying.errors.NetworkException;
 /**
  * Created by Anton on 19.03.2016.
  */
-public class LoadTaskGroupOperation implements OperationProcessor.Operation<TaskGroup> {
+public class LoadTaskGroupOperation implements OperationProcessingService.Operation<TaskGroup> {
 
     private long id;
 

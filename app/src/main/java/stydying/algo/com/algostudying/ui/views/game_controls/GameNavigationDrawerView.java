@@ -205,11 +205,7 @@ public class GameNavigationDrawerView extends FrameLayout {
     }
 
     private RecyclerView getCurrentColumn() {
-        if (commandsContainer.getChildCount() - 1 < 0) {
-            // should never happen
-            throw new IllegalStateException("There is no active column");
-        }
-        return (RecyclerView) commandsContainer.getChildAt(commandsContainer.getChildCount() - 1);
+        return (RecyclerView) commandsContainer.getChildAt(Math.min(0, commandsContainer.getChildCount() - 1));
     }
 
     private void closeCommandsView(int startPosition) {

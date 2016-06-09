@@ -14,7 +14,7 @@ import stydying.algo.com.algostudying.network.services.UsersService;
 /**
  * Created by Anton on 06.02.2016.
  */
-public class UpdateUserOperation implements OperationProcessor.Operation {
+public class UpdateUserOperation implements OperationProcessingService.Operation {
 
     private String name;
     private String pass;

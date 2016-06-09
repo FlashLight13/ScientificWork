@@ -13,7 +13,7 @@ import stydying.algo.com.algostudying.network.services.UsersService;
 /**
  * Created by Anton on 05.02.2016.
  */
-public class LoadUsersOperation implements OperationProcessor.Operation<List<User>> {
+public class LoadUsersOperation implements OperationProcessingService.Operation<List<User>> {
 
     public LoadUsersOperation() {
 
@@ -26,7 +26,7 @@ public class LoadUsersOperation implements OperationProcessor.Operation<List<Use
             if (user.exists()) {
                 user.save();
             } else {
-                user.insert();
+                user.update();
             }
         }
         return users;

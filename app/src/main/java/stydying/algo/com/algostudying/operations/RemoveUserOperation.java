@@ -12,7 +12,7 @@ import stydying.algo.com.algostudying.network.services.UsersService;
 /**
  * Created by Anton on 07.02.2016.
  */
-public class RemoveUserOperation implements OperationProcessor.Operation {
+public class RemoveUserOperation implements OperationProcessingService.Operation {
 
     private String login;
 

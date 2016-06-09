@@ -5,21 +5,16 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Column;
-import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.ModelContainer;
-import com.raizlabs.android.dbflow.annotation.OneToMany;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.structure.BaseModel;
-import com.raizlabs.android.dbflow.structure.container.ForeignKeyContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import stydying.algo.com.algostudying.data.Database;
-import stydying.algo.com.algostudying.data.entities.stats.User;
 
 /**
  * Created by Anton on 25.01.2016.
@@ -32,12 +27,13 @@ public class TaskGroup extends BaseModel implements Parcelable {
 
     @SerializedName("id")
     @PrimaryKey
-    long _id = DEFAULT_ID;
+    protected long _id = DEFAULT_ID;
     @Column
-    String title;
-    List<Task> tasks;
-    @ForeignKey(saveForeignKeyModel = false)
-    transient ForeignKeyContainer<User> userForeignKeyContainer;
+    protected String title;
+    @Column
+    protected String userLogin;
+
+    private List<Task> tasks;
 
     public TaskGroup() {
     }
@@ -52,10 +48,10 @@ public class TaskGroup extends BaseModel implements Parcelable {
         this.tasks = new ArrayList<>();
     }
 
-    @SuppressWarnings("unchecked")
     private TaskGroup(Parcel parcel) {
         _id = parcel.readLong();
         title = parcel.readString();
+        userLogin = parcel.readString();
     }
 
     public String getTitle() {
@@ -67,12 +63,11 @@ public class TaskGroup extends BaseModel implements Parcelable {
         return this;
     }
 
-    @OneToMany(methods = OneToMany.Method.ALL, variableName = "tasks")
     public List<Task> getTasks() {
         if (tasks == null) {
             tasks = SQLite.select()
                     .from(Task.class)
-                    .where(Task_Table.taskGroupForeignKeyContainer__id.eq(_id))
+                    .where(Task_Table.taskGroupId.eq(_id))
                     .queryList();
         }
         return tasks;
@@ -89,16 +84,6 @@ public class TaskGroup extends BaseModel implements Parcelable {
 
     public void setId(long id) {
         this._id = id;
-    }
-
-    public User getUser() {
-        return userForeignKeyContainer.load();
-    }
-
-    public TaskGroup setUserForeignKeyContainer(User user) {
-        userForeignKeyContainer = FlowManager.getContainerAdapter(User.class)
-                .toForeignKeyContainer(user);
-        return this;
     }
 
     @Override
@@ -127,5 +112,6 @@ public class TaskGroup extends BaseModel implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(_id);
         dest.writeString(title);
+        dest.writeString(userLogin);
     }
 }

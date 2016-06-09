@@ -24,23 +24,23 @@ public class Stat extends BaseModel implements Parcelable {
     }
 
     @PrimaryKey(autoincrement = true)
-    long id = DEFAULT_ID;
+    protected long id = DEFAULT_ID;
     @Column
-    String groupName;
+    protected String groupName;
     @Column
-    String taskName;
+    protected String taskName;
     @Column
-    long time;
+    protected long time;
     @Column
-    int commandsCount;
+    protected int commandsCount;
     @Column
-    long taskId;
+    protected long taskId;
     @Column
-    long taskGroupId;
+    protected long taskGroupId;
     @Column
-    Status status = Status.PENDING;
+    protected Status status = Status.PENDING;
     @Column
-    transient String userLogin;
+    protected String userLogin;
 
     public Stat() {
     }
@@ -134,12 +134,12 @@ public class Stat extends BaseModel implements Parcelable {
     public static final Creator<Stat> CREATOR = new Creator<Stat>() {
         @Override
         public Stat createFromParcel(Parcel source) {
-            return null;
+            return new Stat(source);
         }
 
         @Override
         public Stat[] newArray(int size) {
-            return new Stat[0];
+            return new Stat[size];
         }
     };
 

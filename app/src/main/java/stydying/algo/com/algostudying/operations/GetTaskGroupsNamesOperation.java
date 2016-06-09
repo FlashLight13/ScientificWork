@@ -17,7 +17,7 @@ import stydying.algo.com.algostudying.network.services.TasksService;
 /**
  * Created by Anton on 16.02.2016.
  */
-public class GetTaskGroupsNamesOperation implements OperationProcessor.Operation<List<TaskGroup>> {
+public class GetTaskGroupsNamesOperation implements OperationProcessingService.Operation<List<TaskGroup>> {
 
     private OperationType type;
 

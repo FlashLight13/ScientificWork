@@ -30,7 +30,7 @@ import stydying.algo.com.algostudying.events.BusProvider;
 import stydying.algo.com.algostudying.events.OperationErrorEvent;
 import stydying.algo.com.algostudying.events.OperationSuccessEvent;
 import stydying.algo.com.algostudying.operations.LoadUsersOperation;
-import stydying.algo.com.algostudying.operations.OperationProcessor;
+import stydying.algo.com.algostudying.operations.OperationProcessingService;
 import stydying.algo.com.algostudying.operations.RemoveUserOperation;
 import stydying.algo.com.algostudying.ui.activities.RegisterActivity;
 import stydying.algo.com.algostudying.ui.activities.UserViewActivity;
@@ -75,23 +75,23 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
             }
         });
 
-        OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
+        OperationProcessingService.executeOperation(getContext(), new LoadUsersOperation());
         errorPlaceholder.setOnRetryListener(new LoadingPlaceholderView.OnRetryListener() {
             @Override
             public void onRetry() {
                 errorPlaceholder.loading();
-                OperationProcessor.OperationsManager.get(UsersFragment.this.getContext())
+                OperationProcessingService.OperationsManager.get(UsersFragment.this.getContext())
                         .resetDelayForOperation(LoadUsersOperation.class);
-                OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
+                OperationProcessingService.executeOperation(getContext(), new LoadUsersOperation());
             }
         });
         errorPlaceholder.loading();
         refreshLayout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                OperationProcessor.OperationsManager.get(UsersFragment.this.getContext())
+                OperationProcessingService.OperationsManager.get(UsersFragment.this.getContext())
                         .resetDelayForOperation(LoadUsersOperation.class);
-                OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
+                OperationProcessingService.executeOperation(getContext(), new LoadUsersOperation());
                 refreshLayout.setRefreshing(true);
             }
         });
@@ -164,7 +164,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         if (resultCode == Activity.RESULT_OK)
             if (requestCode == RegisterActivity.REQUEST_CODE
                     || requestCode == UserViewActivity.REQUEST_CODE) {
-                OperationProcessor.executeOperation(getContext(), new LoadUsersOperation());
+                OperationProcessingService.executeOperation(getContext(), new LoadUsersOperation());
             }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -175,7 +175,7 @@ public class UsersFragment extends BaseFragment implements UsersListItemView.OnU
         if (view != null) {
             view.setClickable(false);
         }
-        OperationProcessor.executeOperation(getContext(),
+        OperationProcessingService.executeOperation(getContext(),
                 new RemoveUserOperation(adapter.getItem(pos).getLogin()));
     }
 
